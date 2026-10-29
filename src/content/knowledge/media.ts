@@ -1,0 +1,111 @@
+import { L } from "@/content/copy";
+import type { MediaAsset } from "@/content/knowledge/schema";
+
+export const media: MediaAsset[] = [
+  {
+    id: "img-stone-bridge-delso",
+    fileTitle: "Puente de Piedra, Skopie, Macedonia, 2014-04-16, DD 37.JPG",
+    url: "https://commons.wikimedia.org/wiki/Special:FilePath/Puente_de_Piedra,_Skopie,_Macedonia,_2014-04-16,_DD_37.JPG?width=1600",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Puente_de_Piedra,_Skopie,_Macedonia,_2014-04-16,_DD_37.JPG",
+    credit: "Diego Delso",
+    license: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    attributionRequired: true,
+    caption: L(
+      "Stone Bridge over the Vardar, Skopje, 16 April 2014. Contemporary photograph, not an archival plate.",
+      "Камен мост над Вардар, Скопје, 16 април 2014. Современа фотографија, не архивска плоча.",
+      "Kameni most preko Vardara, Skoplje, 16. april 2014. Savremena fotografija, ne arhivska ploča.",
+      "Vardar üzerindeki Taş Köprü, Üsküp, 16 Nisan 2014. Çağdaş fotoğraf, arşiv plağı değil.",
+      "Кам'яний міст над Вардаром, Скоп'є, 16 квітня 2014. Сучасна світлина, не архівна пластина.",
+    ),
+    authenticPhotograph: true,
+    verified: true,
+    captured: "2014-04-16",
+  },
+  {
+    id: "img-square-from-bridge",
+    fileTitle: "Stone Bridge Skopje 4.jpg",
+    url: "https://commons.wikimedia.org/wiki/Special:FilePath/Stone_Bridge_Skopje_4.jpg?width=1600",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Stone_Bridge_Skopje_4.jpg",
+    credit: "kallerna",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    attributionRequired: true,
+    caption: L(
+      "Macedonia Square seen from the Stone Bridge, 30 May 2023. Contemporary photograph.",
+      "Плоштад Македонија гледан од Камениот мост, 30 мај 2023. Современа фотографија.",
+      "Trg Makedonija viđen sa Kamenog mosta, 30. maj 2023. Savremena fotografija.",
+      "Taş Köprü’den görülen Makedonya Meydanı, 30 Mayıs 2023. Çağdaş fotoğraf.",
+      "Площа Македонія з Кам'яного мосту, 30 травня 2023. Сучасна світлина.",
+    ),
+    authenticPhotograph: true,
+    verified: true,
+    captured: "2023-05-30",
+  },
+  {
+    id: "img-porta-macedonia",
+    fileTitle: "Porta Macedonia.jpg",
+    url: "https://commons.wikimedia.org/wiki/Special:FilePath/Porta_Macedonia.jpg?width=1600",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Porta_Macedonia.jpg",
+    credit: "August Dominus",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    attributionRequired: true,
+    caption: L(
+      "Porta Macedonia, Skopje, 18 March 2019. Contemporary photograph.",
+      "Порта Македонија, Скопје, 18 март 2019. Современа фотографија.",
+      "Porta Makedonija, Skoplje, 18. mart 2019. Savremena fotografija.",
+      "Porta Makedonya, Üsküp, 18 Mart 2019. Çağdaş fotoğraf.",
+      "Порта Македонія, Скоп'є, 18 березня 2019. Сучасна світлина.",
+    ),
+    authenticPhotograph: true,
+    verified: true,
+    captured: "2019-03-18",
+  },
+  {
+    id: "img-kale-kallerna",
+    fileTitle: "Kale Skopje Fortress.jpg",
+    url: "https://commons.wikimedia.org/wiki/Special:FilePath/Kale_Skopje_Fortress.jpg?width=1600",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Kale_Skopje_Fortress.jpg",
+    credit: "kallerna",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    attributionRequired: true,
+    caption: L(
+      "Skopje Fortress (Kale), 14 November 2023. Contemporary photograph.",
+      "Скопска тврдина (Кале), 14 ноември 2023. Современа фотографија.",
+      "Skopska tvrđava (Kale), 14. novembar 2023. Savremena fotografija.",
+      "Üsküp Kalesi (Kale), 14 Kasım 2023. Çağdaş fotoğraf.",
+      "Скопська фортеця (Кале), 14 листопада 2023. Сучасна світлина.",
+    ),
+    authenticPhotograph: true,
+    verified: true,
+    captured: "2023-11-14",
+  },
+  {
+    id: "img-mother-teresa-danielmkd",
+    fileTitle: "Memorial house of Mother Teresa.jpg",
+    url: "https://commons.wikimedia.org/wiki/Special:FilePath/Memorial_house_of_Mother_Teresa.jpg?width=1600",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Memorial_house_of_Mother_Teresa.jpg",
+    credit: "Danielmkd",
+    license: "Public domain (author release)",
+    licenseUrl: "https://commons.wikimedia.org/wiki/File:Memorial_house_of_Mother_Teresa.jpg",
+    attributionRequired: false,
+    caption: L(
+      "Memorial House of Mother Teresa, Skopje, 19 April 2009. Contemporary photograph, released by the photographer into the public domain.",
+      "Спомен куќа на Мајка Тереза, Скопје, 19 април 2009. Современа фотографија, пуштена во јавен домен од фотографот.",
+      "Spomen-kuća Majke Tereze, Skoplje, 19. april 2009. Savremena fotografija, fotograf je pustio u javni domen.",
+      "Rahibe Teresa Anı Evi, Üsküp, 19 Nisan 2009. Fotoğrafçının kamu malı bıraktığı çağdaş fotoğraf.",
+      "Меморіальний дім Матері Терези, Скоп'є, 19 квітня 2009. Сучасна світлина, випущена фотографом у суспільне надбання.",
+    ),
+    authenticPhotograph: true,
+    verified: true,
+    captured: "2009-04-19",
+  },
+];
+
+const byId = new Map(media.map((item) => [item.id, item]));
+
+export function getMedia(id: string) {
+  return byId.get(id);
+}

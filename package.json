@@ -1,0 +1,36 @@
+{
+  "name": "centarstory",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "npm run test:recognition && npm run test:atlas && npm run test:i18n && npm run test:quality",
+    "test:recognition": "npx tsx --tsconfig tsconfig.json src/lib/recognition/fuse.test.ts",
+    "test:atlas": "npx tsx --tsconfig tsconfig.json src/lib/graph/graph.test.ts && npx tsx --tsconfig tsconfig.json src/lib/itinerary/engine.test.ts && npx tsx --tsconfig tsconfig.json src/lib/events/status.test.ts && npx tsx --tsconfig tsconfig.json src/lib/mapping/walk.test.ts && npx tsx --tsconfig tsconfig.json src/lib/visit/hours.test.ts",
+    "test:i18n": "npx tsx --tsconfig tsconfig.json src/lib/i18n/messages.test.ts && npx tsx --tsconfig tsconfig.json src/lib/format.test.ts",
+    "test:quality": "npx tsx --tsconfig tsconfig.json src/lib/content/quality.test.ts && npx tsx --tsconfig tsconfig.json src/lib/e2e/routes.test.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^1.64.0",
+    "maplibre-gl": "^5.6.2",
+    "motion": "^14.7.1",
+    "next": "16.4.3",
+    "next-intl": "^4.14.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-map-gl": "^8.1.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

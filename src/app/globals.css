@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #1c1612;
+  --ink-soft: #4a4038;
+  --paper: #f3eee6;
+  --paper-2: #e7e0d4;
+  --foam: #faf7f2;
+  --line: #d5cbbd;
+  --copper: #7a3b2a;
+  --copper-deep: #5e2c1f;
+  --patina: #2c4d42;
+  --brass: #5e4a2c;
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-foam: var(--foam);
+  --color-line: var(--line);
+  --color-copper: var(--copper);
+  --color-copper-deep: var(--copper-deep);
+  --color-patina: var(--patina);
+  --color-brass: var(--brass);
+  --font-sans: var(--font-manrope), "Segoe UI", sans-serif;
+  --font-display: var(--font-eb), "Palatino Linotype", Palatino, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(900px 420px at 0% -10%, rgba(122, 59, 42, 0.06), transparent 55%),
+    radial-gradient(800px 380px at 100% 0%, rgba(44, 77, 66, 0.05), transparent 50%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #e7cfc4;
+  color: var(--ink);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 80;
+  background: var(--ink);
+  color: var(--foam);
+  padding: 0.75rem 1rem;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.cs-map .leaflet-tile {
+  filter: grayscale(0.28) sepia(0.22) contrast(0.94) brightness(1.03);
+}
+
+.cs-map .leaflet-bar {
+  border: 0;
+  box-shadow: none;
+}
+
+.cs-map .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  background: var(--foam);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.cs-map .leaflet-control-zoom a:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+.cs-map .leaflet-control-attribution,
+.cs-map .maplibregl-ctrl-attrib {
+  background: rgba(243, 238, 230, 0.92);
+  color: var(--ink-soft);
+  font-size: 10px;
+  max-width: 70%;
+}
+
+.cs-map .maplibregl-ctrl-group button {
+  width: 44px;
+  height: 44px;
+}
+
+.cs-pin {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.cs-pin span {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin: 5px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  background: var(--foam);
+  box-shadow: 0 0 0 5px rgba(243, 238, 230, 0.82);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cs-pin.is-active span {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--foam);
+}
+
+.cs-pin.is-kitchen span {
+  border-radius: 2px;
+}
+
+.cs-pin.is-nearby span {
+  border-style: dashed;
+}
+
+.cs-pin.is-stop span {
+  width: 22px;
+  height: 22px;
+  margin: 3px;
+  border-radius: 999px;
+}
+
+.cs-user-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--patina);
+  box-shadow: 0 0 0 6px rgba(44, 77, 66, 0.22);
+}
+
+.cs-story-section {
+  scroll-margin-top: 6.5rem;
+}
+
+.cs-claim-fact {
+  border-left: 3px solid var(--patina);
+}
+
+.cs-claim-legend {
+  border-left: 3px solid var(--brass);
+}
+
+.cs-claim-interp {
+  border-left: 3px solid var(--copper);
+}
+
+.cs-claim-unverified {
+  border-left: 3px dashed var(--line);
+}
+
+.cs-lens-scan {
+  animation: cs-lens 2.4s var(--ease-editorial) infinite;
+}
+
+@keyframes cs-lens {
+  0%,
+  100% {
+    transform: translateY(-8%);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(18%);
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
