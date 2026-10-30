@@ -116,6 +116,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Ask at Pelister on the square. Bread is part of the plate.", "Побарајте кај Пелистер на плоштадот. Лебот е дел од чинијата.", "Tražite kod Pelistera na trgu. Hleb je deo tanira.", "Meydandaki Pelister’de isteyin. Ekmek tabağın parçasıdır.", "Просіть у Pelister на площі. Хліб є частиною тарілки."),
     palette: ["#e6d2b8", "#8a4b32"],
+    imageId: "img-tavce-gravce",
     claims: [
       {
         id: "tg-c-practice",
@@ -173,6 +174,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Cross the Stone Bridge to Destan in Čair. Confirm the door.", "Поминете го Камениот мост до Дестан во Чаир. Потврдете ја вратата.", "Pređite Kameni most do Destana u Čairu. Potvrdite vrata.", "Taş Köprü’yü geçip Çair’deki Destan’a gidin. Kapıyı doğrulayın.", "Перейдіть Кам'яний міст до Destan у Чаїрі. Підтвердьте двері."),
     palette: ["#c45c32", "#4a2a1c"],
+    imageId: "img-kebapi-dish",
     claims: [],
     myths: [
       {
@@ -217,6 +219,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Pelister on the square, or Destan across the bridge.", "Пелистер на плоштадот, или Дестан преку мостот.", "Pelister na trgu, ili Destan preko mosta.", "Meydandaki Pelister, ya da köprü ötesindeki Destan.", "Pelister на площі, або Destan за мостом."),
     palette: ["#d94f3d", "#e8e2c8"],
+    imageId: "img-shopska-salad",
     claims: [],
     myths: [
       {
@@ -255,6 +258,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Ask at Destan with kebapi, or at Pelister as a relish.", "Побарајте кај Дестан со ќебапи, или кај Пелистер како релиш.", "Tražite kod Destana uz ćevape, ili kod Pelistera kao relish.", "Kebapla Destan’da, veya mezeyle Pelister’de isteyin.", "Просіть у Destan із кебапами, або в Pelister як приправу."),
     palette: ["#b83a22", "#e8c9a8"],
+    imageId: "img-ajvar-dish",
     claims: [],
     myths: [
       {
@@ -293,6 +297,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Ask at Pelister. Ask which leaf is in the pot.", "Побарајте кај Пелистер. Прашајте кој лист е во тенџерето.", "Tražite kod Pelistera. Pitajte koji je list u loncu.", "Pelister’de isteyin. Tencerede hangi yaprağın olduğunu sorun.", "Просіть у Pelister. Запитайте, яке листя в горщику."),
     palette: ["#d8d2b2", "#6e6a3e"],
+    imageId: "img-sarma-dish",
     claims: [],
     myths: [
       {
@@ -331,6 +336,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("Ask at Pelister on Macedonia Square.", "Побарајте кај Пелистер на плоштадот Македонија.", "Tražite kod Pelistera na trgu Makedonija.", "Makedonya Meydanı’ndaki Pelister’de isteyin.", "Просіть у Pelister на площі Македонія."),
     palette: ["#c47a45", "#5c3b2e"],
+    imageId: "img-turli-tava",
     claims: [],
     myths: [
       {
@@ -369,6 +375,7 @@ export const dishes: DishRecord[] = [
     ],
     eat: L("A neighborhood bakery, morning. This atlas does not invent a door.", "Населска фурна, наутро. Овој атлас не измислува врата.", "Kvartovska pekara, ujutru. Ovaj atlas ne izmišlja vrata.", "Mahalle fırını, sabah. Bu atlas bir kapı uydurmaz.", "Пекарня в районі, вранці. Цей атлас не вигадує дверей."),
     palette: ["#f0e2c8", "#c9a36a"],
+    imageId: "img-burek-dish",
     claims: [],
     myths: [
       {

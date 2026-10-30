@@ -2,8 +2,10 @@ export { planItinerary, reorderStops } from "@/lib/itinerary/engine";
 export {
   AROUND_YEAR_MAX,
   AROUND_YEAR_MIN,
+  aroundMonumentStarts,
   aroundThemeDefault,
   aroundThemeForYear,
+  aroundThemeRandom,
   isAroundBirthYear,
 } from "@/lib/itinerary/around-theme";
 export { ITINERARY_THEMES } from "@/lib/itinerary/types";

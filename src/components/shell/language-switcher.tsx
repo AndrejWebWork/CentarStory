@@ -21,7 +21,7 @@ export function LanguageSwitcher() {
   const search = useSearchParams();
 
   return (
-    <label className="flex items-center rounded-full border border-white/12 bg-white/5 px-3 text-[11px] font-semibold tracking-[0.08em]">
+    <label className="flex w-fit max-w-full items-center border border-white/12 bg-white/5 px-3 text-[11px] font-semibold tracking-[0.08em]">
       <span className="sr-only">{t("language")}</span>
       <select
         className="h-9 max-w-44 bg-transparent pr-1 text-xs tracking-[0.12em] text-foam uppercase"

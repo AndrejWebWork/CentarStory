@@ -56,11 +56,14 @@
   "transport": {
     "title": "Transport",
     "kicker": "Ways to move",
-    "lede": "A short list of how to move through Centar: JSP city buses, e-Enjoy and BinBin scooters, walking, and taxi. Open the official apps. Confirm prices on the operator page.",
+    "lede": "Tap a picture. The text opens after you choose, so you do not have to read the whole page first.",
     "apps": "Apps",
     "jspTitle": "JSP Skopje",
     "googlePlay": "Google Play",
-    "appStore": "App Store"
+    "appStore": "App Store",
+    "pickHint": "Choose how you want to move",
+    "back": "Back to options",
+    "open": "Open"
   },
   "explore": {
     "title": "Atlas",
@@ -309,6 +312,12 @@
     "lastChecked": "Last checked {date}",
     "openHouse": "Open the house",
     "recipeNote": "Ingredients and methods here follow documented kitchen practice. No single recipe is treated as universal, and no origin myth is invented.",
+    "pickHint": "Tap a plate. The story opens after you choose.",
+    "today": "Today",
+    "todayLede": "Find a documented plate, then open the kitchen on the map.",
+    "mapCta": "Show kitchens on the map",
+    "open": "Open",
+    "back": "Back to plates",
     "osmWalk": "Walking directions",
     "scope": {
       "all": "All verified houses",
@@ -319,7 +328,7 @@
   "around": {
     "title": "A walking route",
     "kicker": "Get Around",
-    "lede": "Tap for a route, or type the year you were born. Stops come from the verified atlas, not from invented places.",
+    "lede": "Tap for a new monument walk each time. Type a birth year only if you want that year to lock the theme. Stops come from the verified atlas.",
     "modes": "Ways to move",
     "walk": "On foot",
     "bus": "City bus",

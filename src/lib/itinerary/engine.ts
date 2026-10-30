@@ -117,7 +117,11 @@ export function planItinerary(input: ItineraryInput): ItineraryPlan {
     .sort((a, b) => scoreSlug(b, input.themeId, startSlug) - scoreSlug(a, input.themeId, startSlug));
   const themed = ranked.filter((slug) => scoreSlug(slug, input.themeId, startSlug) > 0);
   const usable = themed.length ? themed : ranked;
-  const ordered = nearestNeighborOrder(startSlug, [startSlug, ...usable]);
+  const monuments = usable.filter((slug) => getSite(slug)?.kinds.includes("monument"));
+  const drawn = input.shuffle
+    ? shuffleSlugs(monuments.length >= 4 ? monuments : usable).slice(0, 12)
+    : usable;
+  const ordered = nearestNeighborOrder(startSlug, [startSlug, ...drawn]);
   const trimmed = trimToBudget(ordered, input.budget);
   const unique = trimmed.filter((slug, index) => trimmed.indexOf(slug) === index);
 
@@ -152,6 +156,17 @@ export function planItinerary(input: ItineraryInput): ItineraryPlan {
     estimatedMinutes,
     warnings,
   };
+}
+
+function shuffleSlugs(slugs: string[]) {
+  const copy = [...slugs];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    const current = copy[index];
+    copy[index] = copy[swap] ?? current;
+    copy[swap] = current ?? copy[swap];
+  }
+  return copy;
 }
 
 export function reorderStops(slugs: string[]): ItineraryPlan["legs"] {

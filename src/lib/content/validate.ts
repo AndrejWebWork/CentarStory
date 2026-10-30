@@ -161,6 +161,9 @@ export function validateKnowledge(): Issue[] {
   for (const dish of dishes) {
     copyComplete(dish.name, `dish:${dish.slug}:name`, issues);
     copyComplete(dish.summary, `dish:${dish.slug}:summary`, issues);
+    if (dish.imageId && !getMedia(dish.imageId)) {
+      issues.push({ level: "error", code: "unknown-image", subject: `dish:${dish.slug}`, detail: dish.imageId });
+    }
     for (const claim of [...dish.claims, ...dish.myths]) {
       copyComplete(claim.text, `dish:${dish.slug}/${claim.id}`, issues);
       if (claim.sourceIds.length === 0) {

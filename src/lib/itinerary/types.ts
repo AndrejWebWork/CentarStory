@@ -10,6 +10,7 @@ export type ItineraryInput = {
   themeId: string;
   budget: ItineraryBudget;
   today?: Date;
+  shuffle?: boolean;
 };
 
 export type ItineraryStop = {

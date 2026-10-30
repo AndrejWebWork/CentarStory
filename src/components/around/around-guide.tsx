@@ -15,8 +15,9 @@ import { coordinatesOf } from "@/lib/graph/query";
 import {
   AROUND_YEAR_MAX,
   AROUND_YEAR_MIN,
-  aroundThemeDefault,
+  aroundMonumentStarts,
   aroundThemeForYear,
+  aroundThemeRandom,
   type AroundThemeChoice,
 } from "@/lib/itinerary/around-theme";
 import { planItinerary, type ItineraryPlan } from "@/lib/itinerary";
@@ -89,11 +90,14 @@ export function AroundGuide() {
     return () => window.clearInterval(tick);
   }, [phase, reduce]);
 
-  function build(next: AroundThemeChoice) {
+  function build(next: AroundThemeChoice, options?: { shuffle?: boolean; startSlug?: string }) {
+    const starts = aroundMonumentStarts();
+    const randomStart = starts[Math.floor(Math.random() * starts.length)];
     const planned = planItinerary({
-      start: { kind: "site", slug: "macedonia-square" },
+      start: { kind: "site", slug: options?.startSlug ?? randomStart ?? "macedonia-square" },
       themeId: next.themeId,
       budget: { mode: "stops", count: 5 },
+      shuffle: options?.shuffle,
     });
     setChoice(next);
     setPlan(planned);
@@ -104,7 +108,7 @@ export function AroundGuide() {
   }
 
   function makeDefault() {
-    build(aroundThemeDefault());
+    build(aroundThemeRandom(), { shuffle: true });
   }
 
   function makeFromYear() {
@@ -114,7 +118,7 @@ export function AroundGuide() {
       setYearError(true);
       return;
     }
-    build(next);
+    build(next, { startSlug: "macedonia-square" });
   }
 
   function reset() {

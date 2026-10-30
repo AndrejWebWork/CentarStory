@@ -56,6 +56,16 @@ function run() {
   assert.ok(venues.find((venue) => venue.slug === "destan" && !venue.coordinates));
 
   assert.equal(aroundThemeDefault().themeId, "civic-axis");
+  const shuffled = planItinerary({
+    start: { kind: "site", slug: "macedonia-square" },
+    themeId: "civic-axis",
+    budget: { mode: "stops", count: 5 },
+    shuffle: true,
+  });
+  assert.ok(shuffled.stops.length >= 2);
+  for (const stop of shuffled.stops) {
+    assert.ok(getSite(stop.slug)?.coordinates);
+  }
   assert.equal(aroundThemeForYear(1958)?.themeId, "1963-memory");
   assert.equal(aroundThemeForYear(2014)?.themeId, "skopje-2014");
   assert.equal(aroundThemeForYear(1899), null);

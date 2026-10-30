@@ -93,9 +93,17 @@ export function ScanScrollTheater({
       gsap.set(armyFront, { autoAlpha: 0, xPercent: 88, y: 54, scale: 0.58 });
       horses.forEach((horse, index) => {
         gsap.set(horse, {
-          y: index % 2 === 0 ? 18 : -14,
-          rotate: index % 2 === 0 ? -8 : 9,
-          scale: 0.86,
+          y: index % 2 === 0 ? 14 : -10,
+          rotate: index % 2 === 0 ? -4 : 5,
+          scale: 0.9,
+        });
+      });
+      const warriors = section.querySelectorAll<HTMLElement>("[data-chronicle-warrior]");
+      warriors.forEach((warrior, index) => {
+        gsap.set(warrior, {
+          y: index % 2 === 0 ? 10 : 18,
+          rotate: index % 3 === 0 ? -3 : 2,
+          scale: 0.88,
         });
       });
       cards.forEach((card, index) => {
@@ -150,12 +158,24 @@ export function ScanScrollTheater({
         tl.to(
           horse,
           {
-            y: index % 2 === 0 ? -22 : 20,
-            rotate: index % 2 === 0 ? 6 : -7,
-            scale: 1.08,
+            y: index % 2 === 0 ? -16 : 12,
+            rotate: index % 2 === 0 ? 4 : -4,
+            scale: 1.06,
             duration: 0.42,
           },
           0.2 + (index % 6) * 0.018,
+        );
+      });
+      warriors.forEach((warrior, index) => {
+        tl.to(
+          warrior,
+          {
+            y: index % 2 === 0 ? -8 : 6,
+            rotate: index % 2 === 0 ? 2 : -3,
+            scale: 1.04,
+            duration: 0.36,
+          },
+          0.2 + (index % 7) * 0.016,
         );
       });
 
@@ -183,11 +203,23 @@ export function ScanScrollTheater({
       }
       if (horses.length) {
         gsap.to(horses, {
-          rotate: "+=6",
-          duration: 0.72,
+          y: "+=10",
+          rotate: "+=3",
+          duration: 0.42,
           yoyo: true,
           repeat: -1,
-          stagger: { each: 0.05, from: "random" },
+          stagger: { each: 0.06, from: "random" },
+          ease: "sine.inOut",
+        });
+      }
+      if (warriors.length) {
+        gsap.to(warriors, {
+          y: "+=8",
+          x: "+=6",
+          duration: 0.38,
+          yoyo: true,
+          repeat: -1,
+          stagger: { each: 0.05, from: "end" },
           ease: "sine.inOut",
         });
       }
@@ -329,9 +361,9 @@ export function ScanScrollTheater({
           className="cs-chronicle-army pointer-events-none absolute inset-x-[-20%] bottom-[18%] z-20 flex items-end gap-6 opacity-55 sm:bottom-[16%] sm:gap-12"
           aria-hidden="true"
         >
-          {Array.from({ length: 10 }, (_, index) => (
+          {Array.from({ length: 12 }, (_, index) => (
             <span key={`back-${index}`} data-chronicle-bob className="inline-flex">
-              <FilmMark kind={filmKind} size="back" flip={index % 3 === 0} />
+              <FilmMark kind={filmKind} size="back" flip={index % 3 === 0} variant={index} />
             </span>
           ))}
         </div>
@@ -341,9 +373,9 @@ export function ScanScrollTheater({
           className="cs-chronicle-army pointer-events-none absolute inset-x-[-28%] bottom-[6%] z-30 flex items-end gap-8 sm:bottom-[5%] sm:gap-14"
           aria-hidden="true"
         >
-          {Array.from({ length: 8 }, (_, index) => (
+          {Array.from({ length: 9 }, (_, index) => (
             <span key={`front-${index}`} data-chronicle-bob className="inline-flex">
-              <FilmMark kind={filmKind} size="front" flip={index % 2 === 1} />
+              <FilmMark kind={filmKind} size="front" flip={index % 2 === 1} variant={index} />
             </span>
           ))}
         </div>
@@ -374,9 +406,19 @@ export function ScanScrollTheater({
   );
 }
 
-function FilmMark({ kind, size, flip }: { kind: FilmKind; size: "back" | "front"; flip?: boolean }) {
+function FilmMark({
+  kind,
+  size,
+  flip,
+  variant = 0,
+}: {
+  kind: FilmKind;
+  size: "back" | "front";
+  flip?: boolean;
+  variant?: number;
+}) {
   if (kind === "cavalry") return <HorseMark flip={flip} size={size} />;
-  if (kind === "company") return <WarriorMark size={size} />;
+  if (kind === "company") return <WarriorMark size={size} pose={variant % 3} />;
   if (kind === "memorial") return <MemorialMark size={size} />;
   if (kind === "ottoman") return <DomeMark size={size} />;
   if (kind === "fortress") return <FortMark size={size} />;
@@ -388,37 +430,48 @@ function HorseMark({ flip, size }: { flip?: boolean; size: "back" | "front" }) {
   return (
     <svg
       data-chronicle-horse
-      viewBox="0 0 220 140"
-      className={`shrink-0 ${tall ? "h-[26vh] w-[42vh] sm:h-[32vh] sm:w-[52vh]" : "h-[16vh] w-[26vh] sm:h-[20vh] sm:w-[32vh]"} ${flip ? "-scale-x-100" : ""}`}
+      viewBox="0 0 260 168"
+      className={`shrink-0 ${tall ? "h-[24vh] w-[38vh] sm:h-[30vh] sm:w-[48vh]" : "h-[15vh] w-[24vh] sm:h-[19vh] sm:w-[30vh]"} ${flip ? "-scale-x-100" : ""}`}
     >
-      <ellipse cx="96" cy="78" rx="46" ry="20" fill="currentColor" />
-      <path fill="currentColor" d="M132 72c16-22 36-34 58-32l4 10c-18 2-32 14-40 30l-22-8Z" />
-      <path fill="currentColor" d="M186 42c8-2 16 2 18 10-8 2-14 2-20-2l2-8Z" />
-      <path fill="currentColor" d="M176 40l6-14 8 12-14 2Z" />
-      <path fill="currentColor" d="M48 74c-16 8-26 24-22 40 8-12 16-20 26-26l-4-14Z" />
-      <path fill="currentColor" d="M62 96c2 14 2 28 0 36h12l6-36H62Zm22 2c2 14 4 28 2 34h12l4-34H84Z" />
-      <path fill="currentColor" d="M118 98c2 14 2 26 0 32h12l6-32h-18Zm22 4c4 12 6 24 4 30h12l2-30h-18Z" />
-      <circle cx="112" cy="30" r="9" fill="currentColor" />
-      <path fill="currentColor" d="M102 40h20l6 30-28 2 2-32Z" />
-      <path fill="currentColor" d="M122 44c10-8 22-16 34-18 1 5 0 9-4 12-8 6-18 12-26 20h-4Z" />
+      <path
+        fill="currentColor"
+        d="M48 96c8-22 28-34 54-36 18-2 36 4 58 8 16 4 34 2 48-8 10-8 22-10 34-4 8 4 14 12 16 20-10 2-18 0-24-6-10 10-24 16-40 16-8 18-22 28-42 32l-8-18c-16 6-36 8-56 4-12 14-18 28-16 44h-16c-4-18-2-34 8-46-14-2-26 4-34 16-4-8-4-22-2-32Z"
+      />
+      <path fill="currentColor" d="M198 76c12-18 28-28 46-28l2 12c-14 2-24 10-30 22l-18-6Z" />
+      <path fill="currentColor" d="M236 50l8-16 10 6-6 14h-12Zm8-16 4-12 8 8-12 4Z" />
+      <path fill="currentColor" d="M42 92c-16 6-28 20-30 38 10-8 20-14 30-16l0-22Z" />
+      <path fill="currentColor" d="M72 118 64 164h12l10-46Zm22 4-4 42h12l8-42Zm52 6-2 36h12l8-36Zm22 2 2 34h12l4-34Z" />
+      <path fill="currentColor" d="M118 42c-2 14 2 26 10 36l16-6c-4-10-6-20-4-30-8 0-16-2-22 0Z" />
+      <circle cx="128" cy="30" r="11" fill="currentColor" />
+      <path fill="currentColor" d="M122 18c2-10 10-16 18-14 2 6 0 12-6 16h-12Z" />
+      <path fill="currentColor" d="M116 40h24l8 34-32 4 0-38Z" />
+      <path fill="currentColor" d="M148 48c14-4 28-2 40 8l-8 12c-10-8-20-10-32-8Z" />
+      <path fill="currentColor" d="M152 28h6v86h-6z" />
+      <path fill="currentColor" d="M148 24h28v5H148z" />
+      <path fill="currentColor" d="M96 58h18v12H96z" />
     </svg>
   );
 }
 
-function WarriorMark({ size }: { size: "back" | "front" }) {
+function WarriorMark({ size, pose = 0 }: { size: "back" | "front"; pose?: number }) {
   const tall = size === "front";
+  const stride = pose === 1 ? 6 : pose === 2 ? -4 : 0;
   return (
     <svg
-      data-chronicle-horse
-      viewBox="0 0 72 140"
-      className={`shrink-0 ${tall ? "h-[24vh] w-[13vh] sm:h-[30vh] sm:w-[16vh]" : "h-[15vh] w-[8vh] sm:h-[19vh] sm:w-[10vh]"}`}
+      data-chronicle-warrior
+      viewBox="0 0 92 176"
+      className={`shrink-0 ${tall ? "h-[23vh] w-[12vh] sm:h-[29vh] sm:w-[15vh]" : "h-[14vh] w-[8vh] sm:h-[18vh] sm:w-[10vh]"}`}
     >
-      <circle cx="30" cy="16" r="10" fill="currentColor" />
-      <path fill="currentColor" d="M18 30h26l4 36H16l2-36Z" />
-      <path fill="currentColor" d="M16 66h12l-2 56H8Zm22 0h12l12 56H50Z" />
-      <path fill="currentColor" d="M44 18h6v78h-6z" />
-      <path fill="currentColor" d="M46 14h22v5H46z" />
-      <path fill="currentColor" d="M6 40h16v10H6z" />
+      <path fill="currentColor" d="M40 8c8-8 18-8 22 2 6-2 10 2 8 8H36c-2-6 2-10 4-10Z" />
+      <circle cx="50" cy="28" r="12" fill="currentColor" />
+      <path fill="currentColor" d="M38 24h24v8H38z" />
+      <path fill="currentColor" d="M34 42h32l6 40H30l4-40Z" />
+      <path fill="currentColor" d="M28 82h16l-4 78H22Zm26 0h16l18 78H62Z" transform={`translate(${stride} 0)`} />
+      <circle cx="24" cy="72" r="16" fill="currentColor" />
+      <circle cx="24" cy="72" r="9" fill="none" stroke="currentColor" strokeWidth="3" opacity="0.35" />
+      <path fill="currentColor" d="M62 18h5v92h-5z" />
+      <path fill="currentColor" d="M58 12h28v6H58z" />
+      <path fill="currentColor" d="M70 12l4-12 4 12H70z" />
     </svg>
   );
 }

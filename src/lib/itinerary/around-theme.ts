@@ -1,8 +1,39 @@
 import { L } from "@/content/copy";
+import { sites } from "@/content/knowledge/catalog";
 import type { Copy } from "@/content/types";
+import { ITINERARY_THEMES } from "@/lib/itinerary/types";
 
 export const AROUND_YEAR_MIN = 1910;
 export const AROUND_YEAR_MAX = 2026;
+
+const RANDOM_THEMES = ITINERARY_THEMES.map((item) => item.id).filter(
+  (id) => id !== "person:stevanovska" && id !== "quay-museums" && id !== "civic-institutions",
+);
+
+export function aroundMonumentStarts(): string[] {
+  return sites
+    .filter(
+      (site) =>
+        site.kinds.includes("monument") &&
+        site.municipality === "centar" &&
+        Number.isFinite(site.coordinates.lat),
+    )
+    .map((site) => site.slug);
+}
+
+export function aroundThemeRandom(): AroundThemeChoice {
+  const themeId = RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)] ?? "civic-axis";
+  return {
+    themeId,
+    note: L(
+      "A fresh walk through documented monuments. Each tap draws a different sequence. A birth year, if you enter one, is the only thing that locks the theme.",
+      "Нова прошетка низ документирани споменици. Секое допирање влече друга низа. Годината на раѓање, ако ја внесете, е единственото што ја заклучува темата.",
+      "Nova šetnja kroz dokumentovane spomenike. Svaki dodir vuče drugi niz. Godina rođenja, ako je unesete, jedino zaključava temu.",
+      "Belgelenmiş anıtlar arasında taze bir yürüyüş. Her dokunuş başka bir sıra çeker. Girdiğiniz doğum yılı temayı kilitleyen tek şeydir.",
+      "Свіжа прогулянка документованими пам'ятниками. Кожен дотик тягне іншу послідовність. Рік народження, якщо ввести, єдине, що фіксує тему.",
+    ),
+  };
+}
 
 export type AroundThemeChoice = {
   themeId: string;

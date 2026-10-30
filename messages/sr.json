@@ -56,11 +56,14 @@
   "transport": {
     "title": "Prevoz",
     "kicker": "Načini kretanja",
-    "lede": "Kratak pregled kako da se krećete kroz Centar: gradski autobusi JSP, trotineti e-Enjoy i BinBin, pešice i taksi. Otvorite zvanične aplikacije. Cene potvrdite na stranici operatora.",
+    "lede": "Dodirnite sliku. Tekst se otvara tek kad izaberete, da ne morate da čitate i skrolujete unapred.",
     "apps": "Aplikacije",
     "jspTitle": "JSP Skoplje",
     "googlePlay": "Google Play",
-    "appStore": "App Store"
+    "appStore": "App Store",
+    "pickHint": "Izaberite kako ćete se kretati",
+    "back": "Nazad na opcije",
+    "open": "Otvori"
   },
   "explore": {
     "title": "Atlas",
@@ -309,6 +312,12 @@
     "lastChecked": "Poslednji put provereno {date}",
     "openHouse": "Otvorite kuću",
     "recipeNote": "Sastojci i način prate dokumentovanu kuhinjsku praksu. Nijedan recept nije univerzalan.",
+    "pickHint": "Dodirnite tanjir. Priča se otvara tek kad izaberete.",
+    "today": "Danas",
+    "todayLede": "Nađite dokumentovan tanjir, pa otvorite kuhinju na mapi.",
+    "mapCta": "Pokaži kuhinje na mapi",
+    "open": "Otvori",
+    "back": "Nazad na tanjire",
     "osmWalk": "Pešačka uputstva",
     "scope": {
       "all": "Sve potvrđene kuće",
@@ -319,7 +328,7 @@
   "around": {
     "title": "Šetnja kroz grad",
     "kicker": "Kroz grad",
-    "lede": "Pritisnite za rutu, ili unesite godinu rođenja. Stajališta su iz potvrđenog atlasa, nisu izmišljena.",
+    "lede": "Svaki dodir pravi novu šetnju kroz spomenike. Godinu unesite samo ako želite da ona zaključa temu. Stajališta su iz potvrđenog atlasa.",
     "modes": "Načini kretanja",
     "walk": "Peške",
     "bus": "Gradski autobus",

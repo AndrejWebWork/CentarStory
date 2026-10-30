@@ -47,17 +47,15 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#content">
         {t("common.skip")}
       </a>
-      <header className="sticky top-0 z-50 isolate px-3 pt-3 lg:px-4">
-        <div className="cs-mast mx-auto grid h-14 max-w-[96rem] grid-cols-[1fr_auto] items-center gap-3 px-3 sm:px-4 lg:h-16 lg:grid-cols-[1fr_auto_1fr] lg:px-5">
-          <Link href="/" className="flex min-w-0 items-center gap-3 justify-self-start">
-            <span className="font-display text-lg leading-none tracking-tight sm:text-xl">CentarStory</span>
-            <span className="hidden text-[10px] font-semibold tracking-[0.16em] text-white/35 uppercase xl:block">
-              41.9957°N · 21.4312°E
-            </span>
+      <header className="sticky top-0 z-50 isolate">
+        <div className="cs-mast flex h-24 flex-col justify-center gap-1.5 px-4 sm:px-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-3 lg:px-8">
+          <Link href="/" className="flex min-w-0 items-center justify-self-start">
+            <span className="font-display text-2xl leading-none tracking-tight sm:text-3xl">CentarStory</span>
           </Link>
           <nav className="hidden items-center lg:flex" aria-label={t("nav.primary")}>
             {leftDesktop.map((item) => {
               const name = labelFor(t, item.id);
+              const Icon = icons[item.id];
               return (
                 <Link
                   key={item.id}
@@ -65,6 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   aria-current={current === item.id ? "page" : undefined}
                   className="cs-nav-link"
                 >
+                  <Icon className="size-3.5" aria-hidden="true" />
                   {name}
                 </Link>
               );
@@ -72,6 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavLens href={scanHref} label={labelFor(t, "scan")} active={current === "scan"} />
             {rightDesktop.map((item) => {
               const name = labelFor(t, item.id);
+              const Icon = icons[item.id];
               return (
                 <Link
                   key={item.id}
@@ -79,6 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   aria-current={current === item.id ? "page" : undefined}
                   className="cs-nav-link"
                 >
+                  <Icon className="size-3.5" aria-hidden="true" />
                   {name}
                 </Link>
               );
@@ -134,12 +135,82 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="cs-dock fixed inset-x-3 bottom-3 z-50 pb-[env(safe-area-inset-bottom)] lg:hidden"
           aria-label={t("nav.primary")}
         >
-          <ul className="cs-dock__pill mx-auto max-w-lg">
+          <div
+            className="cs-dock__stage mx-auto max-w-lg"
+            style={{
+              position: "relative",
+              height: "5rem",
+              overflow: "visible",
+              color: "#141820",
+              filter: "drop-shadow(0 16px 36px rgba(15, 23, 42, 0.28))",
+            }}
+          >
+            <span
+              className="cs-dock__bar"
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: "3.6rem",
+                borderRadius: 999,
+                background: "#141820",
+                pointerEvents: "none",
+              }}
+            />
+            <svg
+              className="cs-dock__join"
+              viewBox="0 0 120 36"
+              width={120}
+              height={36}
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "50%",
+                bottom: "3.6rem",
+                width: 120,
+                height: 36,
+                transform: "translateX(-50%)",
+                overflow: "visible",
+                color: "#141820",
+                pointerEvents: "none",
+              }}
+            >
+              <path
+                fill="currentColor"
+                d="M0 36h23.06C28 36 31 33.8 33.61 29.71A30 30 0 0 1 86.39 29.71C89.2 33.8 92 36 96.94 36H120H0z"
+              />
+            </svg>
+            <ul
+              className="cs-dock__pill"
+              style={{
+                position: "relative",
+                zIndex: 1,
+                display: "grid",
+                gridTemplateColumns: "repeat(5, 1fr)",
+                alignItems: "stretch",
+                height: "100%",
+                overflow: "visible",
+                background: "transparent",
+              }}
+            >
             {mobileDestinations.map((item) => {
               const name = labelFor(t, item.id);
               if (item.id === "scan") {
                 return (
-                  <li key={item.id} className="flex h-full items-center justify-center">
+                  <li
+                    key={item.id}
+                    className="cs-dock__lens-slot"
+                    style={{
+                      position: "relative",
+                      zIndex: 2,
+                      display: "flex",
+                      height: "100%",
+                      alignItems: "flex-end",
+                      justifyContent: "center",
+                    }}
+                  >
                     <NavLens href={scanHref} label={name} active={current === "scan"} raised />
                   </li>
                 );
@@ -147,7 +218,15 @@ export function AppShell({ children }: { children: ReactNode }) {
               const Icon = icons[item.id];
               const active = current === item.id;
               return (
-                <li key={item.id}>
+                <li
+                  key={item.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingTop: "1.4rem",
+                  }}
+                >
                   <Link
                     href={item.href}
                     title={name}
@@ -160,7 +239,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </li>
               );
             })}
-          </ul>
+            </ul>
+          </div>
         </nav>
       )}
     </>

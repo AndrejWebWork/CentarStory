@@ -56,11 +56,14 @@
   "transport": {
     "title": "Ulaşım",
     "kicker": "Hareket yolları",
-    "lede": "Centar’da nasıl gidileceğinin kısa listesi: JSP şehir otobüsleri, e-Enjoy ve BinBin scooterlar, yürüme ve taksi. Resmi uygulamaları açın. Ücretleri işletmeci sayfasında doğrulayın.",
+    "lede": "Bir resmi dokunun. Metin seçtikten sonra açılır; önce okuyup kaydırmanız gerekmez.",
     "apps": "Uygulamalar",
     "jspTitle": "JSP Üsküp",
     "googlePlay": "Google Play",
-    "appStore": "App Store"
+    "appStore": "App Store",
+    "pickHint": "Nasıl gideceğinizi seçin",
+    "back": "Seçeneklere dön",
+    "open": "Aç"
   },
   "explore": {
     "title": "Atlas",
@@ -309,6 +312,12 @@
     "lastChecked": "Son kontrol {date}",
     "openHouse": "Evi aç",
     "recipeNote": "Malzemeler belgelenmiş mutfak pratiğini izler. Hiçbir tarif evrensel sayılmaz.",
+    "pickHint": "Bir tabağa dokunun. Hikâye seçtikten sonra açılır.",
+    "today": "Bugün",
+    "todayLede": "Belgelenmiş bir tabak bulun, sonra mutfağı haritada açın.",
+    "mapCta": "Mutfakları haritada göster",
+    "open": "Aç",
+    "back": "Tablara dön",
     "osmWalk": "Yürüme tarifi",
     "scope": {
       "all": "Tüm doğrulanmış evler",
@@ -319,7 +328,7 @@
   "around": {
     "title": "Kent içinde yürüyüş",
     "kicker": "Ulaşım",
-    "lede": "Rota için dokunun, ya da doğum yılınızı yazın. Duraklar doğrulanmış atlastan gelir, uydurulmaz.",
+    "lede": "Her dokunuş anıtlar arasında yeni bir yürüyüş çizer. Yıl yalnızca temayı kilitlemek istiyorsanız yazın. Duraklar doğrulanmış atlastandır.",
     "modes": "Gidiş yolları",
     "walk": "Yaya",
     "bus": "Kent otobüsü",

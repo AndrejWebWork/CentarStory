@@ -35,7 +35,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: 6rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -219,13 +219,17 @@ body {
 
 .cs-mast {
   position: relative;
+  width: 100%;
   background: var(--mast);
   color: var(--foam);
-  border-radius: 999px;
-  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.16);
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cs-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.55rem 0.7rem;
   font-size: 11px;
   font-weight: 600;
@@ -257,7 +261,7 @@ body {
   width: 100%;
   height: 100%;
   place-items: center;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--mast);
   color: var(--foam);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
@@ -268,8 +272,8 @@ body {
 }
 
 .cs-nav-lens__disc svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.35rem;
+  height: 1.35rem;
 }
 
 .cs-nav-lens__disc:hover,
@@ -279,101 +283,92 @@ body {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-.cs-nav-fillet {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: transparent;
-  pointer-events: none;
-}
-
-.cs-nav-fillet--tl,
-.cs-nav-fillet--bl {
-  right: calc(100% - 1px);
-}
-
-.cs-nav-fillet--tr,
-.cs-nav-fillet--br {
-  left: calc(100% - 1px);
-}
-
-.cs-nav-fillet--tl,
-.cs-nav-fillet--tr {
-  top: 50%;
-  margin-top: -1.72rem;
-}
-
-.cs-nav-fillet--bl,
-.cs-nav-fillet--br {
-  bottom: 50%;
-  margin-bottom: -1.72rem;
-}
-
-.cs-nav-fillet--tl {
-  border-top-right-radius: 16px;
-  box-shadow: 5px -5px 0 0 var(--mast);
-}
-
-.cs-nav-fillet--bl {
-  border-bottom-right-radius: 16px;
-  box-shadow: 5px 5px 0 0 var(--mast);
-}
-
-.cs-nav-fillet--tr {
-  border-top-left-radius: 16px;
-  box-shadow: -5px -5px 0 0 var(--mast);
-}
-
-.cs-nav-fillet--br {
-  border-bottom-left-radius: 16px;
-  box-shadow: -5px 5px 0 0 var(--mast);
-}
-
 .cs-nav-lens--raised {
-  width: 3.85rem;
-  height: 3.85rem;
-  margin-top: -1.15rem;
+  width: 3.75rem;
+  height: 3.75rem;
+  margin: 0 0 1.22rem;
 }
 
-.cs-nav-lens--raised .cs-nav-fillet--tl,
-.cs-nav-lens--raised .cs-nav-fillet--tr {
-  margin-top: -1.95rem;
+.cs-nav-lens--raised .cs-nav-lens__disc {
+  border-radius: 999px;
+  background: var(--mast);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
-.cs-nav-lens--raised .cs-nav-fillet--bl,
-.cs-nav-lens--raised .cs-nav-fillet--br {
-  display: none;
+.cs-nav-lens--raised .cs-nav-lens__disc svg {
+  width: 1.45rem;
+  height: 1.45rem;
 }
 
 .cs-dock {
+  overflow: visible;
   color: var(--foam);
 }
 
+.cs-dock__stage {
+  position: relative;
+  height: 5rem;
+  overflow: visible;
+  color: var(--mast);
+  filter: drop-shadow(0 16px 36px rgba(15, 23, 42, 0.28));
+}
+
+.cs-dock__bar {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3.6rem;
+  border-radius: 999px;
+  background: var(--mast);
+  pointer-events: none;
+}
+
+.cs-dock__join {
+  position: absolute;
+  left: 50%;
+  bottom: 3.6rem;
+  z-index: 0;
+  display: block;
+  width: 7.5rem;
+  height: 2.25rem;
+  transform: translateX(-50%);
+  overflow: visible;
+  color: var(--mast);
+  pointer-events: none;
+}
+
 .cs-dock__pill {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  align-items: center;
-  height: 3.6rem;
+  align-items: stretch;
+  height: 100%;
   overflow: visible;
-  background: var(--mast);
-  border-radius: 999px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28);
+  background: transparent;
+}
+
+.cs-dock__pill > li:not(.cs-dock__lens-slot) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1.4rem;
+}
+
+.cs-dock__lens-slot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  overflow: visible;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 @media (min-width: 1024px) {
   .cs-nav-lens:not(.cs-nav-lens--raised) {
     width: 3.75rem;
     height: 3.75rem;
-  }
-
-  .cs-nav-lens:not(.cs-nav-lens--raised) .cs-nav-fillet--tl,
-  .cs-nav-lens:not(.cs-nav-lens--raised) .cs-nav-fillet--tr {
-    margin-top: -1.95rem;
-  }
-
-  .cs-nav-lens:not(.cs-nav-lens--raised) .cs-nav-fillet--bl,
-  .cs-nav-lens:not(.cs-nav-lens--raised) .cs-nav-fillet--br {
-    margin-bottom: -1.95rem;
   }
 }
 
@@ -514,6 +509,12 @@ body {
 
 .cs-chronicle-army {
   color: var(--cs-accent);
+}
+
+.cs-chronicle-army [data-chronicle-warrior],
+.cs-chronicle-army [data-chronicle-horse] {
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.35));
 }
 
 .cs-chronicle-card {
