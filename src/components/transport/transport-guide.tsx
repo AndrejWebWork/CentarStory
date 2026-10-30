@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowLeft,
   BusFront,
   CarTaxiFront,
   ExternalLink,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getMedia } from "@/content/knowledge/media";
 import { binbin, enjoyTariff, jspHow, wiziTariff } from "@/content/mobility";
@@ -176,10 +176,9 @@ export function TransportGuide() {
 
       {active ? (
         <section className="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8">
-          <button type="button" onClick={() => setOpen(null)} className="cs-btn cs-btn-ghost">
-            <ArrowLeft className="size-4" aria-hidden="true" />
+          <BackLink onClick={() => setOpen(null)} tone="on-light">
             {t("back")}
-          </button>
+          </BackLink>
           <article className="mt-4 overflow-hidden border border-line bg-foam">
             <div className="relative h-52 bg-ink sm:h-64">
               <TilePhoto

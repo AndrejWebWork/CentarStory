@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { FoodCover } from "@/components/food/food-cover";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { dishes, getDish, getDistrict, restaurantsForDish } from "@/content/food";
 import { dishes as dishRecords } from "@/content/knowledge/culinary";
@@ -58,9 +60,7 @@ export default async function DishPage({
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/65 to-ink/30" />
         <div className="relative mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
-          <Link href="/food" className="cs-btn cs-btn-ghost border-foam/25 text-foam">
-            {common("back")}
-          </Link>
+          <BackLink href="/food">{common("back")}</BackLink>
           <p className="cs-kicker mt-8 text-brass">{pick(dish.eyebrow, locale)}</p>
           <h1 className="mt-3 font-display text-6xl leading-[0.86] sm:text-8xl">{pick(dish.name, locale)}</h1>
           {record?.nameMk ? <p className="mt-3 font-display text-3xl text-brass">{record.nameMk}</p> : null}
@@ -85,19 +85,22 @@ export default async function DishPage({
           {houses.length === 0 ? (
             <p className="mt-4 text-sm">{t("noneServed")}</p>
           ) : (
-            <ul className="mt-4 divide-y divide-line border-y border-line">
+            <ul className="mt-4 grid grid-cols-2 gap-3">
               {houses.map((house) => {
                 const district = getDistrict(house.district);
                 return (
                   <li key={house.slug}>
                     <Link
                       href={`/food/places/${house.slug}`}
-                      className="flex h-14 items-center justify-between hover:text-cobalt"
+                      className="group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
                     >
-                      <span className="font-display text-2xl">{house.name}</span>
-                      <span className="text-xs tracking-[0.14em] text-brass uppercase">
+                      <FoodCover serves={house.serves} locale={locale} alt={house.name} />
+                      <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+                      <span className="relative text-[10px] tracking-[0.14em] text-foam/75 uppercase">
                         {district ? pick(district.name, locale) : ""}
                       </span>
+                      <span className="relative mt-1 font-display text-xl leading-none">{house.name}</span>
+                      <span className="cs-food-link relative mt-3 w-fit">{t("openHouse")}</span>
                     </Link>
                   </li>
                 );

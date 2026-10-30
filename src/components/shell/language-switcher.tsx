@@ -21,10 +21,10 @@ export function LanguageSwitcher() {
   const search = useSearchParams();
 
   return (
-    <label className="flex w-fit max-w-full items-center border border-white/12 bg-white/5 px-3 text-[11px] font-semibold tracking-[0.08em]">
+    <label className="flex w-fit max-w-full items-center border border-white/12 bg-white/5 px-2.5 text-[11px] font-semibold tracking-[0.04em] sm:px-3">
       <span className="sr-only">{t("language")}</span>
       <select
-        className="h-9 max-w-44 bg-transparent pr-1 text-xs tracking-[0.12em] text-foam uppercase"
+        className="h-9 max-w-[9.25rem] bg-transparent pr-1 text-xs tracking-[0.04em] text-foam sm:max-w-44"
         value={locale}
         aria-label={t("language")}
         title={t("scriptStrategy")}

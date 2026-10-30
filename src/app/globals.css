@@ -217,6 +217,166 @@ body {
   color: var(--ink);
 }
 
+.cs-back {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3.1rem;
+  overflow: hidden;
+  border-radius: 0.45rem;
+  padding: 0.3rem 1rem 0.3rem 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  isolation: isolate;
+}
+
+.cs-back--on-dark {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(20, 24, 32, 0.35);
+  color: var(--foam);
+}
+
+.cs-back--on-light {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.cs-back__mark {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border-radius: 0.3rem;
+  background: var(--foam);
+  color: var(--ink);
+  animation: cs-back-nudge 1.5s var(--ease-editorial) infinite;
+}
+
+.cs-back--on-light .cs-back__mark {
+  background: var(--ink);
+  color: var(--foam);
+}
+
+.cs-back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.45) 50%, transparent 80%);
+  transform: translateX(-120%);
+  animation: cs-back-sheen 2.6s ease-in-out infinite;
+}
+
+.cs-back:hover .cs-back__mark,
+.cs-back:focus-visible .cs-back__mark {
+  animation: none;
+  transform: translateX(-6px);
+  background: var(--copper);
+  color: var(--foam);
+}
+
+.cs-back:hover,
+.cs-back:focus-visible {
+  transform: translateX(-3px);
+}
+
+@keyframes cs-back-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-6px);
+  }
+}
+
+@keyframes cs-back-sheen {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.cs-food-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.35rem;
+  border-radius: 0.35rem;
+  background: var(--foam);
+  padding: 0 0.75rem;
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cs-food-link:hover,
+.cs-food-link:focus-visible {
+  background: var(--copper);
+  color: var(--foam);
+}
+
+.cs-lift {
+  transition:
+    transform 0.45s var(--ease-editorial),
+    box-shadow 0.45s var(--ease-editorial);
+}
+
+.cs-lift:hover,
+.cs-lift:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.18);
+}
+
+.cs-lift:hover img,
+.cs-lift:focus-visible img {
+  transform: scale(1.08);
+}
+
+.cs-foot-link {
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  padding-bottom: 0.2rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cs-foot-link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--copper);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-editorial);
+}
+
+.cs-foot-link:hover,
+.cs-foot-link:focus-visible {
+  color: var(--foam);
+}
+
+.cs-foot-link:hover::after,
+.cs-foot-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
 .cs-mast {
   position: relative;
   width: 100%;
@@ -272,8 +432,8 @@ body {
 }
 
 .cs-nav-lens__disc svg {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.7rem;
+  height: 1.7rem;
 }
 
 .cs-nav-lens__disc:hover,
@@ -296,8 +456,37 @@ body {
 }
 
 .cs-nav-lens--raised .cs-nav-lens__disc svg {
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.cs-nav-lens--raised .cs-nav-lens__disc:hover,
+.cs-nav-lens--raised.is-active .cs-nav-lens__disc {
+  transform: none;
+  background: #141820;
+  box-shadow: none;
+}
+
+.cs-melt {
+  position: absolute;
+  z-index: 0;
+  width: 18px;
+  height: 18px;
+  top: 2px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.cs-melt--l {
+  left: -16px;
+  border-bottom-right-radius: 18px;
+  box-shadow: 9px 9px 0 0 #141820;
+}
+
+.cs-melt--r {
+  right: -16px;
+  border-bottom-left-radius: 18px;
+  box-shadow: -9px 9px 0 0 #141820;
 }
 
 .cs-dock {

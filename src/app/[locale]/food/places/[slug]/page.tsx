@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { FoodCover } from "@/components/food/food-cover";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getDish, getDistrict, getRestaurant, restaurants } from "@/content/food";
 import { MACEDONIA_SQUARE } from "@/content/knowledge/boundary";
@@ -47,11 +49,11 @@ export default async function RestaurantPage({
 
   return (
     <article>
-      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#ff6b4a_0%,#e24b2d_52%,#0f172a_140%)] text-foam sm:mx-4">
-        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
-          <Link href="/food" className="cs-btn cs-btn-ghost border-foam/40 text-foam">
-            {common("back")}
-          </Link>
+      <header className="group relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-ink text-foam sm:mx-4">
+        <FoodCover serves={restaurant.serves} locale={locale} alt={restaurant.name} />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
+        <div className="relative mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
+          <BackLink href="/food">{common("back")}</BackLink>
           <p className="cs-kicker mt-8 text-brass">
             {district ? pick(district.name, locale) : t("kitchens")}
           </p>
@@ -65,7 +67,7 @@ export default async function RestaurantPage({
       <div className="mx-auto grid max-w-[96rem] gap-12 px-5 py-16 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-7">
           <h2 className="font-display text-4xl">{t("serves")}</h2>
-          <ul className="mt-4 divide-y divide-line border-y border-line">
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {restaurant.serves.map((slugOfDish) => {
               const dish = getDish(slugOfDish);
               if (!dish) return null;
@@ -73,9 +75,12 @@ export default async function RestaurantPage({
                 <li key={dish.slug}>
                   <Link
                     href={`/food/dishes/${dish.slug}`}
-                    className="flex h-16 items-center font-display text-3xl hover:text-cobalt"
+                    className="group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
                   >
-                    {pick(dish.name, locale)}
+                    <FoodCover serves={[dish.slug]} locale={locale} alt={pick(dish.name, locale)} />
+                    <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent" />
+                    <span className="relative font-display text-xl leading-none sm:text-2xl">{pick(dish.name, locale)}</span>
+                    <span className="cs-food-link relative mt-3 w-fit">{t("open")}</span>
                   </Link>
                 </li>
               );
@@ -89,14 +94,16 @@ export default async function RestaurantPage({
           {restaurant.nearbyNote ? <p className="text-ink-soft">{pick(restaurant.nearbyNote, locale)}</p> : null}
           {restaurant.address ? <p className="mt-4">{pick(restaurant.address, locale)}</p> : null}
           {restaurant.phone ? (
-            <p className="mt-2">
-              <a href={`tel:${restaurant.phone.replace(/\s/g, "")}`}>{restaurant.phone}</a>
+            <p className="mt-4">
+              <a href={`tel:${restaurant.phone.replace(/\s/g, "")}`} className="cs-food-link bg-ink text-foam">
+                {restaurant.phone}
+              </a>
             </p>
           ) : null}
           {restaurant.website ? (
-            <p className="mt-2">
-              <a href={restaurant.website} className="text-copper underline" target="_blank" rel="noreferrer">
-                {restaurant.website}
+            <p className="mt-3">
+              <a href={restaurant.website} className="cs-food-link bg-ink text-foam" target="_blank" rel="noreferrer">
+                {restaurant.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
               </a>
             </p>
           ) : null}

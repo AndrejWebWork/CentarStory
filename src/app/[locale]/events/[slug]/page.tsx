@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getEvent, listEvents } from "@/content/journeys";
 import { getPlace, sitePath } from "@/content/places";
@@ -48,9 +49,7 @@ export default async function EventPage({
     <article>
       <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(160deg,#0f172a_0%,#1e3a8a_58%,#3b6dff_140%)] text-foam sm:mx-4">
         <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
-          <Link href={event.host === "municipality" ? "/events" : "/"} className="cs-btn cs-btn-ghost border-foam/40 text-foam">
-            {common("back")}
-          </Link>
+          <BackLink href={event.host === "municipality" ? "/events" : "/"}>{common("back")}</BackLink>
           <p className="cs-kicker mt-8 text-brass">
             {detail("season")} · {pick(event.season, locale)}
           </p>

@@ -79,12 +79,15 @@ export function EventBoard() {
       <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">{t("lede")}</p>
 
       {days.length > 0 ? (
-        <ul className="cs-no-scrollbar mt-5 flex gap-2 overflow-x-auto pb-1" suppressHydrationWarning>
+        <ul
+          className="cs-no-scrollbar -mx-4 mt-5 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:-mx-5 sm:px-5 lg:-mx-8 lg:px-8"
+          suppressHydrationWarning
+        >
           {days.map((iso) => {
             const bits = dayBits(iso, locale);
             const on = selected === iso;
             return (
-              <li key={iso}>
+              <li key={iso} className="shrink-0 snap-start">
                 <button
                   type="button"
                   aria-pressed={on}

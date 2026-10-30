@@ -1,10 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { ArrowDownRight, ArrowLeft, MapPinned, Search } from "lucide-react";
+import { ArrowDownRight, MapPinned, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useRef, useState } from "react";
+import { FoodCover } from "@/components/food/food-cover";
 import type { AtlasMarker } from "@/components/map/explore-map";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { dishes, districts, restaurantsForDish } from "@/content/food";
 import { dishes as dishRecords, venues } from "@/content/knowledge/culinary";
@@ -133,16 +135,19 @@ export function FoodGuide() {
               <button
                 type="button"
                 onClick={() => setOpenDish(hero.slug)}
-                className="group relative mt-5 block min-h-[18rem] w-full overflow-hidden rounded-[1.7rem] bg-ink text-left text-foam sm:min-h-[22rem]"
+                className="cs-lift group relative -mx-4 mt-5 block min-h-[20rem] w-[calc(100%+2rem)] overflow-hidden bg-ink text-left text-foam sm:-mx-5 sm:min-h-[24rem] sm:w-[calc(100%+2.5rem)] lg:-mx-8 lg:w-[calc(100%+4rem)]"
               >
                 <DishPhoto
                   image={heroPhoto}
                   alt={heroPhoto ? pick(heroPhoto.caption, locale) : pick(hero.name, locale)}
                 />
-                <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-ink/10" />
-                <span className="relative flex min-h-[18rem] flex-col justify-end p-5 sm:min-h-[22rem] sm:p-7">
+                <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/5 transition duration-500 group-hover:via-ink/25" />
+                <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-copper transition duration-500 group-hover:scale-x-100" />
+                <span className="relative flex min-h-[20rem] flex-col justify-end p-5 sm:min-h-[24rem] sm:p-8">
                   <span className="text-[10px] tracking-[0.18em] text-foam/70 uppercase">{t("today")}</span>
-                  <span className="mt-2 font-display text-4xl leading-[0.92] sm:text-6xl">{pick(hero.name, locale)}</span>
+                  <span className="mt-2 font-display text-4xl leading-[0.92] transition duration-500 group-hover:translate-y-[-4px] sm:text-6xl">
+                    {pick(hero.name, locale)}
+                  </span>
                   <span className="mt-3 max-w-md text-sm text-foam/80">{pick(hero.summary, locale)}</span>
                 </span>
               </button>
@@ -169,29 +174,26 @@ export function FoodGuide() {
                 const photo = dish.imageId ? getMedia(dish.imageId) : undefined;
                 return (
                   <li key={dish.slug}>
-                    <article className="flex gap-3 rounded-[1.4rem] bg-foam p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
-                      <button
-                        type="button"
-                        onClick={() => setOpenDish(dish.slug)}
-                        className="relative size-[5.4rem] shrink-0 overflow-hidden rounded-2xl bg-paper-2 sm:size-24"
-                      >
+                    <button
+                      type="button"
+                      onClick={() => setOpenDish(dish.slug)}
+                      className="cs-lift group flex w-full gap-3 bg-foam p-2 text-left shadow-[0_10px_28px_rgba(15,23,42,0.05)]"
+                    >
+                      <span className="relative size-[5.4rem] shrink-0 overflow-hidden bg-paper-2 sm:size-28">
                         <DishPhoto
                           image={photo}
                           alt={photo ? pick(photo.caption, locale) : pick(dish.name, locale)}
                         />
-                      </button>
-                      <div className="flex min-w-0 flex-1 flex-col py-1">
-                        <h3 className="font-display text-lg leading-tight sm:text-xl">{pick(dish.name, locale)}</h3>
-                        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-ink-soft">{pick(dish.summary, locale)}</p>
-                        <button
-                          type="button"
-                          onClick={() => setOpenDish(dish.slug)}
-                          className="mt-auto w-fit rounded-full bg-ink px-3 py-1.5 text-[10px] tracking-[0.12em] text-foam uppercase"
-                        >
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col py-1 pr-2">
+                        <span className="font-display text-lg leading-tight sm:text-xl">{pick(dish.name, locale)}</span>
+                        <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-ink-soft">{pick(dish.summary, locale)}</span>
+                        <span className="mt-auto inline-flex w-fit items-center gap-1 bg-ink px-3 py-1.5 text-[10px] tracking-[0.12em] text-foam uppercase transition duration-300 group-hover:bg-copper">
                           {t("open")}
-                        </button>
-                      </div>
-                    </article>
+                          <ArrowDownRight className="size-3.5 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                        </span>
+                      </span>
+                    </button>
                   </li>
                 );
               })}
@@ -199,7 +201,7 @@ export function FoodGuide() {
           </>
         )}
 
-        <section ref={mapRef} className="relative mt-5 overflow-hidden rounded-[1.6rem]">
+        <section ref={mapRef} className="relative mt-6 overflow-hidden">
           <div className="cs-map-frame h-[22rem] sm:h-[26rem]">
             <Atlas
               markers={markers}
@@ -220,25 +222,25 @@ export function FoodGuide() {
         </section>
 
         {featured ? (
-          <article className="-mt-2 rounded-[1.4rem] bg-foam p-4 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-full bg-paper text-copper">
-                <MapPinned className="size-4" aria-hidden="true" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] tracking-[0.16em] text-brass uppercase">
+          <article className="relative mt-4">
+            <Link
+              href={`/food/places/${featured.slug}`}
+              className="cs-lift group relative block overflow-hidden text-foam"
+            >
+              <FoodCover serves={featured.serves} locale={locale} alt={featured.name} />
+              <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10 transition duration-500 group-hover:via-ink/20" />
+              <span className="relative flex min-h-72 flex-col justify-end p-5">
+                <span className="text-[10px] tracking-[0.16em] text-foam/75 uppercase">
                   {featured.slug === "palas-jr" ? t("firstKitchen") : featured.municipality === "nearby" ? t("nearby") : t("inCentar")}
-                </p>
-                <h2 className="mt-1 font-display text-2xl leading-none">{featured.name}</h2>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-soft">
-                  {pick(featured.summary, locale)}
-                </p>
-                {!featured.coordinates ? <p className="mt-2 text-xs text-copper">{t("unmapped")}</p> : null}
-              </div>
-            </div>
-            <Link href={`/food/places/${featured.slug}`} className="cs-btn cs-btn-ink mt-4 h-11 w-full rounded-full">
-              {t("openHouse")}
-              <ArrowDownRight className="size-4" aria-hidden="true" />
+                </span>
+                <h2 className="mt-1 font-display text-3xl leading-none">{featured.name}</h2>
+                <span className="mt-2 line-clamp-2 max-w-sm text-sm text-foam/80">{pick(featured.summary, locale)}</span>
+                {!featured.coordinates ? <span className="mt-2 text-xs text-copper">{t("unmapped")}</span> : null}
+                <span className="cs-food-link mt-4 w-fit">
+                  {t("openHouse")}
+                  <ArrowDownRight className="size-4" aria-hidden="true" />
+                </span>
+              </span>
             </Link>
           </article>
         ) : null}
@@ -258,7 +260,7 @@ export function FoodGuide() {
             ))}
           </div>
           <p className="mt-3 text-xs leading-relaxed text-ink-soft">{t("mapNote")}</p>
-          <ul className="mt-4 space-y-2">
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {[firstKitchen, ...inCentar, ...nearby]
               .filter((house, index, list): house is NonNullable<typeof house> => Boolean(house) && list.indexOf(house) === index)
               .map((restaurant) => (
@@ -287,37 +289,38 @@ function HouseRow({
   const locale = useLocale();
   const isSelected = selected === restaurant.slug;
   return (
-    <article className={`rounded-[1.2rem] bg-foam px-4 py-4 ${isSelected ? "ring-2 ring-ink/10" : ""}`}>
-      <div className="flex items-start justify-between gap-3">
-        <button type="button" className="min-w-0 text-left" onClick={() => onSelect(restaurant.slug)}>
-          <span className="block font-display text-xl leading-none">{restaurant.name}</span>
-          <span className="mt-1 block text-[10px] tracking-[0.16em] text-brass uppercase">
-            {t("lastChecked", { date: restaurant.lastChecked })}
-          </span>
-        </button>
-        {restaurant.coordinates ? (
-          <button
-            type="button"
-            onClick={() => onSelect(restaurant.slug)}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-paper"
-            aria-label={common("onMap")}
-          >
-            <MapPinned className="size-4" aria-hidden="true" />
-          </button>
-        ) : null}
-      </div>
-      {restaurant.municipality === "nearby" ? (
-        <p className="mt-2 text-[10px] tracking-[0.2em] text-copper uppercase">{t("nearby")}</p>
-      ) : null}
-      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-soft">{pick(restaurant.summary, locale)}</p>
-      {!restaurant.coordinates ? <p className="mt-2 text-xs text-copper">{t("unmapped")}</p> : null}
+    <article className={`relative ${isSelected ? "ring-2 ring-copper ring-offset-2 ring-offset-paper" : ""}`}>
       <Link
         href={`/food/places/${restaurant.slug}`}
-        className="mt-3 inline-flex items-center gap-1 text-xs tracking-[0.16em] text-copper uppercase"
+        className="cs-lift group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
       >
-        <span>{t("openHouse")}</span>
-        <ArrowDownRight className="size-3.5" aria-hidden="true" />
+        <FoodCover
+          serves={restaurant.serves}
+          locale={locale}
+          alt={restaurant.name}
+          shift={[...restaurant.slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)}
+        />
+        <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-ink/10" />
+        <span className="relative text-[10px] tracking-[0.14em] text-foam/75 uppercase">
+          {restaurant.municipality === "nearby" ? t("nearby") : t("inCentar")}
+        </span>
+        <span className="relative mt-1 font-display text-lg leading-none sm:text-xl">{restaurant.name}</span>
+        {!restaurant.coordinates ? <span className="relative mt-1 text-[11px] text-copper">{t("unmapped")}</span> : null}
+        <span className="cs-food-link relative mt-3 w-fit">
+          {t("openHouse")}
+          <ArrowDownRight className="size-3.5" aria-hidden="true" />
+        </span>
       </Link>
+      {restaurant.coordinates ? (
+        <button
+          type="button"
+          onClick={() => onSelect(restaurant.slug)}
+          className="absolute top-2 right-2 grid size-9 place-items-center bg-foam text-ink"
+          aria-label={common("onMap")}
+        >
+          <MapPinned className="size-4" aria-hidden="true" />
+        </button>
+      ) : null}
     </article>
   );
 }
@@ -350,7 +353,7 @@ function DishStory({
   const houses = restaurantsForDish(dish.slug);
 
   return (
-    <article className="overflow-hidden rounded-[1.5rem] bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+    <article className="overflow-hidden bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
       <div className="relative h-56 bg-ink sm:h-72">
         <DishPhoto image={photo} alt={photo ? pick(photo.caption, locale) : pick(dish.name, locale)} />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/15 to-transparent" />
@@ -361,20 +364,24 @@ function DishStory({
         </div>
       </div>
       <div className="p-5">
-        <button type="button" onClick={onBack} className="cs-btn cs-btn-ghost h-10 rounded-full">
-          <ArrowLeft className="size-4" aria-hidden="true" />
+        <BackLink onClick={onBack} tone="on-light">
           {t("back")}
-        </button>
+        </BackLink>
         <p className="mt-5 font-display text-xl leading-snug sm:text-2xl">{pick(dish.story[0], locale)}</p>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft">{pick(dish.story[1], locale)}</p>
         <p className="mt-4 text-sm leading-relaxed">{pick(dish.eat, locale)}</p>
         {houses.length ? (
-          <ul className="mt-5 divide-y divide-line border-y border-line">
+          <ul className="mt-5 grid grid-cols-2 gap-3">
             {houses.map((house) => (
               <li key={house.slug}>
-                <Link href={`/food/places/${house.slug}`} className="flex h-12 items-center justify-between">
-                  <span className="font-display text-xl">{house.name}</span>
-                  <span className="text-[10px] tracking-[0.14em] text-brass uppercase">{t("openHouse")}</span>
+                <Link
+                  href={`/food/places/${house.slug}`}
+                  className="cs-lift group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
+                >
+                  <FoodCover serves={house.serves} locale={locale} alt={house.name} />
+                  <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+                  <span className="relative font-display text-lg leading-none">{house.name}</span>
+                  <span className="cs-food-link relative mt-3 w-fit">{t("openHouse")}</span>
                 </Link>
               </li>
             ))}

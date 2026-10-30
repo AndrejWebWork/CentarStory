@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { WalkPreview } from "@/components/journeys/walk-preview";
+import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getWalk, walks } from "@/content/journeys";
 import { getPlace, sitePath } from "@/content/places";
@@ -47,9 +48,7 @@ export default async function RoutePage({
     <article>
       <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(160deg,#0f172a_0%,#1e3a8a_58%,#3b6dff_140%)] text-foam sm:mx-4">
         <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
-          <Link href="/" className="cs-btn cs-btn-ghost border-foam/40 text-foam">
-            {common("back")}
-          </Link>
+          <BackLink href="/">{common("back")}</BackLink>
           <h1 className="mt-8 font-display text-6xl leading-[0.86] sm:text-8xl">{pick(walk.name, locale)}</h1>
           <div className="mt-8 grid gap-6 border-t border-foam/25 pt-6 lg:grid-cols-12">
             <p className="font-display text-2xl leading-snug text-foam/85 lg:col-span-7">{pick(walk.story, locale)}</p>
