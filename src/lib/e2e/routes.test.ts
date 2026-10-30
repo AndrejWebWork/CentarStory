@@ -7,11 +7,16 @@ import { institutions, places } from "@/content/places";
 function run() {
   const paths = [
     "/",
+    "/transport",
     "/scan",
     "/events",
     "/museums",
     "/food",
     "/around",
+    "/legal",
+    "/privacy",
+    "/terms",
+    "/cookies",
     ...places.map((place) => (place.institution ? `/museums/${place.slug}` : `/places/${place.slug}`)),
     ...walks.map((walk) => `/routes/${walk.slug}`),
     ...events.map((event) => `/events/${event.slug}`),

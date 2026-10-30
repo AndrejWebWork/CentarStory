@@ -1,7 +1,7 @@
 export const destinations = [
-  { href: "/", id: "explore" },
+  { href: "/", id: "transport" },
   { href: "/scan", id: "scan", emphasis: true },
-  { href: "/museums", id: "museums" },
+  { href: "/events", id: "events" },
   { href: "/food", id: "food" },
   { href: "/around", id: "around" },
 ] as const;
@@ -18,11 +18,9 @@ export const mobileDestinations = [
 
 export function activeDestination(pathname: string): DestinationId | null {
   if (pathname.startsWith("/scan")) return "scan";
-  if (pathname.startsWith("/museums") || pathname.startsWith("/events")) return "museums";
+  if (pathname.startsWith("/events")) return "events";
   if (pathname.startsWith("/food")) return "food";
   if (pathname.startsWith("/around")) return "around";
-  if (pathname === "/" || pathname.startsWith("/places") || pathname.startsWith("/routes")) {
-    return "explore";
-  }
+  if (pathname === "/" || pathname.startsWith("/transport")) return "transport";
   return null;
 }

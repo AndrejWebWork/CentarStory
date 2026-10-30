@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Compass, Landmark, Signpost, UtensilsCrossed } from "lucide-react";
+import { BusFront, CalendarDays, Camera, Signpost, UtensilsCrossed } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Suspense, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
@@ -13,16 +13,23 @@ import {
   type DestinationId,
 } from "@/components/shell/nav";
 
-const icons: Record<DestinationId, typeof Compass> = {
-  explore: Compass,
+const icons: Record<DestinationId, typeof BusFront> = {
+  transport: BusFront,
   scan: Camera,
-  museums: Landmark,
+  events: CalendarDays,
   food: UtensilsCrossed,
   around: Signpost,
 };
 
+const legalLinks = [
+  { href: "/legal", key: "legal" },
+  { href: "/privacy", key: "privacy" },
+  { href: "/terms", key: "terms" },
+  { href: "/cookies", key: "cookies" },
+] as const;
+
 function labelFor(t: ReturnType<typeof useTranslations>, id: DestinationId) {
-  return id === "museums" ? t("explore.museums") : t(`nav.${id}`);
+  return t(`nav.${id}`);
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -30,24 +37,22 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const current = activeDestination(pathname);
   const reduce = useReducedMotion();
+  const isScan = pathname.startsWith("/scan");
 
   return (
     <>
       <a className="skip-link" href="#content">
         {t("common.skip")}
       </a>
-      <header className="cs-glass sticky top-0 z-40 border-b border-ink">
-        <div className="mx-auto grid h-14 max-w-[96rem] grid-cols-[1fr_auto] items-stretch lg:h-[4.4rem] lg:grid-cols-[auto_1fr_auto_auto]">
-          <Link href="/" className="flex items-center gap-4 border-r border-ink px-4 lg:px-7">
-            <span className="font-display text-2xl leading-none tracking-tight sm:text-3xl">CentarStory</span>
-            <span className="hidden border-l border-line pl-4 text-[10px] tracking-[0.24em] text-brass uppercase sm:block">
+      <header className="sticky top-0 z-50 isolate bg-paper/80 px-3 pt-3 pb-2 sm:px-4">
+        <div className="cs-glass mx-auto flex h-14 max-w-[96rem] items-center justify-between rounded-2xl border border-line px-3 shadow-[0_10px_30px_rgba(15,23,42,0.06)] lg:h-16 lg:px-5">
+          <Link href="/" className="flex min-w-0 shrink items-center gap-3 px-2">
+            <span className="font-display text-xl leading-none tracking-tight sm:text-2xl">CentarStory</span>
+            <span className="hidden text-[10px] font-semibold tracking-[0.16em] text-brass uppercase xl:block">
               41.9957°N · 21.4312°E
             </span>
           </Link>
-          <div className="hidden items-center px-6 text-[10px] tracking-[0.24em] text-ink-soft uppercase xl:flex">
-            {t("explore.kicker")} · Skopje
-          </div>
-          <nav className="hidden items-stretch border-l border-ink lg:flex" aria-label={t("nav.primary")}>
+          <nav className="hidden items-center gap-1 lg:flex" aria-label={t("nav.primary")}>
             {destinations.map((item) => {
               const Icon = icons[item.id];
               const active = current === item.id;
@@ -62,8 +67,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                   aria-current={active ? "page" : undefined}
                   className={
                     emphasis
-                      ? `grid w-16 place-items-center border-r border-ink ${active ? "bg-cobalt text-foam" : "bg-copper text-foam hover:bg-copper-deep"}`
-                      : `grid w-16 place-items-center border-r border-ink ${active ? "bg-ink text-foam" : "text-ink hover:bg-paper-2"}`
+                      ? `grid size-12 place-items-center rounded-full shadow-md ${active ? "bg-cobalt text-foam" : "bg-copper text-foam hover:bg-copper-deep"}`
+                      : `grid size-10 place-items-center rounded-full ${active ? "bg-ink text-foam" : "text-ink hover:bg-paper-2"}`
                   }
                 >
                   <Icon className="size-5" aria-hidden="true" />
@@ -71,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
-          <div className="flex items-center px-3 lg:px-5">
+          <div className="flex shrink-0 items-center">
             <Suspense fallback={<span className="inline-block h-9 w-24" />}>
               <LanguageSwitcher />
             </Suspense>
@@ -82,46 +87,70 @@ export function AppShell({ children }: { children: ReactNode }) {
         key={pathname}
         id="content"
         tabIndex={-1}
-        className={`relative z-[1] overflow-x-clip ${pathname.startsWith("/scan") ? "" : "max-lg:pb-24"}`}
+        className={`relative z-0 overflow-x-clip ${isScan ? "" : "max-lg:pb-[6.75rem] lg:pb-6"}`}
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         {children}
-        {pathname.startsWith("/scan") ? null : (
-          <footer className="border-t border-ink bg-ink text-foam">
-            <div className="mx-auto grid max-w-[96rem] gap-8 px-5 py-12 pb-28 lg:grid-cols-12 lg:px-8 lg:py-20">
+        {isScan ? null : (
+          <footer className="mx-3 mt-8 overflow-hidden rounded-[1.75rem] bg-ink text-foam lg:mx-4">
+            <div className="mx-auto grid max-w-[96rem] gap-8 px-5 py-10 sm:px-8 lg:grid-cols-12 lg:px-10 lg:py-16">
               <div className="lg:col-span-5">
-                <p className="text-[10px] tracking-[0.26em] text-brass uppercase">
+                <p className="text-[10px] font-semibold tracking-[0.2em] text-brass uppercase">
                   OSM Relation 2439777 · Europe/Skopje
                 </p>
-                <p className="mt-3 font-display text-5xl leading-[0.86] tracking-tight sm:text-7xl">
+                <p className="mt-3 font-display text-5xl leading-[0.92] tracking-tight sm:text-7xl">
                   CentarStory
                 </p>
-                <p className="mt-4">
-                  <Link href="/events" className="text-xs tracking-[0.18em] text-brass uppercase underline">
-                    {t("nav.events")} →
-                  </Link>
-                </p>
+                <p className="mt-4 max-w-md text-sm leading-relaxed text-foam/70">{t("common.disclaimer")}</p>
               </div>
-              <p className="max-w-xl text-sm leading-relaxed text-foam/75 lg:col-span-6 lg:col-start-7 lg:self-end">
-                {t("common.disclaimer")}
-              </p>
+              <div className="lg:col-span-6 lg:col-start-7 lg:self-end">
+                <p className="cs-kicker text-foam/55">{t("legal.kicker")}</p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {legalLinks.map((item) => (
+                    <li key={item.href}>
+                      <Link href={item.href} className="cs-btn cs-btn-ghost border-foam/20 bg-foam/5 text-foam">
+                        {t(`legal.${item.key}`)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </footer>
         )}
       </motion.div>
-      <nav
-        className="cs-dock fixed inset-x-0 bottom-0 z-40 border-t border-foam/20 pb-[env(safe-area-inset-bottom)] lg:hidden"
-        aria-label={t("nav.primary")}
-      >
-        <ul className="mx-auto grid h-16 max-w-lg grid-cols-5">
-          {mobileDestinations.map((item) => {
-            const Icon = icons[item.id];
-            const active = current === item.id;
-            const emphasis = "emphasis" in item && item.emphasis;
-            const name = labelFor(t, item.id);
-            if (emphasis) {
+      {isScan ? null : (
+        <nav
+          className="cs-dock fixed inset-x-3 bottom-3 z-50 pb-[env(safe-area-inset-bottom)] lg:hidden"
+          aria-label={t("nav.primary")}
+        >
+          <ul className="mx-auto grid h-16 max-w-lg grid-cols-5">
+            {mobileDestinations.map((item) => {
+              const Icon = icons[item.id];
+              const active = current === item.id;
+              const emphasis = "emphasis" in item && item.emphasis;
+              const name = labelFor(t, item.id);
+              if (emphasis) {
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={item.href}
+                      title={name}
+                      aria-label={name}
+                      aria-current={active ? "page" : undefined}
+                      className="flex h-full items-center justify-center"
+                    >
+                      <span
+                        className={`-mt-5 flex size-14 items-center justify-center rounded-full border-4 border-paper shadow-lg ${active ? "bg-cobalt text-foam" : "bg-copper text-foam"}`}
+                      >
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </li>
+                );
+              }
               return (
                 <li key={item.id}>
                   <Link
@@ -129,33 +158,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                     title={name}
                     aria-label={name}
                     aria-current={active ? "page" : undefined}
-                    className="flex h-full items-center justify-center"
+                    className={`flex h-full items-center justify-center ${active ? "text-paper" : "text-foam/50"}`}
                   >
-                    <span
-                      className={`-mt-5 flex size-14 items-center justify-center border-2 border-paper ${active ? "bg-cobalt text-foam" : "bg-copper text-foam"}`}
-                    >
-                      <Icon className="size-5" aria-hidden="true" />
-                    </span>
+                    <Icon className="size-5" aria-hidden="true" />
                   </Link>
                 </li>
               );
-            }
-            return (
-              <li key={item.id}>
-                <Link
-                  href={item.href}
-                  title={name}
-                  aria-label={name}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex h-full items-center justify-center ${active ? "bg-foam/10 text-paper" : "text-foam/55"}`}
-                >
-                  <Icon className="size-5" aria-hidden="true" />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+            })}
+          </ul>
+        </nav>
+      )}
     </>
   );
 }

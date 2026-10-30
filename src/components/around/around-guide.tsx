@@ -9,6 +9,7 @@ import type { AtlasMarker } from "@/components/map/explore-map";
 import { pick } from "@/content/copy";
 import { getSite } from "@/content/knowledge/catalog";
 import { getPlace, sitePath } from "@/content/places";
+import { MovementMasthead } from "@/components/around/movement-masthead";
 import { Link } from "@/i18n/navigation";
 import { coordinatesOf } from "@/lib/graph/query";
 import {
@@ -127,31 +128,9 @@ export function AroundGuide() {
 
   return (
     <div suppressHydrationWarning>
-      {/* COBALT WAYFINDING HEADER */}
-      <header className="relative overflow-hidden border-b border-ink bg-cobalt text-foam">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.1] sm:text-[15rem]"
-        >
-          05
-        </span>
-        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
-          <div className="lg:col-span-8">
-            <p className="cs-kicker text-foam/80">
-              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
-              05 — {t("kicker")}
-            </p>
-            <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
-              {t("title")}
-            </h1>
-          </div>
-          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
-            <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
-          </div>
-        </div>
-      </header>
+      <MovementMasthead />
 
-      <div className="mx-auto max-w-[96rem] px-4 py-8 sm:px-5 sm:py-12 lg:px-8 lg:py-16">
+      <div id="move" className="mx-auto max-w-[96rem] px-4 py-8 sm:px-5 sm:py-12 lg:px-8 lg:py-16">
         <AnimatePresence mode="wait">
           {phase === "idle" ? (
             <motion.div
@@ -159,13 +138,13 @@ export function AroundGuide() {
               initial={reduce ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -8 }}
-              className="grid border border-ink bg-foam lg:grid-cols-12"
+              className="grid overflow-hidden rounded-[1.75rem] border border-line bg-foam shadow-[0_16px_40px_rgba(15,23,42,0.06)] lg:grid-cols-12"
             >
-              <div className="flex flex-col justify-between border-b border-ink p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
+              <div className="flex flex-col justify-between border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
                 <p className="cs-kicker">01 — 41.9957°N · 21.4312°E</p>
                 <button
                   type="button"
-                  className="mt-6 h-16 w-full bg-ink px-5 font-display text-3xl text-foam hover:bg-cobalt sm:mt-10 sm:h-20 sm:text-4xl"
+                  className="mt-6 h-16 w-full rounded-2xl bg-cobalt px-5 font-display text-3xl text-foam shadow-[0_12px_28px_rgba(59,109,255,0.28)] hover:bg-ink sm:mt-10 sm:h-20 sm:text-4xl"
                   onClick={makeDefault}
                 >
                   {t("makeRoute")}
@@ -181,7 +160,7 @@ export function AroundGuide() {
                 <label className="block">
                   <span className="cs-kicker">02 — {t("yearLabel")}</span>
                   <input
-                    className="mt-3 h-16 w-full border-b-2 border-ink bg-transparent font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
+                    className="mt-3 h-16 w-full rounded-2xl border border-line bg-paper px-4 font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
                     inputMode="numeric"
                     type="number"
                     min={AROUND_YEAR_MIN}
@@ -214,16 +193,16 @@ export function AroundGuide() {
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={reduce ? undefined : { opacity: 0 }}
-              className="border border-ink bg-ink px-5 py-16 text-foam sm:px-12 sm:py-20"
+              className="rounded-[1.75rem] bg-ink px-5 py-16 text-foam sm:px-12 sm:py-20"
               aria-live="polite"
             >
               <div className="flex items-center justify-between text-[11px] tracking-[0.22em] text-brass uppercase">
                 <span>{t("buildingTitle")}</span>
                 <span>0{step + 1} / 0{BUILD_STEPS.length}</span>
               </div>
-              <div className="mt-5 h-1 w-full bg-foam/15">
+              <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-foam/15">
                 <motion.div
-                  className="h-full bg-cobalt"
+                  className="h-full rounded-full bg-cobalt"
                   animate={{ width: `${((step + 1) / BUILD_STEPS.length) * 100}%` }}
                   transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 />
@@ -250,7 +229,7 @@ export function AroundGuide() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="grid gap-4 border-b border-ink pb-6 lg:grid-cols-12">
+              <div className="grid gap-4 rounded-[1.5rem] border border-line bg-foam p-5 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:p-7 lg:grid-cols-12">
                 <div className="lg:col-span-7">
                   <p className="cs-kicker">{te(themeKey(choice.themeId))}</p>
                   <h2 className="mt-2 font-display text-4xl leading-[0.9] sm:text-7xl">{t("yourRoute")}</h2>
@@ -270,7 +249,7 @@ export function AroundGuide() {
                 </div>
               </div>
 
-              <div className="h-72 overflow-hidden border border-ink sm:h-96">
+              <div className="cs-map-frame h-72 sm:h-96">
                 <Atlas
                   markers={routeMarkers}
                   selectedId={selectedStop}
@@ -287,14 +266,14 @@ export function AroundGuide() {
                   {pick(warning, locale)}
                 </p>
               ))}
-              <ol className="divide-y divide-ink border-y border-ink">
+              <ol className="overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
                 {plan.stops.map((stop, index) => {
                   const site = getSite(stop.slug);
                   const place = getPlace(stop.slug);
                   if (!site) return null;
                   const leg = index > 0 ? plan.legs[index - 1] : null;
                   return (
-                    <li key={`${stop.slug}-${index}`} className="grid gap-3 py-6 sm:py-8 lg:grid-cols-12 lg:items-baseline">
+                    <li key={`${stop.slug}-${index}`} className="grid gap-3 border-b border-line px-5 py-6 last:border-b-0 sm:px-7 sm:py-8 lg:grid-cols-12 lg:items-baseline">
                       <p className="font-display text-4xl leading-none text-cobalt sm:text-5xl lg:col-span-2">
                         {String(index + 1).padStart(2, "0")}
                       </p>

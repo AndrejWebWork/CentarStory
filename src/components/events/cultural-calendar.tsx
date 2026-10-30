@@ -27,7 +27,7 @@ function EventRow({ event, index }: { event: CulturalEvent; index: number }) {
   const t = useTranslations("explore");
   const venue = event.venues[0] ? getPlace(event.venues[0]) : undefined;
   return (
-    <article className="grid gap-4 border-b border-ink py-7 lg:grid-cols-12 lg:items-baseline">
+    <article className="grid gap-4 rounded-[1.35rem] border border-line bg-foam px-5 py-6 shadow-[0_10px_24px_rgba(15,23,42,0.04)] sm:px-6 lg:grid-cols-12 lg:items-baseline">
       <div className="lg:col-span-3">
         <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
           {String(index + 1).padStart(2, "0")} · <Status event={event} />
@@ -78,7 +78,7 @@ export function CulturalCalendar({ venue, host }: { venue?: string; host?: Event
   return (
     <div suppressHydrationWarning>
       {live.length === 0 ? (
-        <div className="grid gap-6 border border-ink bg-foam p-6 lg:grid-cols-12 lg:p-8">
+        <div className="grid gap-6 rounded-3xl border border-line bg-foam p-6 lg:grid-cols-12 lg:p-8">
           <div className="lg:col-span-7">
             <p className="font-display text-4xl leading-none">{t("eventsEmpty")}</p>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">{t("eventsEmptyBody")}</p>
@@ -94,7 +94,7 @@ export function CulturalCalendar({ venue, host }: { venue?: string; host?: Event
           </ul>
         </div>
       ) : (
-        <ul className="border-t border-ink">
+        <ul className="space-y-3">
           {live.map((event, index) => (
             <motion.li
               key={event.slug}
@@ -111,7 +111,7 @@ export function CulturalCalendar({ venue, host }: { venue?: string; host?: Event
       {confirm.length > 0 ? (
         <div className="mt-14">
           <h3 className="cs-kicker">{t("eventsConfirmTitle")}</h3>
-          <ul className="mt-4 border-t border-ink">
+          <ul className="mt-4 space-y-3">
             {confirm.map((event, index) => (
               <li key={event.slug}>
                 <EventRow event={event} index={index} />
@@ -123,7 +123,7 @@ export function CulturalCalendar({ venue, host }: { venue?: string; host?: Event
       {closed.length > 0 ? (
         <div className="mt-14">
           <h3 className="cs-kicker">{t("eventsClosedTitle")}</h3>
-          <ul className="mt-4 border-t border-ink">
+          <ul className="mt-4 space-y-3">
             {closed.map((event, index) => (
               <motion.li
                 key={event.slug}

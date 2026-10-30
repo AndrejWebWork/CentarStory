@@ -179,7 +179,7 @@ export function ScanStudio() {
   }, [locale, query]);
 
   return (
-    <div className="relative min-h-[calc(100dvh-3.5rem)] overflow-hidden bg-ink lg:min-h-[calc(100dvh-4.4rem)]">
+    <div className="relative min-h-[calc(100dvh-5.25rem)] overflow-hidden bg-ink lg:min-h-[calc(100dvh-5.75rem)]">
       <input
         ref={fileRef}
         type="file"
@@ -241,7 +241,7 @@ export function ScanStudio() {
           />
         ) : null}
         {error ? (
-          <p className="border border-foam/30 bg-ink/85 px-4 py-2 text-center text-xs text-foam" role="alert">
+          <p className="rounded-2xl border border-foam/30 bg-ink/85 px-4 py-2 text-center text-xs text-foam" role="alert">
             {t(`errors.${error}`)}
           </p>
         ) : null}
@@ -251,7 +251,7 @@ export function ScanStudio() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="grid size-12 place-items-center border border-foam/60 bg-ink/70 text-foam hover:border-foam"
+                className="grid size-12 place-items-center rounded-full border border-foam/60 bg-ink/70 text-foam hover:border-foam"
                 aria-label={t("upload")}
                 title={t("upload")}
               >
@@ -260,16 +260,16 @@ export function ScanStudio() {
               <button
                 type="button"
                 onClick={() => void capture()}
-                className="grid size-16 place-items-center border-2 border-foam bg-ink/60"
+                className="grid size-16 place-items-center rounded-full border-2 border-foam bg-ink/60"
                 aria-label={t("shutter")}
                 title={t("shutter")}
               >
-                <span className="size-10 bg-cobalt" />
+                <span className="size-10 rounded-full bg-cobalt" />
               </button>
               <button
                 type="button"
                 onClick={() => setCatalogOpen(true)}
-                className="grid size-12 place-items-center border border-foam/60 bg-ink/70 text-foam hover:border-foam"
+                className="grid size-12 place-items-center rounded-full border border-foam/60 bg-ink/70 text-foam hover:border-foam"
                 aria-label={t("catalog")}
                 title={t("catalog")}
               >
@@ -325,7 +325,7 @@ export function ScanStudio() {
             <button
               type="button"
               onClick={() => setCatalogOpen(false)}
-              className="grid size-11 place-items-center border border-foam/40"
+              className="grid size-11 place-items-center rounded-full border border-foam/40"
               aria-label={t("stopCamera")}
             >
               <X className="size-5" aria-hidden="true" />
@@ -342,7 +342,7 @@ export function ScanStudio() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("catalog")}
-                className="h-12 w-full border border-foam/35 bg-ink pr-3 pl-10 text-sm text-foam"
+                className="h-12 w-full rounded-2xl border border-foam/35 bg-ink pr-3 pl-10 text-sm text-foam"
               />
             </label>
           </div>
@@ -403,7 +403,7 @@ function Results({
 
   if (result.outcome === "unknown" || result.outcome === "out-of-catalogue" || !active) {
     return (
-      <section className="w-full border border-ink bg-paper p-5 shadow-[10px_10px_0_var(--ink)]">
+      <section className="w-full rounded-3xl border border-line bg-paper p-5 shadow-lg">
         <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
           {result.outcome === "out-of-catalogue" ? t("outOfCatalogue") : t("resultKicker")}
         </p>
@@ -445,9 +445,9 @@ function Results({
 
   if (isSingleMatch) {
     return (
-      <section className="w-full overflow-hidden border border-ink bg-paper shadow-[10px_10px_0_var(--ink)]">
+      <section className="w-full overflow-hidden rounded-3xl border border-line bg-paper shadow-lg">
         <div className="grid sm:grid-cols-[8.5rem_1fr]">
-          <div className="relative h-36 overflow-hidden border-b border-ink bg-ink sm:h-auto sm:border-r sm:border-b-0">
+          <div className="relative h-36 overflow-hidden bg-ink sm:h-auto">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -481,7 +481,7 @@ function Results({
                 <span>{t("open")}</span>
                 <ArrowDownRight className="size-4" aria-hidden="true" />
               </Link>
-              <Link href={`/?place=${place.slug}`} className="cs-btn cs-btn-ghost">
+              <Link href={sitePath(place)} className="cs-btn cs-btn-ghost">
                 {t("onMap")}
               </Link>
             </div>
@@ -499,7 +499,7 @@ function Results({
   }
 
   return (
-    <section className="w-full border border-ink bg-paper p-5 shadow-[10px_10px_0_var(--ink)]">
+    <section className="w-full rounded-3xl border border-line bg-paper p-5 shadow-lg">
       <p className="text-[10px] tracking-[0.22em] text-copper uppercase">{t("choose")}</p>
       <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
       <p className="mt-2 text-xs leading-relaxed text-ink-soft">{pick(place.summary, locale)}</p>
@@ -528,11 +528,11 @@ function Results({
           <span>{t("open")}</span>
           <ArrowDownRight className="size-4" aria-hidden="true" />
         </Link>
-        <Link href={`/?place=${place.slug}`} className="cs-btn cs-btn-ghost">
+        <Link href={sitePath(place)} className="cs-btn cs-btn-ghost">
           {t("onMap")}
         </Link>
         {walk ? (
-          <Link href={`/?walk=${walk.slug}`} className="cs-btn cs-btn-ghost">
+          <Link href={`/routes/${walk.slug}`} className="cs-btn cs-btn-ghost">
             {t("makeRoute")}
           </Link>
         ) : null}

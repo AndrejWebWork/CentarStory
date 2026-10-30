@@ -46,8 +46,8 @@ export default async function EventPage({
 
   return (
     <article>
-      <header className="border-b border-ink bg-ink text-foam">
-        <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8 lg:py-20">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(160deg,#0f172a_0%,#1e3a8a_58%,#3b6dff_140%)] text-foam sm:mx-4">
+        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
           <Link href={event.host === "municipality" ? "/events" : "/"} className="cs-btn cs-btn-ghost border-foam/40 text-foam">
             {common("back")}
           </Link>
@@ -73,7 +73,7 @@ export default async function EventPage({
           <p className="font-display text-3xl leading-snug">{pick(event.summary, locale)}</p>
           <p className="mt-6 text-lg leading-relaxed">{pick(event.story, locale)}</p>
         </div>
-        <div className="border-t border-ink pt-6 text-sm lg:col-span-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+        <div className="rounded-[1.5rem] border border-line bg-foam p-6 text-sm shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
           <p className="text-ink-soft">{explore("eventsNote")}</p>
           <p className="mt-4">
             <a href={event.officialUrl} className="cs-btn cs-btn-cobalt" target="_blank" rel="noreferrer">
@@ -86,7 +86,7 @@ export default async function EventPage({
           {venues.length > 0 ? (
             <div className="mt-10">
               <h2 className="font-display text-3xl">{detail("stops")}</h2>
-              <ul className="mt-4 divide-y divide-ink border-y border-ink">
+              <ul className="mt-4 divide-y divide-line border-y border-line">
                 {venues.map((place) => (
                   <li key={place.slug}>
                     <Link href={sitePath(place)} className="flex h-14 items-center font-display text-2xl hover:text-cobalt">

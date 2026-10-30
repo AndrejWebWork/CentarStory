@@ -42,8 +42,8 @@ export default async function DishPage({
 
   return (
     <article>
-      <header className="border-b border-ink bg-paper-2">
-        <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8 lg:py-20">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-foam text-ink shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:mx-4">
+        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
           <Link href="/food" className="cs-btn cs-btn-ghost">
             {common("back")}
           </Link>
@@ -58,15 +58,15 @@ export default async function DishPage({
           <h2 className="cs-kicker">{t("history")}</h2>
           <p className="mt-4 font-display text-3xl leading-snug sm:text-4xl">{pick(dish.story[0], locale)}</p>
           <p className="mt-6 text-lg leading-relaxed">{pick(dish.story[1], locale)}</p>
-          <p className="mt-8 border-t border-ink pt-6 text-sm leading-relaxed text-ink-soft">{t("recipeNote")}</p>
+          <p className="mt-8 border-t border-line pt-6 text-sm leading-relaxed text-ink-soft">{t("recipeNote")}</p>
         </div>
-        <div className="border-t border-ink pt-6 lg:col-span-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+        <div className="rounded-[1.5rem] border border-line bg-foam p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
           <h2 className="font-display text-3xl">{t("served")}</h2>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">{pick(dish.eat, locale)}</p>
           {houses.length === 0 ? (
             <p className="mt-4 text-sm">{t("noneServed")}</p>
           ) : (
-            <ul className="mt-4 divide-y divide-ink border-y border-ink">
+            <ul className="mt-4 divide-y divide-line border-y border-line">
               {houses.map((house) => {
                 const district = getDistrict(house.district);
                 return (

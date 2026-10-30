@@ -22,7 +22,7 @@
     "errorBody": "Sayfa yüklenemedi. Yeniden deneyebilirsiniz.",
     "notFoundTitle": "Bu sayfa atlasta yok",
     "notFoundBody": "Bağlantı bir CentarStory sayfasıyla eşleşmiyor.",
-    "home": "Keşfet’e dön",
+    "home": "Ulaşım’a dön",
     "loading": "CentarStory yükleniyor",
     "selected": "Seçili",
     "empty": "Atlasta bu süzgece uyan bir şey yok.",
@@ -32,13 +32,35 @@
     "nearby": "Yakında, Centar dışında",
     "scriptStrategy": "Bu atlasda Sırpça, tasarım gereği Latin alfabesiyledir (Gajica). Makedonca ve Ukraynaca Kiril kullanır. Özel adlar yerel biçimlerini korur."
   },
+  "legal": {
+    "kicker": "Yasal",
+    "updated": "Son güncelleme {date}",
+    "legal": "Yasal uyarı",
+    "privacy": "Gizlilik",
+    "terms": "Koşullar",
+    "cookies": "Çerezler",
+    "legalLede": "Bağımsız kültür rehberi. Resmi belediye sitesi değildir.",
+    "privacyLede": "CentarStory’nin sakladığı: dil çerezi ve isteğe bağlı Tarama fotoğrafı.",
+    "termsLede": "Atlas bir rehberdir, bilet veya canlı sefer çizelgesi değildir.",
+    "cookiesLede": "Tek birinci taraf dil çerezi. Reklam çerezi yoktur."
+  },
   "nav": {
     "primary": "Ana",
     "explore": "Keşfet",
+    "transport": "Ulaşım",
     "scan": "Tara",
     "events": "Etkinlikler",
     "food": "Geleneksel Yemek",
     "around": "Ulaşım"
+  },
+  "transport": {
+    "title": "Ulaşım",
+    "kicker": "Hareket yolları",
+    "lede": "Centar’da nasıl gidileceğinin kısa listesi: JSP şehir otobüsleri, e-Enjoy ve BinBin scooterlar, yürüme ve taksi. Resmi uygulamaları açın. Ücretleri işletmeci sayfasında doğrulayın.",
+    "apps": "Uygulamalar",
+    "jspTitle": "JSP Üsküp",
+    "googlePlay": "Google Play",
+    "appStore": "App Store"
   },
   "explore": {
     "title": "Atlas",
@@ -79,8 +101,8 @@
     "insideCentar": "Centar içinde",
     "unmapped": "Harita noktası değil",
     "destanUnmapped": "Destan Eski Çarşı’da listelenir ama benzersiz doğrulanmış bir koordinat onaylanmadı. Kesin bir iğne olarak gösterilmez.",
-    "transportNote": "JSP durakları burada işaretlenmez. Ücretler ve resmi planlayıcı Dolaşım’dadır. Uydurulmuş koordinat yok.",
-    "transportLink": "Dolaşım’ı aç",
+    "transportNote": "JSP durakları burada işaretlenmez. Ücretler, planlayıcı ve scooter uygulamaları Ulaşım’dadır. Uydurulmuş koordinat yok.",
+    "transportLink": "Ulaşım’ı aç",
     "buildRoute": "Tarihî güzergâhımı kur",
     "closeBuilder": "Güzergâh kurucuyu gizle",
     "routeStart": "Başlangıç",
@@ -229,10 +251,10 @@
     }
   },
   "events": {
-    "title": "Belediye etkinlikleri",
+    "title": "Etkinlikler",
     "kicker": "Centar Belediyesi",
-    "lede": "Centar Belediyesi’nin resmi 2026 kültür programındaki tarihli duyurular. Geçmiş kayıtlar geçmiş olarak kalır. Buradaki hiçbir şey bilet değildir.",
-    "inventoryNote": "Bu liste resmi centar.gov.mk duyurularından kurulur. Centar’daki her kültürel olay değildir ve canlı bir rezervasyon takvimi değildir."
+    "lede": "Centar Belediyesi’nin düzenlediği kamusal kültür etkinlikleri: sokak programları, park buluşmaları, açık hava sineması, konserler, yürüyüşler. Geçmiş kayıtlar gerçekleşmiş olay olarak kalır. Buradaki hiçbir şey bilet değildir.",
+    "inventoryNote": "Yalnızca Centar Belediyesi’nin tarihli duyuruları. Müze sergileri ve kent genelindeki tatiller bu listede yoktur."
   },
   "museums": {
     "title": "Bellek evleri",

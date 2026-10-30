@@ -456,7 +456,7 @@ export async function CinematicMonumentStory({
               {story("coordinates")}: {place.coordinates.lat.toFixed(5)}, {place.coordinates.lng.toFixed(5)}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={`/?place=${place.slug}`} className="cs-btn cs-btn-ink">
+              <Link href="/around" className="cs-btn cs-btn-ink">
                 {story("openAtlas")}
               </Link>
               <a className="cs-btn cs-btn-ghost" href={osm} target="_blank" rel="noreferrer">
@@ -482,7 +482,7 @@ export async function CinematicMonumentStory({
                       <Link href={`/routes/${walk.slug}`} className="font-display text-2xl">
                         {pick(walk.name, locale)}
                       </Link>
-                      <Link href={`/?walk=${walk.slug}`} className="text-xs tracking-[0.16em] text-copper uppercase">
+                      <Link href="/around" className="text-xs tracking-[0.16em] text-copper uppercase">
                         {story("makeItinerary")}
                       </Link>
                     </li>

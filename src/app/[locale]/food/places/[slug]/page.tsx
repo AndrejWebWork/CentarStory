@@ -47,8 +47,8 @@ export default async function RestaurantPage({
 
   return (
     <article>
-      <header className="border-b border-ink bg-ink text-foam">
-        <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8 lg:py-20">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#ff6b4a_0%,#e24b2d_52%,#0f172a_140%)] text-foam sm:mx-4">
+        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
           <Link href="/food" className="cs-btn cs-btn-ghost border-foam/40 text-foam">
             {common("back")}
           </Link>
@@ -65,7 +65,7 @@ export default async function RestaurantPage({
       <div className="mx-auto grid max-w-[96rem] gap-12 px-5 py-16 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-7">
           <h2 className="font-display text-4xl">{t("serves")}</h2>
-          <ul className="mt-4 divide-y divide-ink border-y border-ink">
+          <ul className="mt-4 divide-y divide-line border-y border-line">
             {restaurant.serves.map((slugOfDish) => {
               const dish = getDish(slugOfDish);
               if (!dish) return null;
@@ -85,7 +85,7 @@ export default async function RestaurantPage({
           <p className="mt-3 leading-relaxed">{pick(restaurant.practical, locale)}</p>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t("priceBody")}</p>
         </div>
-        <div className="border-t border-ink pt-6 text-sm lg:col-span-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+        <div className="rounded-[1.5rem] border border-line bg-foam p-6 text-sm shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
           {restaurant.nearbyNote ? <p className="text-ink-soft">{pick(restaurant.nearbyNote, locale)}</p> : null}
           {restaurant.address ? <p className="mt-4">{pick(restaurant.address, locale)}</p> : null}
           {restaurant.phone ? (
@@ -106,7 +106,7 @@ export default async function RestaurantPage({
               <h2 className="font-display text-3xl">{t("approach")}</h2>
               <p className="mt-3 leading-relaxed">{pick(district.approach, locale)}</p>
               <p className="mt-4 flex flex-wrap gap-3">
-                <Link href={`/?place=${district.slug}`} className="cs-btn cs-btn-ink">
+                <Link href="/around" className="cs-btn cs-btn-ink">
                   {common("onMap")}
                 </Link>
                 {nav?.osm ? (

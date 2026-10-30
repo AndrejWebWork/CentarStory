@@ -22,7 +22,7 @@
     "errorBody": "Stranica se nije učitala. Možete pokušati ponovo.",
     "notFoundTitle": "Ova stranica nije u atlasu",
     "notFoundBody": "Veza ne odgovara stranici CentarStory.",
-    "home": "Nazad na Istraži",
+    "home": "Nazad na Prevoz",
     "loading": "Učitava se CentarStory",
     "selected": "Izabrano",
     "empty": "Ništa u atlasu ne odgovara ovom filteru.",
@@ -32,13 +32,35 @@
     "nearby": "Blizu, van Centra",
     "scriptStrategy": "Srpski u ovom atlasu koristi latinicu (Gajicu) namerno. Makedonski i ukrajinski koriste ćirilicu. Vlastita imena zadržavaju lokalni oblik."
   },
+  "legal": {
+    "kicker": "Pravno",
+    "updated": "Poslednje ažurirano {date}",
+    "legal": "Pravna napomena",
+    "privacy": "Privatnost",
+    "terms": "Uslovi",
+    "cookies": "Kolačići",
+    "legalLede": "Nezavisni kulturni vodič. Nije zvanična opštinska stranica.",
+    "privacyLede": "Šta CentarStory čuva: jezički kolačić i, po izboru, fotografiju sa Skena.",
+    "termsLede": "Atlas je vodič, ne karta i ne živi red vožnje.",
+    "cookiesLede": "Jedan sopstveni kolačić za jezik. Nema reklamnih kolačića."
+  },
   "nav": {
     "primary": "Glavno",
     "explore": "Istraži",
+    "transport": "Prevoz",
     "scan": "Skeniraj",
     "events": "Događaji",
     "food": "Tradicionalna hrana",
     "around": "Kroz grad"
+  },
+  "transport": {
+    "title": "Prevoz",
+    "kicker": "Načini kretanja",
+    "lede": "Kratak pregled kako da se krećete kroz Centar: gradski autobusi JSP, trotineti e-Enjoy i BinBin, pešice i taksi. Otvorite zvanične aplikacije. Cene potvrdite na stranici operatora.",
+    "apps": "Aplikacije",
+    "jspTitle": "JSP Skoplje",
+    "googlePlay": "Google Play",
+    "appStore": "App Store"
   },
   "explore": {
     "title": "Atlas",
@@ -79,8 +101,8 @@
     "insideCentar": "U Centru",
     "unmapped": "Nije tačka na mapi",
     "destanUnmapped": "Destan je naveden u Staroj čaršiji, ali jedinstvena potvrđena koordinata nije potvrđena. Ne prikazuje se kao precizna igla.",
-    "transportNote": "JSP stajališta ovde nisu označena. Cene i zvanični planer su na Kretanje. Nema izmišljenih koordinata.",
-    "transportLink": "Otvori Kretanje",
+    "transportNote": "JSP stajališta ovde nisu označena. Cene, planer i aplikacije za trotinete su na Prevoz. Nema izmišljenih koordinata.",
+    "transportLink": "Otvori Prevoz",
     "buildRoute": "Sastavi moju istorijsku rutu",
     "closeBuilder": "Sakrij sastavljač rute",
     "routeStart": "Početna tačka",
@@ -229,10 +251,10 @@
     }
   },
   "events": {
-    "title": "Opštinski događaji",
+    "title": "Događaji",
     "kicker": "Opština Centar",
-    "lede": "Datirana saopštenja iz zvaničnog programa kulture Opštine Centar za 2026. Prošli unosi ostaju označeni kao prošli. Ništa ovde nije karta.",
-    "inventoryNote": "Spisak je sastavljen iz zvaničnih saopštenja na centar.gov.mk. Nije svaki kulturni događaj u Centru, i nije kalendar za rezervaciju."
+    "lede": "Javni kulturni događaji koje organizuje Opština Centar: ulični programi, okupljanja u parku, bioskop na otvorenom, koncerti, šetnje. Prošli unosi ostaju kao događaj koji se desio. Ništa ovde nije karta.",
+    "inventoryNote": "Samo datirana saopštenja Opštine Centar. Muzejske izložbe i gradski praznici nisu na ovom spisku."
   },
   "museums": {
     "title": "Kuće sećanja",

@@ -45,8 +45,8 @@ export default async function RoutePage({
 
   return (
     <article>
-      <header className="border-b border-ink bg-ink text-foam">
-        <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8 lg:py-20">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(160deg,#0f172a_0%,#1e3a8a_58%,#3b6dff_140%)] text-foam sm:mx-4">
+        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
           <Link href="/" className="cs-btn cs-btn-ghost border-foam/40 text-foam">
             {common("back")}
           </Link>
@@ -69,7 +69,7 @@ export default async function RoutePage({
           }))}
         />
         <h2 className="mt-14 font-display text-5xl">{detail("stops")}</h2>
-        <ol className="mt-6 divide-y divide-ink border-y border-ink">
+        <ol className="mt-6 divide-y divide-line overflow-hidden rounded-[1.5rem] border border-line bg-foam px-5 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:px-7">
           {stops.map((place, index) => (
             <li key={place.slug}>
               <Link
@@ -85,7 +85,7 @@ export default async function RoutePage({
             </li>
           ))}
         </ol>
-        <Link href={`/?walk=${walk.slug}`} className="cs-btn cs-btn-cobalt mt-8">
+        <Link href="/around" className="cs-btn cs-btn-cobalt mt-8">
           {detail("openAtlas")}
         </Link>
       </div>

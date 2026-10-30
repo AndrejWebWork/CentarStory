@@ -22,7 +22,7 @@
     "errorBody": "The page failed to load. You can try again.",
     "notFoundTitle": "This page is not in the atlas",
     "notFoundBody": "The link does not match a CentarStory page.",
-    "home": "Return to Explore",
+    "home": "Return to Transport",
     "loading": "Loading CentarStory",
     "selected": "Selected",
     "empty": "Nothing in the atlas matches this filter.",
@@ -32,13 +32,35 @@
     "nearby": "Nearby, outside Centar",
     "scriptStrategy": "Serbian in this atlas uses Latin script (Gajica) by design. Macedonian and Ukrainian use Cyrillic. Proper names keep their local forms."
   },
+  "legal": {
+    "kicker": "Legal",
+    "updated": "Last updated {date}",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "legalLede": "Independent cultural guide. Not the official municipal website.",
+    "privacyLede": "What CentarStory stores: language cookie, optional Scan photograph.",
+    "termsLede": "The atlas is a guide, not a ticket or a live timetable.",
+    "cookiesLede": "One first-party locale cookie. No advertising cookies."
+  },
   "nav": {
     "primary": "Primary",
     "explore": "Explore",
+    "transport": "Transport",
     "scan": "Scan",
     "events": "Events",
     "food": "Traditional Food",
     "around": "Get Around"
+  },
+  "transport": {
+    "title": "Transport",
+    "kicker": "Ways to move",
+    "lede": "A short list of how to move through Centar: JSP city buses, e-Enjoy and BinBin scooters, walking, and taxi. Open the official apps. Confirm prices on the operator page.",
+    "apps": "Apps",
+    "jspTitle": "JSP Skopje",
+    "googlePlay": "Google Play",
+    "appStore": "App Store"
   },
   "explore": {
     "title": "Atlas",
@@ -79,8 +101,8 @@
     "insideCentar": "Inside Centar",
     "unmapped": "Not a map point",
     "destanUnmapped": "Destan is listed in the Old Bazaar, but a unique verified coordinate was not confirmed. It is not shown as a precise pin.",
-    "transportNote": "JSP stops are not pinned here. Fares and the official planner live on Get Around. No invented coordinates.",
-    "transportLink": "Open Get Around",
+    "transportNote": "JSP stops are not pinned here. Fares, planner, and scooter apps live on Transport. No invented coordinates.",
+    "transportLink": "Open Transport",
     "buildRoute": "Build my historical route",
     "closeBuilder": "Hide the route builder",
     "routeStart": "Starting point",
@@ -229,10 +251,10 @@
     }
   },
   "events": {
-    "title": "Municipal events",
+    "title": "Events",
     "kicker": "Municipality of Centar",
-    "lede": "Dated notices from the official 2026 culture programme of the Municipality of Centar. Past listings stay labelled past. Nothing here is a ticket.",
-    "inventoryNote": "This list is built from official centar.gov.mk activity notices. It is not every cultural happening in Centar, and it is not a live booking calendar."
+    "lede": "Public cultural events organised by the Municipality of Centar: street programmes, park gatherings, open-air cinema, concerts, walks. Past listings stay as the event that happened. Nothing here is a ticket.",
+    "inventoryNote": "Only dated notices from the Municipality of Centar. Museum exhibitions and city-wide holidays are not on this list."
   },
   "museums": {
     "title": "Houses of memory",

@@ -22,11 +22,17 @@ export const enjoyTariff = {
   reservationPer10MinMkd: 10,
   pausePerMinuteMkd: 6,
   url: "https://enjoyscooters.com/pricing/",
+  site: "https://enjoyscooters.com/",
+  playStore: "https://play.google.com/store/apps/details?id=com.eenjoyscooter.android",
+  appStore: "https://apps.apple.com/mk/app/e-enjoy-live-the-moment/id6449702253",
   lastChecked: "2026-10-29",
 } as const;
 
 export const binbin = {
   help: "https://www.binbin.tech/en/help/",
+  site: "https://www.binbin.tech/",
+  playStore: "https://play.google.com/store/apps/details?id=com.BINBIN",
+  appStore: "https://apps.apple.com/app/binbin-taxi-scooter/id1483635924",
   lastChecked: "2026-10-29",
 } as const;
 

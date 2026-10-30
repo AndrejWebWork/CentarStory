@@ -45,6 +45,21 @@ const boundaryData = {
   },
 };
 
+function sameBounds(a: MapBounds, b: MapBounds) {
+  return (
+    Math.abs(a.west - b.west) < 1e-6 &&
+    Math.abs(a.south - b.south) < 1e-6 &&
+    Math.abs(a.east - b.east) < 1e-6 &&
+    Math.abs(a.north - b.north) < 1e-6 &&
+    Math.abs(a.zoom - b.zoom) < 1e-3
+  );
+}
+
+function lineSignature(line: [number, number][] | null) {
+  if (!line || line.length < 2) return "";
+  return line.map(([lat, lng]) => `${lat.toFixed(5)},${lng.toFixed(5)}`).join(";");
+}
+
 function pinClass(active: boolean, tone: AtlasMarker["tone"]) {
   const extra =
     tone === "kitchen"
@@ -124,7 +139,13 @@ export function ExploreMap({
   const mapRef = useRef<MapRef>(null);
   const [styleFailed, setStyleFailed] = useState(false);
   const [zoom, setZoom] = useState<number>(CENTAR_VIEW.zoom);
+  const [mapReady, setMapReady] = useState(false);
   const reduceRef = useRef(false);
+  const onBoundsChangeRef = useRef(onBoundsChange);
+  const lastEmittedRef = useRef<MapBounds | null>(null);
+  const markersRef = useRef(markers);
+  onBoundsChangeRef.current = onBoundsChange;
+  markersRef.current = markers;
 
   useEffect(() => {
     reduceRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -160,24 +181,36 @@ export function ExploreMap({
 
   const emitBounds = useCallback(() => {
     const map = mapRef.current;
-    if (!map || !onBoundsChange) return;
+    const notify = onBoundsChangeRef.current;
+    if (!map || !notify) return;
     const bounds = map.getBounds();
-    onBoundsChange({
+    const next: MapBounds = {
       west: bounds.getWest(),
       south: bounds.getSouth(),
       east: bounds.getEast(),
       north: bounds.getNorth(),
       zoom: map.getZoom(),
-    });
-  }, [onBoundsChange]);
+    };
+    const previous = lastEmittedRef.current;
+    if (previous && sameBounds(previous, next)) return;
+    lastEmittedRef.current = next;
+    notify(next);
+  }, []);
+
+  const routeKey = lineSignature(line);
 
   useEffect(() => {
+    if (!mapReady) return;
     const map = mapRef.current;
     if (!map) return;
     const reduce = reduceRef.current;
-    if (line && line.length > 1) {
-      const lngs = line.map((pair) => pair[1]);
-      const lats = line.map((pair) => pair[0]);
+    if (routeKey) {
+      const pairs = routeKey.split(";").map((pair) => {
+        const [lat, lng] = pair.split(",");
+        return [Number(lat), Number(lng)] as const;
+      });
+      const lngs = pairs.map((pair) => pair[1]);
+      const lats = pairs.map((pair) => pair[0]);
       map.fitBounds(
         [
           [Math.min(...lngs), Math.min(...lats)],
@@ -187,16 +220,21 @@ export function ExploreMap({
       );
       return;
     }
-    const selected = markers.find((marker) => marker.id === selectedId);
-    if (selected) {
-      map.flyTo({
-        center: [selected.lng, selected.lat],
-        zoom: Math.max(map.getZoom(), 16.1),
-        pitch: reduce ? 0 : 28,
-        duration: reduce ? 0 : 600,
-      });
-    }
-  }, [line, markers, selectedId]);
+    const selected = markersRef.current.find((marker) => marker.id === selectedId);
+    if (!selected) return;
+    const center = map.getCenter();
+    const alreadyThere =
+      Math.abs(center.lng - selected.lng) < 8e-5 &&
+      Math.abs(center.lat - selected.lat) < 8e-5 &&
+      map.getZoom() >= 16.05;
+    if (alreadyThere) return;
+    map.flyTo({
+      center: [selected.lng, selected.lat],
+      zoom: Math.max(map.getZoom(), 16.1),
+      pitch: reduce ? 0 : 28,
+      duration: reduce ? 0 : 600,
+    });
+  }, [mapReady, routeKey, selectedId]);
 
   useEffect(() => {
     if (resetNonce === undefined) return;
@@ -238,10 +276,12 @@ export function ExploreMap({
           });
           applyCentarCartography(event.target);
           event.target.resize();
+          setMapReady(true);
           emitBounds();
         }}
         onMoveEnd={(event) => {
-          setZoom(event.viewState.zoom);
+          const nextZoom = event.viewState.zoom;
+          setZoom((current) => (Math.abs(current - nextZoom) < 0.04 ? current : nextZoom));
           emitBounds();
         }}
         onError={() => setStyleFailed(true)}

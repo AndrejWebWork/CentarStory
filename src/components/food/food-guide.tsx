@@ -69,25 +69,24 @@ export function FoodGuide() {
 
   return (
     <div>
-      {/* TERRACOTTA CULINARY FOLIO HEADER */}
-      <header className="relative overflow-hidden border-b border-ink bg-copper text-foam">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#ff6b4a_0%,#e24b2d_52%,#0f172a_140%)] text-foam sm:mx-4">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.09] sm:text-[15rem]"
         >
           04
         </span>
-        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
+        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-12 lg:px-10 lg:py-20">
           <div className="lg:col-span-8">
             <p className="cs-kicker text-foam/80">
-              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
+              <span className="inline-block size-2 rounded-full bg-paper" aria-hidden="true" />
               04 — {t("kicker")}
             </p>
             <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
               {t("title")}
             </h1>
           </div>
-          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
+          <div className="pt-2 lg:col-span-4 lg:pt-10">
             <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
           </div>
         </div>
@@ -95,8 +94,8 @@ export function FoodGuide() {
 
       <div className="mx-auto max-w-[96rem]">
         {/* SEARCH + TABLE NOTES */}
-        <div className="grid border-b border-ink bg-paper-2 lg:grid-cols-12">
-          <div className="border-b border-ink p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
+        <div className="mx-3 mt-4 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+          <div className="border-b border-line p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
             <label className="block">
               <span className="cs-kicker">{t("search")}</span>
               <input
@@ -130,14 +129,14 @@ export function FoodGuide() {
 
         {/* DISHES AS NUMBERED BROADSHEET SPECIMENS */}
         <section className="px-4 py-12 sm:px-5 lg:px-8 lg:py-20">
-          <div className="flex items-end justify-between border-b border-ink pb-4">
+          <div className="flex items-end justify-between border-b border-line pb-4">
             <h2 className="font-display text-4xl sm:text-6xl">{t("dishes")}</h2>
             <span className="text-[11px] tracking-[0.2em] text-brass uppercase">01 — 0{filteredDishes.length}</span>
           </div>
           {filteredDishes.length === 0 ? (
             <p className="mt-6 text-sm">{t("empty")}</p>
           ) : (
-            <ol className="divide-y divide-ink border-b border-ink">
+            <ol className="divide-y divide-line">
               {filteredDishes.map((dish, index) => {
                 const record = dishRecords.find((item) => item.slug === dish.slug);
                 return (
@@ -151,7 +150,7 @@ export function FoodGuide() {
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <span
-                          className="h-3 w-10 border border-ink lg:hidden"
+                          className="h-3 w-10 rounded-full lg:hidden"
                           style={{ background: `linear-gradient(90deg, ${dish.palette[0]}, ${dish.palette[1]})` }}
                           aria-hidden="true"
                         />
@@ -182,15 +181,15 @@ export function FoodGuide() {
         </section>
 
         {/* KITCHENS + MAP */}
-        <section className="border-t border-ink bg-foam">
+        <section className="mx-3 mb-4 overflow-hidden rounded-[1.75rem] border border-line bg-foam shadow-[0_16px_40px_rgba(15,23,42,0.05)] sm:mx-4">
           <div className="grid lg:grid-cols-12">
-            <div className="border-b border-ink p-4 sm:p-8 lg:col-span-7 lg:border-r lg:border-b-0 lg:p-12">
+            <div className="border-b border-line p-4 sm:p-8 lg:col-span-7 lg:border-r lg:border-b-0 lg:p-12">
               <h2 className="font-display text-4xl sm:text-5xl">{t("kitchens")}</h2>
               <h3 className="mt-6 cs-kicker">{t("inCentar")}</h3>
               {inCentar.length === 0 ? (
                 <p className="mt-3 text-sm">{t("empty")}</p>
               ) : (
-                <ul className="mt-3 divide-y divide-ink border-y border-ink">
+                <ul className="mt-3 divide-y divide-line border-y border-line">
                   {inCentar.map((restaurant) => (
                     <li key={restaurant.slug}>
                       <HouseRow restaurant={restaurant} selected={selected} onSelect={setSelected} />
@@ -202,7 +201,7 @@ export function FoodGuide() {
               {nearby.length === 0 ? (
                 <p className="mt-3 text-sm">{t("empty")}</p>
               ) : (
-                <ul className="mt-3 divide-y divide-ink border-y border-ink">
+                <ul className="mt-3 divide-y divide-line border-y border-line">
                   {nearby.map((restaurant) => (
                     <li key={restaurant.slug}>
                       <HouseRow restaurant={restaurant} selected={selected} onSelect={setSelected} />
@@ -212,7 +211,7 @@ export function FoodGuide() {
               )}
             </div>
             <div className="flex flex-col lg:col-span-5">
-              <div className="h-72 sm:h-96 lg:flex-1 border-b border-ink">
+              <div className="h-72 sm:h-96 lg:flex-1">
                 <Atlas
                   markers={markers}
                   selectedId={selected}
@@ -259,7 +258,7 @@ function HouseRow({
           <button
             type="button"
             onClick={() => onSelect(restaurant.slug)}
-            className="grid size-11 shrink-0 place-items-center border border-ink bg-paper"
+            className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-paper"
             aria-label={common("onMap")}
           >
             <MapPinned className="size-4" aria-hidden="true" />

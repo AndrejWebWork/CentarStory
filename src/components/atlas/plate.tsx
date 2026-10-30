@@ -30,7 +30,7 @@ export function Plate({
           <p className="text-[10px] tracking-[0.24em] text-brass uppercase">{eyebrow}</p>
           <p className="mt-1 font-display text-3xl leading-none">{title}</p>
         </div>
-        <span className="h-3 w-3 shrink-0 bg-cobalt" aria-hidden="true" />
+        <span className="h-3 w-3 shrink-0 rounded-full bg-cobalt" aria-hidden="true" />
       </figcaption>
     </figure>
   );

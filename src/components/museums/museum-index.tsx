@@ -69,11 +69,11 @@ function MuseumRow({
   const folio = String(index + 1).padStart(2, "0");
 
   return (
-    <article className={`border-b border-ink ${selected ? "bg-paper-2" : "bg-foam"}`}>
+    <article className={`overflow-hidden rounded-[1.5rem] border border-line shadow-[0_12px_30px_rgba(15,23,42,0.05)] ${selected ? "bg-paper-2" : "bg-foam"}`}>
       <div className="grid lg:grid-cols-12">
         <Link
           href={sitePath(place)}
-          className="relative block h-48 overflow-hidden border-b border-ink sm:h-56 lg:col-span-4 lg:h-auto lg:min-h-60 lg:border-r lg:border-b-0"
+          className="relative block h-48 overflow-hidden sm:h-56 lg:col-span-4 lg:h-auto lg:min-h-60"
         >
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -93,7 +93,7 @@ function MuseumRow({
               eyebrow={t("noPhotograph")}
             />
           )}
-          <span className="absolute top-3 left-3 bg-patina px-2.5 py-1 text-[10px] tracking-[0.2em] text-foam uppercase">
+          <span className="absolute top-3 left-3 rounded-full bg-patina px-2.5 py-1 text-[10px] tracking-[0.2em] text-foam uppercase">
             {folio} · {t(place.institution ?? "collection")}
           </span>
         </Link>
@@ -109,7 +109,7 @@ function MuseumRow({
               <button
                 type="button"
                 onClick={onSelect}
-                className="grid size-11 shrink-0 place-items-center border border-ink bg-paper text-ink hover:bg-patina hover:text-foam"
+                className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink hover:bg-patina hover:text-foam"
                 aria-label={common("onMap")}
                 title={common("onMap")}
               >
@@ -175,25 +175,24 @@ export function MuseumIndex() {
 
   return (
     <div>
-      {/* PATINA ARCHIVAL HEADER */}
-      <header className="relative overflow-hidden border-b border-ink bg-patina text-foam">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#0f9f8a_0%,#0b7d6c_52%,#0f172a_140%)] text-foam sm:mx-4">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.08] sm:text-[15rem]"
         >
           03
         </span>
-        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
+        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-12 lg:px-10 lg:py-20">
           <div className="lg:col-span-8">
             <p className="cs-kicker text-foam/75">
-              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
+              <span className="inline-block size-2 rounded-full bg-paper" aria-hidden="true" />
               03 — {t("kicker")}
             </p>
             <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
               {t("title")}
             </h1>
           </div>
-          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
+          <div className="pt-2 lg:col-span-4 lg:pt-10">
             <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
             <Link href="/events" className="cs-btn mt-5 w-full bg-foam text-ink sm:w-auto">
               <CalendarDays className="size-4" aria-hidden="true" />
@@ -205,8 +204,8 @@ export function MuseumIndex() {
 
       <div className="mx-auto max-w-[96rem]">
         {/* STICKY PHONE FILTER BAR + INTERACTIVE QUAY MAP */}
-        <div className="grid border-b border-ink bg-paper-2 lg:grid-cols-12">
-          <div className="border-b border-ink p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
+        <div className="mx-3 mt-4 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+          <div className="border-b border-line p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
             <label className="block">
               <span className="cs-kicker">{t("search")}</span>
               <input
@@ -250,7 +249,7 @@ export function MuseumIndex() {
         {list.length === 0 ? (
           <p className="px-4 py-12 text-sm lg:px-8">{t("empty")}</p>
         ) : (
-          <ol className="border-b border-ink">
+          <ol className="mx-3 mt-4 space-y-3 sm:mx-4">
             {list.map((place, index) => (
               <li key={place.slug}>
                 <MuseumRow
@@ -264,8 +263,8 @@ export function MuseumIndex() {
           </ol>
         )}
 
-        <section className="grid border-b border-ink bg-paper lg:grid-cols-12">
-          <div className="border-b border-ink p-5 sm:p-8 lg:col-span-5 lg:border-r lg:border-b-0">
+        <section className="mx-3 mt-4 mb-2 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+          <div className="border-b border-line p-5 sm:p-8 lg:col-span-5 lg:border-r lg:border-b-0">
             <h2 className="font-display text-3xl sm:text-4xl">{t("nearbyTitle")}</h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t("nearbyBody")}</p>
           </div>
@@ -282,7 +281,7 @@ export function MuseumIndex() {
         </section>
 
         <section className="px-4 py-12 sm:px-5 lg:px-8">
-          <CulturalCalendar />
+          <CulturalCalendar host="institution" />
         </section>
       </div>
     </div>
