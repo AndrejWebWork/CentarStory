@@ -270,7 +270,7 @@ export function ScanStudio() {
         locked={result?.outcome === "identified" || result?.outcome === "candidates"}
         failed={result?.outcome === "unknown" || result?.outcome === "out-of-catalogue"}
       />
-      <div className="pointer-events-none absolute inset-5 sm:inset-10" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-x-5 top-5 bottom-36 sm:inset-x-10 sm:top-10 lg:bottom-10" aria-hidden="true">
         <span className="absolute top-0 left-0 h-10 w-10 border-t-2 border-l-2 border-foam" />
         <span className="absolute top-0 right-0 h-10 w-10 border-t-2 border-r-2 border-foam" />
         <span className="absolute bottom-0 left-0 h-10 w-10 border-b-2 border-l-2 border-foam" />
@@ -293,7 +293,7 @@ export function ScanStudio() {
           {t("stageSample")}
         </p>
       ) : null}
-      <div className="absolute inset-x-0 bottom-[4.75rem] z-10 mx-auto flex w-full max-w-xl flex-col items-center gap-3 px-4 pb-[env(safe-area-inset-bottom)] lg:bottom-8">
+      <div className="absolute inset-x-0 bottom-36 z-10 mx-auto flex w-full max-w-xl flex-col items-center gap-3 px-4 pb-[env(safe-area-inset-bottom)] lg:bottom-8">
         {phase === "result" && result && revealResult ? (
           <Results
             result={result}
@@ -376,7 +376,7 @@ export function ScanStudio() {
 
       {catalogOpen ? (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-ink/95 p-4 pb-24 text-foam sm:p-8 lg:pb-8"
+          className="fixed inset-0 z-[60] flex flex-col bg-ink/95 p-4 pb-36 text-foam sm:p-8 lg:pb-8"
           role="dialog"
           aria-modal="true"
           aria-label={t("catalog")}

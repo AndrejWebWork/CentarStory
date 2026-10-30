@@ -43,7 +43,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const scanHref = destinations.find((item) => item.id === "scan")?.href ?? "/scan";
 
   return (
-    <>
+    <div className="flex min-h-dvh flex-col">
       <a className="skip-link" href="#content">
         {t("common.skip")}
       </a>
@@ -96,14 +96,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         key={pathname}
         id="content"
         tabIndex={-1}
-        className={`relative z-0 overflow-x-clip ${isScan ? "" : "max-lg:pb-36 lg:pb-0"}`}
+        className="relative z-0 flex flex-1 flex-col overflow-x-clip"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
-        {children}
+        <div className="flex-1">{children}</div>
         {isScan ? null : (
-          <footer className="mt-16 bg-ink text-foam">
+          <footer className="mt-16 bg-ink text-foam max-lg:pb-36">
             <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
               <p className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">
                 OSM Relation 2439777 · Europe/Skopje
@@ -130,8 +130,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </footer>
         )}
       </motion.div>
-      {isScan ? null : (
-        <nav
+      <nav
           className="cs-dock fixed inset-x-3 bottom-3 z-50 pb-[env(safe-area-inset-bottom)] lg:hidden"
           aria-label={t("nav.primary")}
         >
@@ -228,7 +227,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             </ul>
           </div>
         </nav>
-      )}
-    </>
+    </div>
   );
 }
