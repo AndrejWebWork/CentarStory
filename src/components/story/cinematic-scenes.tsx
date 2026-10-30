@@ -12,13 +12,15 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { useWalkingPath } from "@/lib/mapping/use-walking-path";
 import { pedestrianNavigation } from "@/lib/mapping/walk";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
+import { SCAN_CAPTURE_STORAGE_KEY } from "@/lib/scan/capture";
+import { useScanCapture } from "@/lib/scan/use-scan-capture";
 
 const Atlas = dynamic(
   () => import("@/components/map/explore-map").then((mod) => mod.ExploreMap),
   { ssr: false, loading: () => <div className="h-full w-full bg-paper-2" /> },
 );
 
-export const SCAN_CAPTURE_STORAGE_KEY = "centarstory:last-scan-capture";
+export { SCAN_CAPTURE_STORAGE_KEY };
 
 const kindClass: Record<ClaimKind, string> = {
   "documented-fact": "cs-claim-fact",
@@ -36,21 +38,7 @@ export function VisitorCaptureChip({
   fromScan: boolean;
   label: string;
 }) {
-  const [dataUrl, setDataUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!fromScan) return;
-    try {
-      const raw = window.sessionStorage.getItem(SCAN_CAPTURE_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { slug?: string; dataUrl?: string };
-      if (parsed.slug === slug && parsed.dataUrl?.startsWith("data:image/")) {
-        setDataUrl(parsed.dataUrl);
-      }
-    } catch {
-      /* Session storage optional. */
-    }
-  }, [fromScan, slug]);
+  const dataUrl = useScanCapture(slug, fromScan);
 
   if (!dataUrl) return null;
 
@@ -318,11 +306,12 @@ export function TimelineToMapScene({
             return (
               <motion.li
                 key={item.slug}
-                initial={reduce ? false : { opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={reduce ? false : { opacity: 0, y: 36, rotate: idx % 2 === 0 ? -4 : 4, scale: 0.92 }}
+                whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
                 viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                transition={{ duration: 0.4, delay: reduce ? 0 : Math.min(idx * 0.05, 0.2) }}
+                transition={{ duration: 0.62, delay: reduce ? 0 : Math.min(idx * 0.07, 0.28) }}
                 className="border border-ink bg-foam"
+                style={{ borderTop: `5px solid ${item.palette[0]}` }}
               >
                 <Link href={item.href} className="group flex h-full flex-col justify-between">
                   <div>

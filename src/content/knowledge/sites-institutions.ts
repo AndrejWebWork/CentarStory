@@ -45,6 +45,7 @@ export const institutionSites: SiteRecord[] = [
     municipality: "centar",
     address: L("Kej Dimitar Vlahov b.b., 1000 Skopje", "Кеј Димитар Влахов б.б., 1000 Скопје", "Kej Dimitar Vlahov b.b., 1000 Skoplje", "Kej Dimitar Vlahov b.b., 1000 Üsküp", "Набережна Димитара Влахова б.б., 1000 Скоп'є"),
     historicalPeriod: L("Institution from 1924; present building 2014", "Установа од 1924; сегашна градба 2014", "Ustanova od 1924; sadašnja zgrada 2014.", "Kurum 1924’ten; bugünkü bina 2014", "Установа від 1924; нинішня будівля 2014"),
+    installationDate: "2014",
     architecturalStyle: L("Skopje 2014 museum building on the quay", "Музејска градба од Скопје 2014 на кејот", "Muzejska zgrada Skoplja 2014 na keju", "Rıhtımdaki Üsküp 2014 müze binası", "Музейна будівля «Скоп'є 2014» на набережній"),
     significance: L(
       "Listed in the Centar municipal profile and on the City of Skopje portal. The museum's own history calls it the oldest museum institution in the country, organised in 1924.",
@@ -87,7 +88,7 @@ export const institutionSites: SiteRecord[] = [
     ],
     myths: none("amm", L("the Archaeological Museum", "Археолошкиот музеј", "Arheološkog muzeja", "Arkeoloji Müzesi", "Археологічного музею")),
     related: ["holocaust-memorial", "macedonian-struggle", "stone-bridge", "macedonian-national-theatre"],
-    images: [],
+    images: ["img-amm-lupan"],
     visitor: {
       website: "https://amm.org.mk/",
       phone: "+389 2 3233 999",
@@ -148,6 +149,8 @@ export const institutionSites: SiteRecord[] = [
     municipality: "centar",
     address: L("Samoilova 2 / Iljo Vojvoda 2, 1000 Skopje", "Самоилова 2 / Иљо Војвода 2, 1000 Скопје", "Samoilova 2 / Iljo Vojvoda 2, 1000 Skoplje", "Samoilova 2 / Iljo Vojvoda 2, 1000 Üsküp", "Самойлова 2 / Ільо Воєвода 2, 1000 Скоп'є"),
     historicalPeriod: L("Deportation 11 March 1943; center opened 2011", "Депортација 11 март 1943; центар отворен 2011", "Deportacija 11. mart 1943; centar otvoren 2011.", "Sürgün 11 Mart 1943; merkez 2011’de açıldı", "Депортація 11 березня 1943; центр відкрито 2011"),
+    installationDate: "2011",
+    architecturalStyle: L("Memorial building on the former Jewish quarter, opened 2011", "Меморијална градба на поранешното Еврејско маало, отворена 2011", "Memorijalna zgrada na bivšem Jevrejskom maalu, otvorena 2011.", "Eski Yahudi mahallesinde 2011’de açılan anma binası", "Меморіальна будівля на колишньому Єврейському кварталі, відкрита 2011"),
     commemorates: L("Jews of Macedonia murdered after the deportation of 11 March 1943", "Евреите од Македонија убиени по депортацијата на 11 март 1943", "Jevreji Makedonije ubijeni posle deportacije 11. marta 1943.", "11 Mart 1943 sürgününden sonra öldürülen Makedonya Yahudileri", "Євреї Македонії, вбиті після депортації 11 березня 1943"),
     significance: L(
       "The Holocaust Fund states the center stands in the former Jewish quarter on the left bank of the Vardar, between the Stone Bridge and Kale, and commemorates deportees from Skopje, Bitola, and Shtip.",
@@ -190,7 +193,7 @@ export const institutionSites: SiteRecord[] = [
     ],
     myths: none("hc", L("the memorial center", "меморијалниот центар", "memorijalnog centra", "anma merkezi", "меморіального центру")),
     related: ["archaeological-museum", "macedonian-struggle", "stone-bridge"],
-    images: [],
+    images: ["img-holocaust-lupan"],
     visitor: {
       hours: L(
         "The Fund prints Tuesday–Friday 09:00–19:00 and Saturday–Sunday 09:00–15:00, with Monday closed. Confirm at the door.",
@@ -257,6 +260,8 @@ export const institutionSites: SiteRecord[] = [
     municipality: "centar",
     address: L("11 Mart 1 / Iljo Vojvoda 1, 1000 Skopje", "11 Март 1 / Иљо Војвода 1, 1000 Скопје", "11. Mart 1 / Iljo Vojvoda 1, 1000 Skoplje", "11 Mart 1 / Iljo Vojvoda 1, 1000 Üsküp", "11 Березня 1 / Ільо Воєвода 1, 1000 Скоп'є"),
     historicalPeriod: L("Opened in the Skopje 2014 years", "Отворен во годините на Скопје 2014", "Otvoren u godinama Skoplja 2014", "Üsküp 2014 yıllarında açıldı", "Відкритий у роки «Скоп'є 2014»"),
+    installationDate: "2014",
+    architecturalStyle: L("Skopje 2014 quay museum building", "Музејска градба од Скопје 2014 на кејот", "Muzejska zgrada Skoplja 2014 na keju", "Rıhtımdaki Üsküp 2014 müze binası", "Музейна будівля «Скоп'є 2014» на набережній"),
     significance: L(
       "Listed in the Centar municipal profile. The museum's own English page describes a historical museum of Macedonian statehood and independence from the 19th to the 20th century.",
       "Наведен во општинскиот профил на Центар. Сопствената англиска страница на музејот опишува историски музеј на македонската државност и самостојност од XIX до XX век.",
@@ -281,7 +286,7 @@ export const institutionSites: SiteRecord[] = [
     ],
     myths: none("mmb", L("this museum", "овој музеј", "ovog muzeja", "bu müze", "цього музею")),
     related: ["stone-bridge", "archaeological-museum", "holocaust-memorial", "skopje-fortress"],
-    images: [],
+    images: ["img-mmb-teicher"],
     visitor: {
       website: "https://mmb.org.mk/",
       phone: "+389 2 3256 668",
@@ -336,6 +341,7 @@ export const institutionSites: SiteRecord[] = [
     municipality: "centar",
     address: L("Samoilova 17, 1000 Skopje", "Самоилова 17, 1000 Скопје", "Samoilova 17, 1000 Skoplje", "Samoilova 17, 1000 Üsküp", "Самойлова 17, 1000 Скоп'є"),
     historicalPeriod: L("Hilltop museum after 1963", "Музеј на рид по 1963", "Muzej na bregu posle 1963.", "1963 sonrası tepe müzesi", "Музей на пагорбі після 1963"),
+    architecturalStyle: L("Hilltop museum above Kale, after 1963", "Музеј на рид над Кале, по 1963", "Muzej na bregu iznad Kale, posle 1963.", "Kale’nin üstünde, 1963 sonrası tepe müzesi", "Музей на пагорбі над Кале, після 1963"),
     significance: L(
       "Nominatim places MSU in Municipality of Centar on Samoilova, above Kale. The museum states it holds nearly six thousand works in international and national collections.",
       "Nominatim го става МСУ во Општина Центар на Самоилова, над Кале. Музејот наведува близу шест илјади дела во меѓународни и национални збирки.",
@@ -360,7 +366,7 @@ export const institutionSites: SiteRecord[] = [
     ],
     myths: none("msu", L("MSU", "МСУ", "MSU", "MSU", "МСУ")),
     related: ["skopje-fortress", "stone-bridge"],
-    images: [],
+    images: ["img-msu-kallerna"],
     visitor: {
       hours: L("Tuesday–Saturday 10:00–17:00; Sunday 09:00–13:00, as printed by MSU.", "Вторник–сабота 10:00–17:00; недела 09:00–13:00, според МСУ.", "Utorak–subota 10:00–17:00; nedelja 09:00–13:00, prema MSU.", "MSU’nun basımına göre Salı–Cumartesi 10:00–17:00; Pazar 09:00–13:00.", "Вівторок–субота 10:00–17:00; неділя 09:00–13:00, за МСУ."),
       tickets: L("100 MKD as printed on msu.mk on 29 October 2026. Confirm at the desk.", "100 денари како што печати msu.mk на 29 октомври 2026. Потврдете на шалтер.", "100 denara kako što štampa msu.mk 29. oktobra 2026. Potvrdite na šalteru.", "29 Ekim 2026’da msu.mk’nin bastığı üzere 100 MKD. Gişede doğrulayın.", "100 денарів, як друкує msu.mk 29 жовтня 2026. Підтвердьте на касі."),

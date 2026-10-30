@@ -14,6 +14,7 @@
     "test:quality": "npx tsx --tsconfig tsconfig.json src/lib/content/quality.test.ts && npx tsx --tsconfig tsconfig.json src/lib/e2e/routes.test.ts"
   },
   "dependencies": {
+    "gsap": "^3.15.0",
     "lucide-react": "^1.64.0",
     "maplibre-gl": "^5.6.2",
     "motion": "^14.7.1",

@@ -4,8 +4,10 @@ import { dishes as dishRecords, districts as districtRecords, venues } from "@/c
 import { programmes, routes } from "@/content/knowledge/programmes";
 import type { CulturalEvent, Dish, District, Place, Restaurant, Walk } from "@/content/types";
 import { resolveEvent } from "@/lib/events/status";
+import { monumentTone } from "@/lib/story/monument-tone";
 
 export function toPlace(site: (typeof sites)[number]): Place {
+  const tone = monumentTone(site.slug, site.motif);
   return {
     slug: site.slug,
     kinds: site.kinds,
@@ -21,7 +23,7 @@ export function toPlace(site: (typeof sites)[number]): Place {
     collection: site.collection,
     walkMinutes: walkMinutesFromSquare(site.coordinates),
     related: site.related,
-    palette: site.palette,
+    palette: tone.palette,
     motif: site.motif,
     municipality: site.municipality,
     verificationStatus: site.verificationStatus,

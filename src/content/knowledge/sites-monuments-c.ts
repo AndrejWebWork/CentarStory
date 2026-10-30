@@ -56,6 +56,7 @@ const seedsC: MonumentSeed[] = [
     claimText: L("OSM node 9121296388 and Prizma's Skopje 2014 database document sculptor Tome Adžievski, investor Municipality of Centar, and foundry Jeremić.", "OSM јазолот 9121296388 и базата на Призма ги документираат вајарот Томе Аџиевски, инвеститорот Општина Центар и леарницата Јеремиќ.", "OSM čvor 9121296388 i baza Prizme dokumentuju vajara Toma Adžievskog, investitora Opštinu Centar i livnicu Jeremić.", "OSM düğümü 9121296388 ve Prizma veri tabanı, heykeltıraş Tome Adcievski’yi ve Jeremić dökümhanesini belgeler.", "Вузол OSM 9121296388 та база Prizma документують скульптора Томе Аджієвські, інвестора громаду Центар та ливарню Єремич."),
     sourceIds: ["osm-overpass-centar", "prizma-fallen-heroes"],
     related: ["woman-warrior-monument", "imro-founders-monument", "asnom-monument", "assembly"],
+    images: ["img-fallen-heroes-botev"],
     motif: "arch",
     palette: ["#8a6f3d", "#241d12"],
   },

@@ -4,6 +4,7 @@ import { ArrowDownRight, ImageUp, ListFilter, RotateCcw, Search, X } from "lucid
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Plate } from "@/components/atlas/plate";
+import { SkeletonOverlay } from "@/components/scan/skeleton-overlay";
 import { SCAN_CAPTURE_STORAGE_KEY } from "@/components/story/cinematic-scenes";
 import { pick } from "@/content/copy";
 import { getSite } from "@/content/knowledge/catalog";
@@ -16,6 +17,7 @@ import type { ImageQualityIssue } from "@/lib/recognition/analyze";
 import { requestRemoteRecognition } from "@/lib/recognition/client";
 import { recognizeOnDevice } from "@/lib/recognition/on-device";
 import { canvasFromFile, canvasFromVideo, jpegFromCanvas, type PrepareError } from "@/lib/recognition/prepare";
+import { skeletonFromCanvas, type SkeletonMesh } from "@/lib/recognition/skeleton";
 import type { RecognitionResult } from "@/lib/recognition/types";
 
 type Phase = "live" | "reading" | "result";
@@ -38,6 +40,8 @@ export function ScanStudio() {
   const [mode, setMode] = useState<Mode>("unknown");
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [skeleton, setSkeleton] = useState<SkeletonMesh | null>(null);
+  const [revealResult, setRevealResult] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +70,16 @@ export function ScanStudio() {
     }
   }, [phase]);
 
+  useEffect(() => {
+    if (phase !== "result") {
+      setRevealResult(false);
+      return;
+    }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => setRevealResult(true), reduce || !skeleton ? 0 : 1450);
+    return () => window.clearTimeout(timer);
+  }, [phase, skeleton]);
+
   function stopCamera() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
@@ -77,6 +91,8 @@ export function ScanStudio() {
     setResult(null);
     setSelectedSlug(null);
     setPreview(null);
+    setSkeleton(null);
+    setRevealResult(false);
     shotRef.current = null;
     if (!navigator.mediaDevices?.getUserMedia) {
       setError("unsupported");
@@ -135,6 +151,7 @@ export function ScanStudio() {
       void openCamera();
       return;
     }
+    setSkeleton(skeletonFromCanvas(jpeg.canvas));
     const local = await recognizeOnDevice(jpeg.canvas);
     setQualityIssue(local.qualityIssue);
 
@@ -207,30 +224,37 @@ export function ScanStudio() {
       ) : (
         <div className="absolute inset-0 bg-ink" />
       )}
+      <SkeletonOverlay
+        mesh={skeleton}
+        active={Boolean(skeleton) && (phase === "reading" || phase === "result")}
+        locked={result?.outcome === "identified" || result?.outcome === "candidates"}
+        failed={result?.outcome === "unknown" || result?.outcome === "out-of-catalogue"}
+      />
       <div className="pointer-events-none absolute inset-5 sm:inset-10" aria-hidden="true">
         <span className="absolute top-0 left-0 h-10 w-10 border-t-2 border-l-2 border-foam" />
         <span className="absolute top-0 right-0 h-10 w-10 border-t-2 border-r-2 border-foam" />
         <span className="absolute bottom-0 left-0 h-10 w-10 border-b-2 border-l-2 border-foam" />
         <span className="absolute right-0 bottom-0 h-10 w-10 border-b-2 border-r-2 border-foam" />
-        <span className="absolute top-1/2 left-1/2 h-6 w-px -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
-        <span className="absolute top-1/2 left-1/2 h-px w-6 -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
+        {skeleton ? null : (
+          <>
+            <span className="absolute top-1/2 left-1/2 h-6 w-px -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
+            <span className="absolute top-1/2 left-1/2 h-px w-6 -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
+          </>
+        )}
         <span className="absolute top-2 left-3 text-[10px] tracking-[0.24em] text-foam/75 uppercase">
           41.9957°N · 21.4312°E
         </span>
       </div>
       {phase === "reading" ? (
-        <>
-          <div className="cs-lens-scan pointer-events-none absolute inset-x-6 top-1/3 h-px bg-cobalt sm:inset-x-10" />
-          <p
-            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 text-center text-xs tracking-[0.22em] text-foam uppercase"
-            role="status"
-          >
-            {t("reading")}
-          </p>
-        </>
+        <p
+          className="absolute inset-x-0 top-[18%] z-10 text-center text-[10px] tracking-[0.28em] text-foam/80 uppercase"
+          role="status"
+        >
+          {t("stageSample")}
+        </p>
       ) : null}
       <div className="absolute inset-x-0 bottom-[4.75rem] z-10 mx-auto flex w-full max-w-xl flex-col items-center gap-3 px-4 pb-[env(safe-area-inset-bottom)] lg:bottom-8">
-        {phase === "result" && result ? (
+        {phase === "result" && result && revealResult ? (
           <Results
             result={result}
             qualityIssue={qualityIssue}
@@ -280,7 +304,7 @@ export function ScanStudio() {
               {mode === "remote" ? t("privacyRemote") : t("privacy")}
             </p>
           </div>
-        ) : phase !== "reading" ? (
+        ) : phase !== "reading" && (phase !== "result" || revealResult) ? (
           <div className="flex flex-wrap justify-center gap-2">
             <button
               type="button"
@@ -403,7 +427,7 @@ function Results({
 
   if (result.outcome === "unknown" || result.outcome === "out-of-catalogue" || !active) {
     return (
-      <section className="w-full rounded-3xl border border-line bg-paper p-5 shadow-lg">
+      <section className="w-full border border-line bg-paper p-5">
         <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
           {result.outcome === "out-of-catalogue" ? t("outOfCatalogue") : t("resultKicker")}
         </p>
@@ -445,7 +469,7 @@ function Results({
 
   if (isSingleMatch) {
     return (
-      <section className="w-full overflow-hidden rounded-3xl border border-line bg-paper shadow-lg">
+      <section className="w-full overflow-hidden border border-line bg-paper" style={{ borderLeft: `6px solid ${place.palette[0]}` }}>
         <div className="grid sm:grid-cols-[8.5rem_1fr]">
           <div className="relative h-36 overflow-hidden bg-ink sm:h-auto">
             {image ? (
@@ -499,7 +523,7 @@ function Results({
   }
 
   return (
-    <section className="w-full rounded-3xl border border-line bg-paper p-5 shadow-lg">
+    <section className="w-full border border-line bg-paper p-5">
       <p className="text-[10px] tracking-[0.22em] text-copper uppercase">{t("choose")}</p>
       <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
       <p className="mt-2 text-xs leading-relaxed text-ink-soft">{pick(place.summary, locale)}</p>

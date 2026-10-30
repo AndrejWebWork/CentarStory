@@ -21,10 +21,10 @@ export function LanguageSwitcher() {
   const search = useSearchParams();
 
   return (
-    <label className="flex items-center rounded-full border border-line bg-foam px-3 text-[11px] font-semibold tracking-[0.08em]">
+    <label className="flex items-center rounded-full border border-white/12 bg-white/5 px-3 text-[11px] font-semibold tracking-[0.08em]">
       <span className="sr-only">{t("language")}</span>
       <select
-        className="h-9 max-w-44 bg-transparent pr-1 text-xs tracking-[0.12em] text-ink uppercase"
+        className="h-9 max-w-44 bg-transparent pr-1 text-xs tracking-[0.12em] text-foam uppercase"
         value={locale}
         aria-label={t("language")}
         title={t("scriptStrategy")}
@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
         }}
       >
         {locales.map((code) => (
-          <option key={code} value={code}>
+          <option key={code} value={code} className="bg-foam text-ink">
             {names[code]}
           </option>
         ))}

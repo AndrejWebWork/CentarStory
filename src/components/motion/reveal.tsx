@@ -1,8 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
-import { useMounted } from "@/lib/use-mounted";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { gsap, prefersReducedMotion, registerGsap } from "@/lib/motion/gsap-client";
 
 export function Reveal({
   children,
@@ -13,20 +12,38 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-  const mounted = useMounted();
+  const ref = useRef<HTMLDivElement>(null);
 
-  if (!mounted || reduce) return <div className={className}>{children}</div>;
+  useLayoutEffect(() => {
+    registerGsap();
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { autoAlpha: 0, y: 22 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.72,
+          delay,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            once: true,
+          },
+        },
+      );
+    }, el);
+
+    return () => ctx.revert();
+  }, [delay]);
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

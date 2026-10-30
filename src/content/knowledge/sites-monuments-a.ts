@@ -628,6 +628,7 @@ const seeds: MonumentSeed[] = [
     ),
     sourceIds: ["osm-overpass-centar", "prizma-gemidzii", "mkwiki-monuments"],
     related: ["stone-bridge", "pavel-satev-monument", "vardar-quay"],
+    images: ["img-gemidzii-dvacet"],
     motif: "memorial",
     palette: ["#6b533e", "#241d17"],
   },

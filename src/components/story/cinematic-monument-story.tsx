@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/motion/reveal";
 import { CinematicEntry } from "@/components/story/cinematic-entry";
+import { ScanScrollTheater } from "@/components/story/scan-scroll-theater";
 import {
   AnimatedTimelineScene,
   ContinueJourneyItinerary,
   TimelineToMapScene,
-  VisitorCaptureChip,
   type ConnectedConnectionItem,
 } from "@/components/story/cinematic-scenes";
 import { StoryHero } from "@/components/story/story-hero";
@@ -22,6 +22,9 @@ import { getPlace, places, sitePath } from "@/content/places";
 import type { Place } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { explainLeg } from "@/lib/graph/query";
+import { chronicleCast } from "@/lib/story/chronicle-cast";
+import { filmFacts, filmKindFor } from "@/lib/story/cinematic-register";
+import { monumentTone } from "@/lib/story/monument-tone";
 import { openState } from "@/lib/visit/hours";
 
 const kindKey: Record<ClaimKind, "fact" | "legend" | "interpretation" | "unverified"> = {
@@ -113,6 +116,22 @@ export async function CinematicMonumentStory({
     })),
   ];
   const hrefs = Object.fromEntries([place, ...related].map((item) => [item.slug, sitePath(item)]));
+  const chronicle = cinematic ? chronicleCast(place, locale) : [];
+  const filmKind = filmKindFor(place);
+  const facts = filmFacts(place, locale);
+  const tone = monumentTone(place.slug, place.motif);
+  const filmKicker =
+    filmKind === "museum"
+      ? story("museumKicker")
+      : filmKind === "memorial"
+        ? story("memorialKicker")
+        : filmKind === "civic"
+          ? story("civicKicker")
+          : filmKind === "ottoman"
+            ? story("ottomanKicker")
+            : filmKind === "fortress"
+              ? story("fortressKicker")
+              : story("chronicleKicker");
 
   const timelineItems = (site?.milestones ?? []).map((item) => ({
     ...item,
@@ -148,7 +167,7 @@ export async function CinematicMonumentStory({
   }));
 
   return (
-    <article className="cs-story">
+    <article className={cinematic ? "cs-story cs-story-cinematic" : "cs-story"}>
       <CinematicEntry
         active={cinematic}
         index={index}
@@ -156,6 +175,9 @@ export async function CinematicMonumentStory({
         title={pick(place.name, locale)}
         era={pick(site?.historicalPeriod ?? place.era, locale)}
         coordinates={`${place.coordinates.lat.toFixed(4)}°N · ${place.coordinates.lng.toFixed(4)}°E`}
+        accent={tone.accent}
+        washA={tone.washA}
+        washB={tone.washB}
       />
 
       {/* SCENE 1 — THE MONUMENT */}
@@ -169,7 +191,36 @@ export async function CinematicMonumentStory({
         title={pick(place.name, locale)}
         eyebrow={pick(place.eyebrow, locale)}
         noPhotograph={story("noPhotograph")}
+        cinematic={cinematic}
+        slug={place.slug}
+        scanLabel={scan("previewAlt")}
+        scrollLabel={cinematic ? story("scrollDown") : undefined}
       />
+
+      {cinematic ? (
+        <ScanScrollTheater
+          figures={chronicle}
+          lead={pick(place.story[0], locale)}
+          second={pick(place.story[1], locale)}
+          scrollLabel={story("scrollDown")}
+          kicker={filmKicker}
+          roleLabels={{
+            rider: story("riderRole"),
+            warrior: story("warriorRole"),
+            place: story("companyRole"),
+            house: story("houseRole"),
+          }}
+          filmKind={filmKind}
+          year={facts.year}
+          yearShort={facts.yearShort}
+          architecture={facts.architecture || facts.style}
+          yearLabel={story("yearLabel")}
+          architectureLabel={story("architectureLabel")}
+          washA={tone.washA}
+          washB={tone.washB}
+          accent={tone.accent}
+        />
+      ) : null}
 
       <div className="border-b border-ink bg-foam">
         <div className="mx-auto grid max-w-[96rem] gap-8 px-4 py-10 sm:px-5 sm:py-12 lg:grid-cols-12 lg:px-8 lg:py-16">
@@ -180,7 +231,6 @@ export async function CinematicMonumentStory({
             <p className="mt-3 font-display text-3xl leading-snug text-ink sm:text-4xl">
               {pick(place.summary, locale)}
             </p>
-            <VisitorCaptureChip slug={place.slug} fromScan={cinematic} label={scan("previewAlt")} />
           </div>
           <dl className="grid gap-5 border-t border-ink pt-5 text-sm lg:col-span-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             {place.municipality === "nearby" ? (

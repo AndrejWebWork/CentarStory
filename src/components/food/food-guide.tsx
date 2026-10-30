@@ -5,6 +5,7 @@ import { ArrowDownRight, MapPinned } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import type { AtlasMarker } from "@/components/map/explore-map";
+import { PageHero } from "@/components/shell/page-hero";
 import { pick } from "@/content/copy";
 import { dishes, districts } from "@/content/food";
 import { dishes as dishRecords, venues } from "@/content/knowledge/culinary";
@@ -21,7 +22,10 @@ export function FoodGuide() {
   const [query, setQuery] = useState("");
   const [scope, setScope] = useState<"all" | "centar" | "nearby">("all");
   const [selected, setSelected] = useState<string | null>(
-    venues.find((item) => item.coordinates)?.slug ?? districts[0]?.slug ?? null,
+    venues.find((item) => item.slug === "palas-jr" && item.coordinates)?.slug ??
+      venues.find((item) => item.coordinates)?.slug ??
+      districts[0]?.slug ??
+      null,
   );
   const markers: AtlasMarker[] = useMemo(
     () => [
@@ -64,37 +68,17 @@ export function FoodGuide() {
       .toLowerCase()
       .includes(needle);
   });
+  const firstKitchen = filteredHouses.find((house) => house.slug === "palas-jr");
   const inCentar = filteredHouses.filter((house) => house.municipality === "centar");
-  const nearby = filteredHouses.filter((house) => house.municipality === "nearby");
+  const nearby = filteredHouses.filter((house) => house.municipality === "nearby" && house.slug !== "palas-jr");
 
   return (
     <div>
-      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#ff6b4a_0%,#e24b2d_52%,#0f172a_140%)] text-foam sm:mx-4">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.09] sm:text-[15rem]"
-        >
-          04
-        </span>
-        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-12 lg:px-10 lg:py-20">
-          <div className="lg:col-span-8">
-            <p className="cs-kicker text-foam/80">
-              <span className="inline-block size-2 rounded-full bg-paper" aria-hidden="true" />
-              04 — {t("kicker")}
-            </p>
-            <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
-              {t("title")}
-            </h1>
-          </div>
-          <div className="pt-2 lg:col-span-4 lg:pt-10">
-            <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
-          </div>
-        </div>
-      </header>
+      <PageHero index="04" kicker={t("kicker")} title={t("title")} lede={t("lede")} tone="copper" />
 
       <div className="mx-auto max-w-[96rem]">
         {/* SEARCH + TABLE NOTES */}
-        <div className="mx-3 mt-4 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+        <div className="mx-3 mt-4 grid overflow-hidden border border-line bg-foam sm:mx-4 lg:grid-cols-12">
           <div className="border-b border-line p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
             <label className="block">
               <span className="cs-kicker">{t("search")}</span>
@@ -181,11 +165,21 @@ export function FoodGuide() {
         </section>
 
         {/* KITCHENS + MAP */}
-        <section className="mx-3 mb-4 overflow-hidden rounded-[1.75rem] border border-line bg-foam shadow-[0_16px_40px_rgba(15,23,42,0.05)] sm:mx-4">
+        <section className="mx-3 mb-4 overflow-hidden border border-line bg-foam sm:mx-4">
           <div className="grid lg:grid-cols-12">
             <div className="border-b border-line p-4 sm:p-8 lg:col-span-7 lg:border-r lg:border-b-0 lg:p-12">
               <h2 className="font-display text-4xl sm:text-5xl">{t("kitchens")}</h2>
-              <h3 className="mt-6 cs-kicker">{t("inCentar")}</h3>
+              {firstKitchen ? (
+                <>
+                  <h3 className="mt-6 cs-kicker">{t("firstKitchen")}</h3>
+                  <ul className="mt-3 divide-y divide-line border-y border-line">
+                    <li>
+                      <HouseRow restaurant={firstKitchen} selected={selected} onSelect={setSelected} />
+                    </li>
+                  </ul>
+                </>
+              ) : null}
+              <h3 className="mt-8 cs-kicker">{t("inCentar")}</h3>
               {inCentar.length === 0 ? (
                 <p className="mt-3 text-sm">{t("empty")}</p>
               ) : (

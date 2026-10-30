@@ -138,13 +138,13 @@ export function AroundGuide() {
               initial={reduce ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -8 }}
-              className="grid overflow-hidden rounded-[1.75rem] border border-line bg-foam shadow-[0_16px_40px_rgba(15,23,42,0.06)] lg:grid-cols-12"
+              className="grid overflow-hidden border border-line bg-foam lg:grid-cols-12"
             >
               <div className="flex flex-col justify-between border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
                 <p className="cs-kicker">01 — 41.9957°N · 21.4312°E</p>
                 <button
                   type="button"
-                  className="mt-6 h-16 w-full rounded-2xl bg-cobalt px-5 font-display text-3xl text-foam shadow-[0_12px_28px_rgba(59,109,255,0.28)] hover:bg-ink sm:mt-10 sm:h-20 sm:text-4xl"
+                  className="mt-6 h-16 w-full bg-cobalt px-5 font-display text-3xl text-foam hover:bg-ink sm:mt-10 sm:h-20 sm:text-4xl"
                   onClick={makeDefault}
                 >
                   {t("makeRoute")}
@@ -160,7 +160,7 @@ export function AroundGuide() {
                 <label className="block">
                   <span className="cs-kicker">02 — {t("yearLabel")}</span>
                   <input
-                    className="mt-3 h-16 w-full rounded-2xl border border-line bg-paper px-4 font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
+                    className="mt-3 h-16 w-full border-b border-ink bg-transparent px-0 font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
                     inputMode="numeric"
                     type="number"
                     min={AROUND_YEAR_MIN}
@@ -193,7 +193,7 @@ export function AroundGuide() {
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={reduce ? undefined : { opacity: 0 }}
-              className="rounded-[1.75rem] bg-ink px-5 py-16 text-foam sm:px-12 sm:py-20"
+              className="bg-ink px-5 py-16 text-foam sm:px-12 sm:py-20"
               aria-live="polite"
             >
               <div className="flex items-center justify-between text-[11px] tracking-[0.22em] text-brass uppercase">
@@ -229,7 +229,7 @@ export function AroundGuide() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="grid gap-4 rounded-[1.5rem] border border-line bg-foam p-5 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:p-7 lg:grid-cols-12">
+              <div className="grid gap-4 border border-line bg-foam p-5 sm:p-7 lg:grid-cols-12">
                 <div className="lg:col-span-7">
                   <p className="cs-kicker">{te(themeKey(choice.themeId))}</p>
                   <h2 className="mt-2 font-display text-4xl leading-[0.9] sm:text-7xl">{t("yourRoute")}</h2>
@@ -266,7 +266,7 @@ export function AroundGuide() {
                   {pick(warning, locale)}
                 </p>
               ))}
-              <ol className="overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
+              <ol className="overflow-hidden border border-line bg-foam">
                 {plan.stops.map((stop, index) => {
                   const site = getSite(stop.slug);
                   const place = getPlace(stop.slug);

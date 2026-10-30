@@ -53,21 +53,24 @@ export async function TransportGuide() {
           <span className="inline-block size-2 rounded-full bg-cobalt" aria-hidden="true" />
           {around("modes")}
         </p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-6 divide-y divide-line border-y border-line">
           {[
             ["walk", around("walk"), around("walkBody")],
             ["bus", around("bus"), around("busBody")],
             ["scooter", around("scooter"), around("scooterIntro")],
             ["taxi", around("taxi"), around("taxiBody")],
-          ].map(([id, title, body]) => (
-            <article key={id} className="rounded-[1.5rem] border border-line bg-foam p-5 shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:p-6">
+          ].map(([id, title, body], index) => (
+            <li key={id} className="grid gap-3 py-5 sm:grid-cols-[4.5rem_minmax(0,14rem)_1fr] sm:items-baseline">
+              <span className="font-display text-2xl leading-none text-brass">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h2 className="font-display text-3xl leading-none">{title}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-ink-soft">{body}</p>
-            </article>
+              <p className="text-sm leading-relaxed text-ink-soft">{body}</p>
+            </li>
           ))}
-        </div>
+        </ol>
 
-        <section className="mt-12 overflow-hidden rounded-[1.75rem] border border-line bg-foam shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+        <section className="mt-12 overflow-hidden border border-line bg-foam">
           <div className="grid gap-0 lg:grid-cols-12">
             <div className="border-b border-line p-5 sm:p-8 lg:col-span-5 lg:border-r lg:border-b-0">
               <p className="cs-kicker">
@@ -139,8 +142,9 @@ export async function TransportGuide() {
             {t("apps")}
           </p>
           <div className="mt-5 grid gap-3 lg:grid-cols-2">
-            <article className="rounded-3xl border border-line bg-paper p-5 sm:p-8">
-              <h2 className="font-display text-4xl leading-none">{around("enjoyTitle")}</h2>
+            <article className="border border-line bg-foam p-5 sm:p-8">
+              <p className="text-[10px] tracking-[0.22em] text-brass uppercase">01</p>
+              <h2 className="mt-2 font-display text-4xl leading-none">{around("enjoyTitle")}</h2>
               <p className="mt-3 text-sm leading-relaxed text-ink-soft">{around("enjoyBody")}</p>
               <ul className="mt-4 space-y-1 text-sm">
                 <li>{around("enjoyStart", { amount: enjoyTariff.startMkd })}</li>
@@ -157,8 +161,9 @@ export async function TransportGuide() {
                 webLabel={around("enjoySource")}
               />
             </article>
-            <article className="rounded-3xl border border-line bg-paper p-5 sm:p-8">
-              <h2 className="font-display text-4xl leading-none">{around("binbinTitle")}</h2>
+            <article className="border border-line bg-foam p-5 sm:p-8">
+              <p className="text-[10px] tracking-[0.22em] text-brass uppercase">02</p>
+              <h2 className="mt-2 font-display text-4xl leading-none">{around("binbinTitle")}</h2>
               <p className="mt-3 text-sm leading-relaxed text-ink-soft">{around("binbinBody")}</p>
               <AppLinks
                 play={binbin.playStore}

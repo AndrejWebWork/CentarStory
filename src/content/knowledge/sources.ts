@@ -877,6 +877,16 @@ export const sources: SourceRecord[] = [
     notes: "Official website of Destan (founded 1913). Documents both the Old Bazaar house (Čair) and the Bunjakovec branch on Vladimir Poležanovski in Centar (OSM node/1868812117).",
   },
   {
+    id: "palas-jr-wolt",
+    title: "Palas - Jr GRILL — Wolt venue page",
+    publisher: "Wolt",
+    url: "https://wolt.com/en/mkd/skopje/restaurant/gostilnica-palas-jr",
+    accessed: "2026-10-30",
+    kind: "institutional",
+    language: "en",
+    notes: "House delivery listing for Gostilnica Palas Jr. Prints plus code 2C2Q+VF, 1000 Skopje. Nominatim returned no unique OSM node in this pass. Tripadvisor's house-managed listing prints Bitpazarska, Old Turkish Bazaar, and +389 77 610 090.",
+  },
+  {
     id: "commons-tavce-gravce",
     title: "File:Tavce gravce.jpg",
     publisher: "Wikimedia Commons",

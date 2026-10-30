@@ -69,7 +69,10 @@ function MuseumRow({
   const folio = String(index + 1).padStart(2, "0");
 
   return (
-    <article className={`overflow-hidden rounded-[1.5rem] border border-line shadow-[0_12px_30px_rgba(15,23,42,0.05)] ${selected ? "bg-paper-2" : "bg-foam"}`}>
+    <article
+      className={`overflow-hidden rounded-[1.5rem] border border-line shadow-[0_12px_30px_rgba(15,23,42,0.05)] ${selected ? "bg-paper-2" : "bg-foam"}`}
+      style={{ borderTop: `5px solid ${place.palette[0]}` }}
+    >
       <div className="grid lg:grid-cols-12">
         <Link
           href={sitePath(place)}

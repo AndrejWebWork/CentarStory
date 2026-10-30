@@ -48,6 +48,7 @@ export const memorySites: SiteRecord[] = [
       "Св. Кирила і Мефодія 11, Центар, Скоп'є",
     ),
     historicalPeriod: L("Station 1939; museum from 1971", "Станица 1939; музеј од 1971", "Stanica 1939; muzej od 1971.", "İstasyon 1939; müze 1971’den", "Вокзал 1939; музей від 1971"),
+    installationDate: "1939",
     architecturalStyle: L("Interwar railway station, retained after 1963", "Меѓувоена железничка станица, задржана по 1963", "Međuratna železnička stanica, zadržana posle 1963.", "1963 sonrası korunan savaş arası gar", "Міжвоєнний вокзал, збережений після 1963"),
     architecturalFeatures: L(
       "The City Museum states the building was constructed in 1939, placed under cultural monument protection in 1971, and now covers 4,670 m² of which 1,500 m² is exhibition space. The stopped station clock is widely treated as a memorial of 26 July 1963; that reading is a public commemorative practice documented by the museum's siting in the damaged station, not a separate folkloric tale.",
@@ -105,7 +106,7 @@ export const memorySites: SiteRecord[] = [
     ],
     myths: noLegend(L("the old station", "старата станица", "stare stanice", "eski gar", "старого вокзалу")),
     related: ["mother-teresa-house", "macedonia-square", "cathedral-clement"],
-    images: [],
+    images: ["img-city-museum-kalachevska"],
     visitor: {
       hours: L(
         "Tuesday–Saturday 10:00–16:30; Sunday 10:00–13:30; closed on state holidays, as printed by the museum.",
@@ -185,6 +186,7 @@ export const memorySites: SiteRecord[] = [
     municipality: "centar",
     address: L("Macedonia Street 9, 1000 Skopje", "ул. Македонија бр. 9, 1000 Скопје", "ul. Makedonija br. 9, 1000 Skoplje", "Makedonya Caddesi 9, 1000 Üsküp", "вул. Македонія 9, 1000 Скоп'є"),
     historicalPeriod: L("Opened 2009, on the site of a church lost in 1963", "Отворена 2009, на место на црква изгубена во 1963", "Otvorena 2009, na mestu crkve izgubljene 1963.", "1963’te yitirilen bir kilisenin yerinde 2009’da açıldı", "Відкритий 2009-го, на місці церкви, втраченої 1963-го"),
+    installationDate: "2009",
     commemorates: L("Anjezë Gonxhe Bojaxhiu (Mother Teresa), born in Skopje in 1910", "Ањезе Гонџа Бојаџиу (Мајка Тереза), родена во Скопје во 1910", "Anjezë Gonxhe Bojaxhiu (Majka Tereza), rođena u Skoplju 1910.", "1910’da Üsküp’te doğan Anjezë Gonxhe Bojaxhiu (Rahibe Teresa)", "Аньєзе Гонджа Бояджіу (Мати Тереза), народжена в Скоп'є 1910 року"),
     creator: L(
       "Architect Vangel Božinovski, as named by Koncept za kultura Skopje and by Prizma's Skopje 2014 file.",
