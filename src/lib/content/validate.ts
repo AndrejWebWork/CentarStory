@@ -187,9 +187,21 @@ export function validateKnowledge(): Issue[] {
     }
   }
   for (const event of programmes) {
+    copyComplete(event.name, `event:${event.slug}:name`, issues);
+    copyComplete(event.season, `event:${event.slug}:season`, issues);
+    copyComplete(event.summary, `event:${event.slug}:summary`, issues);
+    copyComplete(event.story, `event:${event.slug}:story`, issues);
+    if (!event.host) {
+      issues.push({ level: "error", code: "event-missing-host", subject: event.slug, detail: "host required" });
+    }
     for (const venue of event.venues) {
       if (!getSite(venue)) {
         issues.push({ level: "error", code: "unknown-venue", subject: event.slug, detail: venue });
+      }
+    }
+    for (const sourceId of event.sourceIds) {
+      if (!getSource(sourceId)) {
+        issues.push({ level: "error", code: "unknown-source", subject: event.slug, detail: sourceId });
       }
     }
     if (!event.officialUrl?.startsWith("http")) {

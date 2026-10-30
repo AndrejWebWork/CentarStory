@@ -37,7 +37,7 @@ export function StoryHero({
   const y = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 48]);
 
   return (
-    <div ref={ref} className="cs-story-hero relative min-h-[86vh] overflow-hidden bg-ink">
+    <div ref={ref} className="cs-story-hero relative min-h-[78vh] overflow-hidden border-b border-ink bg-ink">
       {image ? (
         <motion.div className="absolute inset-0" style={{ y }}>
           {/* Authentic Commons photograph; next/image is not configured for this host. */}
@@ -49,21 +49,27 @@ export function StoryHero({
             alt={imageAlt}
             className="h-[110%] w-full object-cover"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(28,22,18,0.18),rgba(28,22,18,0.78))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,16,13,0.22),rgba(18,16,13,0.88))]" />
         </motion.div>
       ) : (
         <div className="absolute inset-0">
           <Plate motif={motif} palette={palette} index={index} title={title} eyebrow={eyebrow} />
         </div>
       )}
-      {image && credit ? (
-        <p className="absolute right-5 bottom-5 z-[1] max-w-sm text-right text-[11px] tracking-[0.12em] text-foam/80 uppercase">
-          {credit}
-        </p>
-      ) : null}
-      {!image ? (
-        <p className="absolute right-5 bottom-5 z-[1] max-w-xs text-right text-[11px] text-ink/70">{noPhotograph}</p>
-      ) : null}
+      <div className="relative z-[1] mx-auto flex min-h-[68vh] max-w-[96rem] flex-col justify-between p-4 text-foam sm:min-h-[78vh] sm:p-8 lg:p-12">
+        <div className="flex items-center justify-between text-[10px] tracking-[0.24em] text-foam/80 uppercase">
+          <span>{eyebrow}</span>
+          <span>Folio {index}</span>
+        </div>
+        <div>
+          <h1 className="max-w-5xl font-display text-[clamp(2.85rem,11vw,7.5rem)] leading-[0.86] tracking-tight">
+            {title}
+          </h1>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-foam/25 pt-3 text-[10px] tracking-[0.16em] text-foam/80 uppercase sm:text-[11px]">
+            <span>{image && credit ? credit : noPhotograph}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

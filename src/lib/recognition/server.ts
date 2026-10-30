@@ -10,24 +10,32 @@ import {
 
 type VisionHit = { slug: string; score: number; rationale?: string };
 
+const FREE_GEMINI_MODELS = new Set(["gemini-2.0-flash", "gemini-2.5-flash"]);
+
 function env(name: string) {
   return process.env[name]?.trim() || undefined;
 }
 
+/**
+ * Paid AI endpoints (OpenAI, Anthropic, or paid Gemini models) are forbidden.
+ * Only local browser matching is enabled by default; optional remote vision is
+ * restricted to an explicitly opted-in free-tier Gemini Flash endpoint.
+ */
 export function recognitionConfig() {
   const key = env("RECOGNITION_API_KEY");
-  const provider = (env("RECOGNITION_PROVIDER") ?? (key ? "openai" : "")).toLowerCase();
+  const provider = (env("RECOGNITION_PROVIDER") ?? "").toLowerCase();
+  const model = env("RECOGNITION_MODEL") ?? "gemini-2.0-flash";
+  const freeTierOptIn = env("RECOGNITION_FREE_TIER") === "true";
+  const allowedFree =
+    Boolean(key) &&
+    freeTierOptIn &&
+    provider === "google-free" &&
+    FREE_GEMINI_MODELS.has(model);
+
   return {
-    configured: Boolean(key && provider),
-    provider: key ? provider : "none",
-    model:
-      env("RECOGNITION_MODEL") ??
-      (provider === "google"
-        ? "gemini-2.0-flash"
-        : provider === "anthropic"
-          ? "claude-sonnet-4-5"
-          : "gpt-4o-mini"),
-    baseUrl: env("RECOGNITION_BASE_URL") ?? env("RECOGNITION_API_URL"),
+    configured: allowedFree,
+    provider: allowedFree ? "google-free" : "none",
+    model: allowedFree ? model : "none",
   };
 }
 
@@ -71,40 +79,7 @@ Use only visual evidence. Do not invent a match. Do not use GPS or EXIF. Do not 
 Return JSON only: {"candidates":[{"slug":"...","confidence":0.0,"rationale":"visible features"}],"outOfCatalogue":false}
 confidence is 0-0.97. Only use slugs from the supplied catalogue. If the photograph is not one of those places, return empty candidates and outOfCatalogue true.`;
 
-async function callOpenAI(jpegBase64: string, model: string, key: string, baseUrl?: string) {
-  const url = `${(baseUrl ?? "https://api.openai.com/v1").replace(/\/$/, "")}/chat/completions`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: SYSTEM },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: `Catalogue:\n${cataloguePrompt()}` },
-            {
-              type: "image_url",
-              image_url: { url: `data:image/jpeg;base64,${jpegBase64}`, detail: "low" },
-            },
-          ],
-        },
-      ],
-    }),
-    signal: AbortSignal.timeout(RECOGNITION_TIMEOUT_MS),
-  });
-  if (!response.ok) throw new Error(`vision-http-${response.status}`);
-  const data = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> };
-  return data.choices?.[0]?.message?.content ?? "";
-}
-
-async function callGoogle(jpegBase64: string, model: string, key: string) {
+async function callFreeGoogle(jpegBase64: string, model: string, key: string) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
   const response = await fetch(url, {
     method: "POST",
@@ -124,44 +99,12 @@ async function callGoogle(jpegBase64: string, model: string, key: string) {
     }),
     signal: AbortSignal.timeout(RECOGNITION_TIMEOUT_MS),
   });
+  if (response.status === 429) throw new Error("quota-exhausted");
   if (!response.ok) throw new Error(`vision-http-${response.status}`);
   const data = (await response.json()) as {
     candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
   };
   return data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
-}
-
-async function callAnthropic(jpegBase64: string, model: string, key: string) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 700,
-      temperature: 0,
-      system: SYSTEM,
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: `Catalogue:\n${cataloguePrompt()}` },
-            {
-              type: "image",
-              source: { type: "base64", media_type: "image/jpeg", data: jpegBase64 },
-            },
-          ],
-        },
-      ],
-    }),
-    signal: AbortSignal.timeout(RECOGNITION_TIMEOUT_MS),
-  });
-  if (!response.ok) throw new Error(`vision-http-${response.status}`);
-  const data = (await response.json()) as { content?: Array<{ text?: string }> };
-  return data.content?.map((part) => part.text ?? "").join("") ?? "";
 }
 
 export async function recognizeOnServer(input: {
@@ -184,11 +127,7 @@ export async function recognizeOnServer(input: {
     };
   }
 
-  let raw = "";
-  if (config.provider === "google") raw = await callGoogle(input.jpegBase64, config.model, key);
-  else if (config.provider === "anthropic") raw = await callAnthropic(input.jpegBase64, config.model, key);
-  else raw = await callOpenAI(input.jpegBase64, config.model, key, config.baseUrl);
-
+  const raw = await callFreeGoogle(input.jpegBase64, config.model, key);
   const parsed = parseHits(raw);
   const coordinates = Object.fromEntries(
     visionCatalogue().map((entry) => [entry.slug, { lat: entry.lat, lng: entry.lng }]),

@@ -36,7 +36,7 @@
     "primary": "Glavno",
     "explore": "Istraži",
     "scan": "Skeniraj",
-    "museums": "Muzeji",
+    "events": "Događaji",
     "food": "Tradicionalna hrana",
     "around": "Kroz grad"
   },
@@ -130,7 +130,8 @@
     "eventsEmpty": "Nema potvrđenog tekućeg datiranog događaja.",
     "eventsEmptyBody": "Koristite zvanične kalendare umesto izmišljenog spiska.",
     "eventsConfirmTitle": "Ponavljajući programi — potvrdite datume",
-    "eventsClosedTitle": "Nedavno zatvoreni datirani unosi",
+    "eventsClosedTitle": "Već održani",
+    "unmappedVenue": "Zvanično saopštenje imenuje mesto koje nije potvrđena atlas-tačka.",
     "calMsu": "Muzej savremene umetnosti",
     "calOpera": "Nacionalna opera i balet",
     "calCity": "Grad Skoplje",
@@ -227,6 +228,12 @@
       "timeout": "Prepoznavanje je trajalo predugo. Pokušajte ponovo ili izaberite ručno."
     }
   },
+  "events": {
+    "title": "Opštinski događaji",
+    "kicker": "Opština Centar",
+    "lede": "Datirana saopštenja iz zvaničnog programa kulture Opštine Centar za 2026. Prošli unosi ostaju označeni kao prošli. Ništa ovde nije karta.",
+    "inventoryNote": "Spisak je sastavljen iz zvaničnih saopštenja na centar.gov.mk. Nije svaki kulturni događaj u Centru, i nije kalendar za rezervaciju."
+  },
   "museums": {
     "title": "Kuće sećanja",
     "kicker": "Zbirke i ustanove",
@@ -287,9 +294,9 @@
     }
   },
   "around": {
-    "title": "Kako da se krećete",
+    "title": "Šetnja kroz grad",
     "kicker": "Kroz grad",
-    "lede": "Istorijsko jezgro Centra se hoda. Autobusi, bicikli, trotineti i taksi pokrivaju ostatak. Cene ispod su navedene, ne izmišljene.",
+    "lede": "Pritisnite za rutu, ili unesite godinu rođenja. Stajališta su iz potvrđenog atlasa, nisu izmišljena.",
     "modes": "Načini kretanja",
     "walk": "Peške",
     "bus": "Gradski autobus",
@@ -371,7 +378,23 @@
     "compareAssumptions": "Pešački minuti su procene od trga. Minuti trotineta su 40% toga. Kilometri taksija su prava linija × 1,35.",
     "osmWalk": "Pešačka uputstva OpenStreetMap",
     "googleWalk": "Pešačka uputstva Google",
-    "museumsOnFoot": "{count} potvrđenih institucija je u muzejskom atlasu."
+    "museumsOnFoot": "{count} potvrđenih institucija je u muzejskom atlasu.",
+    "makeRoute": "Napravi mi rutu",
+    "orYear": "ili unesi godinu",
+    "yearLabel": "Godina rođenja",
+    "yearPlaceholder": "1994",
+    "yearHint": "Cela godina između {min} i {max}. Biraju se samo dokumentovane teme šetnje.",
+    "yearInvalid": "Unesite godinu između {min} i {max}.",
+    "yearSubmit": "Napravi od ove godine",
+    "buildingTitle": "Ruta se gradi",
+    "building_gather": "Skupljamo potvrđena stajališta",
+    "building_order": "Redosled kreće od trga",
+    "building_hours": "Proveravamo štampane sate za danas",
+    "building_path": "Crtamo pešačku liniju",
+    "building_lock": "Zaključavamo redosled",
+    "yourRoute": "Tvoja šetnja",
+    "drawingStreets": "Pitamo javni pešački ruter za ulice",
+    "again": "Napravi drugu rutu"
   },
   "detail": {
     "walks": "Šetnje koje prolaze ovde",

@@ -36,7 +36,7 @@
     "primary": "Ana",
     "explore": "Keşfet",
     "scan": "Tara",
-    "museums": "Müzeler",
+    "events": "Etkinlikler",
     "food": "Geleneksel Yemek",
     "around": "Ulaşım"
   },
@@ -130,7 +130,8 @@
     "eventsEmpty": "Güncel doğrulanmış tarihli etkinlik yok.",
     "eventsEmptyBody": "Uydurma liste yerine resmi takvimleri kullanın.",
     "eventsConfirmTitle": "Yinelenen programlar — tarihleri doğrulayın",
-    "eventsClosedTitle": "Yakın zamanda kapanmış tarihli kayıtlar",
+    "eventsClosedTitle": "Yapılmış etkinlikler",
+    "unmappedVenue": "Resmi duyuru, doğrulanmış bir atlas pimi olmayan bir yer adlandırır.",
     "calMsu": "Çağdaş Sanat Müzesi",
     "calOpera": "Ulusal Opera ve Bale",
     "calCity": "Üsküp kenti",
@@ -227,6 +228,12 @@
       "timeout": "Tanıma çok uzun sürdü. Yeniden deneyin ya da yeri el ile seçin."
     }
   },
+  "events": {
+    "title": "Belediye etkinlikleri",
+    "kicker": "Centar Belediyesi",
+    "lede": "Centar Belediyesi’nin resmi 2026 kültür programındaki tarihli duyurular. Geçmiş kayıtlar geçmiş olarak kalır. Buradaki hiçbir şey bilet değildir.",
+    "inventoryNote": "Bu liste resmi centar.gov.mk duyurularından kurulur. Centar’daki her kültürel olay değildir ve canlı bir rezervasyon takvimi değildir."
+  },
   "museums": {
     "title": "Bellek evleri",
     "kicker": "Koleksiyonlar ve kurumlar",
@@ -287,9 +294,9 @@
     }
   },
   "around": {
-    "title": "Nasıl gidilir",
+    "title": "Kent içinde yürüyüş",
     "kicker": "Ulaşım",
-    "lede": "Centar’ın tarihi çekirdeği yürüyerek gezilir. Otobüs, bisiklet, skuter ve taksi gerisini karşılar. Aşağıdaki ücretler aktarılmıştır, uydurulmamıştır.",
+    "lede": "Rota için dokunun, ya da doğum yılınızı yazın. Duraklar doğrulanmış atlastan gelir, uydurulmaz.",
     "modes": "Gidiş yolları",
     "walk": "Yaya",
     "bus": "Kent otobüsü",
@@ -371,7 +378,23 @@
     "compareAssumptions": "Yürüme dakikaları meydandan atlas tahminidir. Scooter dakikaları bunun %40’ıdır. Taksi km’si kuş uçuşu × 1,35.",
     "osmWalk": "OpenStreetMap yürüme tarifi",
     "googleWalk": "Google yürüme tarifi",
-    "museumsOnFoot": "Müze atlasında {count} doğrulanmış kurum var."
+    "museumsOnFoot": "Müze atlasında {count} doğrulanmış kurum var.",
+    "makeRoute": "Bana bir rota yap",
+    "orYear": "veya yılınızı yazın",
+    "yearLabel": "Doğum yılı",
+    "yearPlaceholder": "1994",
+    "yearHint": "{min} ile {max} arasında tam bir yıl. Yalnızca belgelenmiş bir yürüyüş teması seçilir.",
+    "yearInvalid": "{min} ile {max} arasında bir yıl girin.",
+    "yearSubmit": "Bu yıldan kur",
+    "buildingTitle": "Rota kuruluyor",
+    "building_gather": "Doğrulanmış duraklar toplanıyor",
+    "building_order": "Sıra meydandan kuruluyor",
+    "building_hours": "Bugünün basılı saatleri bakılıyor",
+    "building_path": "Yaya çizgisi çiziliyor",
+    "building_lock": "Sıra kilitleniyor",
+    "yourRoute": "Yürüyüşünüz",
+    "drawingStreets": "Sokaklar için kamusal yaya yönlendirici soruluyor",
+    "again": "Başka bir rota yap"
   },
   "detail": {
     "walks": "Buradan geçen yürüyüşler",

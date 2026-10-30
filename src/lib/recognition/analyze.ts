@@ -7,6 +7,8 @@ export type Evidence = {
   vertical: number;
 };
 
+export type ImageQualityIssue = "low-light" | "blurry" | null;
+
 export type ReasonCode =
   | "warmth"
   | "cool"
@@ -97,6 +99,12 @@ export function evidenceFromImageData(image: ImageData): Evidence {
     horizontal: clamp((horizontalEnergy / edgeBase) * 4.2),
     vertical: clamp((verticalEnergy / edgeBase) * 4.2),
   };
+}
+
+export function assessImageQuality(evidence: Evidence): ImageQualityIssue {
+  if (evidence.brightness < 0.08) return "low-light";
+  if (evidence.horizontal + evidence.vertical < 0.045) return "blurry";
+  return null;
 }
 
 export function analyzeSource(

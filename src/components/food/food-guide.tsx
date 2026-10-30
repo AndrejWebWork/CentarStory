@@ -1,12 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ArrowDownRight, MapPinned } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import type { AtlasMarker } from "@/components/map/explore-map";
 import { pick } from "@/content/copy";
 import { dishes, districts } from "@/content/food";
-import { venues } from "@/content/knowledge/culinary";
+import { dishes as dishRecords, venues } from "@/content/knowledge/culinary";
 import { Link } from "@/i18n/navigation";
 
 const Atlas = dynamic(
@@ -68,113 +69,169 @@ export function FoodGuide() {
 
   return (
     <div>
-      <header className="bg-paper-2">
-        <div className="mx-auto grid max-w-6xl gap-6 px-5 py-12 lg:grid-cols-12 lg:px-8 lg:py-20">
-          <div className="lg:col-span-7">
-            <p className="text-[11px] tracking-[0.22em] text-brass uppercase">04 — {t("kicker")}</p>
-            <h1 className="mt-3 font-display text-5xl leading-[0.9] sm:text-7xl">{t("title")}</h1>
+      {/* TERRACOTTA CULINARY FOLIO HEADER */}
+      <header className="relative overflow-hidden border-b border-ink bg-copper text-foam">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.09] sm:text-[15rem]"
+        >
+          04
+        </span>
+        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
+          <div className="lg:col-span-8">
+            <p className="cs-kicker text-foam/80">
+              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
+              04 — {t("kicker")}
+            </p>
+            <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
+              {t("title")}
+            </h1>
           </div>
-          <p className="max-w-md leading-relaxed text-ink-soft lg:col-span-4 lg:col-start-9 lg:pt-10">{t("lede")}</p>
+          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
+            <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
+          </div>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8 lg:py-12">
-        <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{t("inventoryNote")}</p>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">{t("priceCoverage")}</p>
-        <label className="mt-8 block">
-          <span className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("search")}</span>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="mt-2 h-12 w-full border border-line bg-transparent px-3"
-            placeholder={t("searchHint")}
-          />
-        </label>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {(["all", "centar", "nearby"] as const).map((item) => (
-            <button
-              key={item}
-              type="button"
-              aria-pressed={scope === item}
-              onClick={() => setScope(item)}
-              className={`h-11 border px-3 text-sm ${scope === item ? "border-ink bg-ink text-foam" : "border-line"}`}
-            >
-              {t(`scope.${item}`)}
-            </button>
-          ))}
-        </div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-12">
-          <div className="h-80 overflow-hidden border border-line lg:col-span-5">
-            <Atlas
-              markers={markers}
-              selectedId={selected}
-              onSelect={setSelected}
-              line={null}
-              user={null}
-              label={t("mapLabel")}
-            />
+
+      <div className="mx-auto max-w-[96rem]">
+        {/* SEARCH + TABLE NOTES */}
+        <div className="grid border-b border-ink bg-paper-2 lg:grid-cols-12">
+          <div className="border-b border-ink p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
+            <label className="block">
+              <span className="cs-kicker">{t("search")}</span>
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="cs-field mt-2"
+                placeholder={t("searchHint")}
+              />
+            </label>
+            <div className="cs-no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+              {(["all", "centar", "nearby"] as const).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  aria-pressed={scope === item}
+                  onClick={() => setScope(item)}
+                  className={`cs-chip ${scope === item ? "is-on" : ""}`}
+                >
+                  {t(`scope.${item}`)}
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="text-sm leading-relaxed text-ink-soft lg:col-span-7 lg:pt-4">{t("mapNote")}</p>
+          <div className="flex flex-col justify-center p-4 sm:p-6 lg:col-span-6">
+            <p className="text-xs leading-relaxed text-ink-soft sm:text-sm">{t("inventoryNote")}</p>
+            <p className="mt-2 border-l-2 border-copper pl-3 text-xs leading-relaxed text-ink-soft">
+              {t("priceCoverage")}
+            </p>
+          </div>
         </div>
-        <section className="mt-14">
-          <h2 className="font-display text-5xl">{t("dishes")}</h2>
+
+        {/* DISHES AS NUMBERED BROADSHEET SPECIMENS */}
+        <section className="px-4 py-12 sm:px-5 lg:px-8 lg:py-20">
+          <div className="flex items-end justify-between border-b border-ink pb-4">
+            <h2 className="font-display text-4xl sm:text-6xl">{t("dishes")}</h2>
+            <span className="text-[11px] tracking-[0.2em] text-brass uppercase">01 — 0{filteredDishes.length}</span>
+          </div>
           {filteredDishes.length === 0 ? (
-            <p className="mt-4 text-sm">{t("empty")}</p>
+            <p className="mt-6 text-sm">{t("empty")}</p>
           ) : (
-            <ul className="mt-6">
-              {filteredDishes.map((dish) => (
-                <li key={dish.slug} className="border-t border-line py-8">
-                  <Link href={`/food/dishes/${dish.slug}`} className="grid gap-4 lg:grid-cols-12">
-                    <span
-                      className="hidden min-h-28 lg:col-span-3 lg:block"
-                      style={{ background: `linear-gradient(160deg, ${dish.palette[0]}, ${dish.palette[1]})` }}
-                      aria-hidden="true"
-                    />
-                    <span className="lg:col-span-9">
-                      <span className="text-[11px] tracking-[0.16em] text-brass uppercase">{pick(dish.eyebrow, locale)}</span>
-                      <span className="mt-2 block font-display text-4xl leading-none sm:text-5xl">{pick(dish.name, locale)}</span>
-                      <span className="mt-4 block max-w-2xl text-sm leading-relaxed text-ink-soft">
+            <ol className="divide-y divide-ink border-b border-ink">
+              {filteredDishes.map((dish, index) => {
+                const record = dishRecords.find((item) => item.slug === dish.slug);
+                return (
+                  <li key={dish.slug}>
+                    <Link
+                      href={`/food/dishes/${dish.slug}`}
+                      className="group grid gap-3 py-6 sm:py-8 lg:grid-cols-12 lg:items-baseline"
+                    >
+                      <div className="flex items-baseline justify-between lg:col-span-2">
+                        <span className="font-display text-4xl leading-none text-copper sm:text-5xl">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span
+                          className="h-3 w-10 border border-ink lg:hidden"
+                          style={{ background: `linear-gradient(90deg, ${dish.palette[0]}, ${dish.palette[1]})` }}
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="lg:col-span-5">
+                        <span className="block text-[10px] tracking-[0.22em] text-brass uppercase">
+                          {pick(dish.eyebrow, locale)}
+                        </span>
+                        <span className="mt-1.5 block font-display text-4xl leading-[0.9] group-hover:text-copper sm:text-5xl">
+                          {pick(dish.name, locale)}
+                        </span>
+                        {record?.nameMk ? (
+                          <span className="mt-1 block text-xs text-ink-soft">{record.nameMk}</span>
+                        ) : null}
+                      </div>
+                      <span className="max-w-xl text-sm leading-relaxed text-ink-soft lg:col-span-4">
                         {pick(dish.summary, locale)}
                       </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <span className="hidden lg:col-span-1 lg:block lg:justify-self-end">
+                        <ArrowDownRight className="size-5" aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
           )}
         </section>
-        <section className="mt-14">
-          <h2 className="font-display text-4xl">{t("kitchens")}</h2>
-          <h3 className="mt-8 text-[11px] tracking-[0.18em] text-brass uppercase">{t("inCentar")}</h3>
-          {inCentar.length === 0 ? (
-            <p className="mt-3 text-sm">{t("empty")}</p>
-          ) : (
-            <ul className="mt-4 grid gap-4 lg:grid-cols-2">
-              {inCentar.map((restaurant) => (
-                <li key={restaurant.slug}>
-                  <HouseCard restaurant={restaurant} selected={selected} onSelect={setSelected} />
-                </li>
-              ))}
-            </ul>
-          )}
-          <h3 className="mt-10 text-[11px] tracking-[0.18em] text-copper uppercase">{t("nearby")}</h3>
-          {nearby.length === 0 ? (
-            <p className="mt-3 text-sm">{t("empty")}</p>
-          ) : (
-            <ul className="mt-4 grid gap-4 lg:grid-cols-2">
-              {nearby.map((restaurant) => (
-                <li key={restaurant.slug}>
-                  <HouseCard restaurant={restaurant} selected={selected} onSelect={setSelected} />
-                </li>
-              ))}
-            </ul>
-          )}
+
+        {/* KITCHENS + MAP */}
+        <section className="border-t border-ink bg-foam">
+          <div className="grid lg:grid-cols-12">
+            <div className="border-b border-ink p-4 sm:p-8 lg:col-span-7 lg:border-r lg:border-b-0 lg:p-12">
+              <h2 className="font-display text-4xl sm:text-5xl">{t("kitchens")}</h2>
+              <h3 className="mt-6 cs-kicker">{t("inCentar")}</h3>
+              {inCentar.length === 0 ? (
+                <p className="mt-3 text-sm">{t("empty")}</p>
+              ) : (
+                <ul className="mt-3 divide-y divide-ink border-y border-ink">
+                  {inCentar.map((restaurant) => (
+                    <li key={restaurant.slug}>
+                      <HouseRow restaurant={restaurant} selected={selected} onSelect={setSelected} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <h3 className="mt-8 cs-kicker text-copper">{t("nearby")}</h3>
+              {nearby.length === 0 ? (
+                <p className="mt-3 text-sm">{t("empty")}</p>
+              ) : (
+                <ul className="mt-3 divide-y divide-ink border-y border-ink">
+                  {nearby.map((restaurant) => (
+                    <li key={restaurant.slug}>
+                      <HouseRow restaurant={restaurant} selected={selected} onSelect={setSelected} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-col lg:col-span-5">
+              <div className="h-72 sm:h-96 lg:flex-1 border-b border-ink">
+                <Atlas
+                  markers={markers}
+                  selectedId={selected}
+                  onSelect={setSelected}
+                  line={null}
+                  user={null}
+                  label={t("mapLabel")}
+                />
+              </div>
+              <p className="p-4 text-xs leading-relaxed text-ink-soft sm:p-6">{t("mapNote")}</p>
+            </div>
+          </div>
         </section>
       </div>
     </div>
   );
 }
 
-function HouseCard({
+function HouseRow({
   restaurant,
   selected,
   onSelect,
@@ -184,20 +241,42 @@ function HouseCard({
   onSelect: (slug: string) => void;
 }) {
   const t = useTranslations("food");
+  const common = useTranslations("common");
   const locale = useLocale();
+  const isSelected = selected === restaurant.slug;
   return (
-    <article className={`border p-5 ${selected === restaurant.slug ? "border-ink" : "border-line"}`}>
-      <button type="button" className="text-left" onClick={() => onSelect(restaurant.slug)}>
-        <span className="block font-display text-3xl">{restaurant.name}</span>
-      </button>
+    <article className={`py-5 ${isSelected ? "bg-paper px-3" : ""}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <button type="button" className="text-left" onClick={() => onSelect(restaurant.slug)}>
+            <span className="block font-display text-3xl leading-none sm:text-4xl">{restaurant.name}</span>
+          </button>
+          <span className="mt-1 block text-[10px] tracking-[0.16em] text-brass uppercase">
+            {t("lastChecked", { date: restaurant.lastChecked })}
+          </span>
+        </div>
+        {restaurant.coordinates ? (
+          <button
+            type="button"
+            onClick={() => onSelect(restaurant.slug)}
+            className="grid size-11 shrink-0 place-items-center border border-ink bg-paper"
+            aria-label={common("onMap")}
+          >
+            <MapPinned className="size-4" aria-hidden="true" />
+          </button>
+        ) : null}
+      </div>
       {restaurant.municipality === "nearby" ? (
-        <p className="mt-2 text-[11px] tracking-[0.16em] text-copper uppercase">{t("nearby")}</p>
+        <p className="mt-2 text-[10px] tracking-[0.2em] text-copper uppercase">{t("nearby")}</p>
       ) : null}
-      <p className="mt-2 text-sm leading-relaxed text-ink-soft">{pick(restaurant.summary, locale)}</p>
-      {!restaurant.coordinates ? <p className="mt-2 text-sm text-copper">{t("unmapped")}</p> : null}
-      <p className="mt-3 text-xs text-brass">{t("lastChecked", { date: restaurant.lastChecked })}</p>
-      <Link href={`/food/places/${restaurant.slug}`} className="mt-4 inline-flex h-11 items-center text-sm text-copper">
-        {t("openHouse")}
+      <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-ink-soft">{pick(restaurant.summary, locale)}</p>
+      {!restaurant.coordinates ? <p className="mt-2 text-xs text-copper">{t("unmapped")}</p> : null}
+      <Link
+        href={`/food/places/${restaurant.slug}`}
+        className="mt-3 inline-flex h-10 items-center gap-1.5 text-xs tracking-[0.16em] text-copper uppercase underline"
+      >
+        <span>{t("openHouse")}</span>
+        <ArrowDownRight className="size-3.5" aria-hidden="true" />
       </Link>
     </article>
   );

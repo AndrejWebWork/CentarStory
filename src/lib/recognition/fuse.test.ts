@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { PRECOMPUTED_REFERENCE_EMBEDDINGS } from "./embeddings";
 import { capDisplayedScore, decideOutcome, fuseCandidates } from "./fuse";
+import { embeddingSimilarity, evaluateLocalSamples } from "./on-device";
+import { recognitionConfig, recognizeOnServer } from "./server";
 
 const coordinates = {
   "stone-bridge": { lat: 41.9971154, lng: 21.4332499 },
@@ -7,7 +10,18 @@ const coordinates = {
   "porta-macedonia": { lat: 41.9939, lng: 21.4316 },
 };
 
-function run() {
+function makePatch(r: number, g: number, b: number) {
+  const data = new Uint8ClampedArray(32 * 24 * 4);
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+    data[i + 3] = 255;
+  }
+  return { width: 32, height: 24, data, colorSpace: "srgb" as const };
+}
+
+async function run() {
   const identified = fuseCandidates({
     mode: "remote",
     vision: [{ slug: "stone-bridge", score: 0.82, rationale: "arches" }],
@@ -97,7 +111,103 @@ function run() {
   assert.equal(capDisplayedScore(1), 97);
   assert.equal(capDisplayedScore(0.973), 97);
 
+  // Precomputed reference embeddings: self-similarity must be 1 and discriminate different monuments.
+  assert.ok(PRECOMPUTED_REFERENCE_EMBEDDINGS.length >= 10);
+  const gruevRef = PRECOMPUTED_REFERENCE_EMBEDDINGS.find((item) => item.slug === "dame-gruev-square")!;
+  const plaqueRef = PRECOMPUTED_REFERENCE_EMBEDDINGS.find((item) => item.slug === "karposh-execution-plaque")!;
+  assert.ok(embeddingSimilarity(gruevRef, gruevRef) > 0.99);
+  assert.ok(embeddingSimilarity(gruevRef, gruevRef) - embeddingSimilarity(gruevRef, plaqueRef) > 0.25);
+
+  const gruevEval = evaluateLocalSamples({
+    evidence: {
+      brightness: 0.52,
+      warmth: 0.58,
+      saturation: 0.22,
+      green: 0.08,
+      horizontal: 0.42,
+      vertical: 0.58,
+    },
+    precomputedScores: PRECOMPUTED_REFERENCE_EMBEDDINGS.map((ref) => ({
+      slug: ref.slug,
+      score: embeddingSimilarity(gruevRef, ref),
+    })),
+  });
+  assert.equal(gruevEval.result.outcome, "identified");
+  assert.equal(gruevEval.result.candidates[0]?.slug, "dame-gruev-square");
+
+  // Paid providers must be rejected even if an API key is set.
+  const prevKey = process.env.RECOGNITION_API_KEY;
+  const prevProvider = process.env.RECOGNITION_PROVIDER;
+  const prevFree = process.env.RECOGNITION_FREE_TIER;
+  try {
+    process.env.RECOGNITION_API_KEY = "test-key";
+    process.env.RECOGNITION_PROVIDER = "openai";
+    process.env.RECOGNITION_FREE_TIER = "true";
+    assert.equal(recognitionConfig().configured, false);
+
+    delete process.env.RECOGNITION_API_KEY;
+    delete process.env.RECOGNITION_PROVIDER;
+    delete process.env.RECOGNITION_FREE_TIER;
+    const unconfigured = await recognizeOnServer({ jpegBase64: "AA==" });
+    assert.equal(unconfigured.mode, "demo");
+    assert.equal(unconfigured.outcome, "unknown");
+    assert.equal(unconfigured.note, "unconfigured");
+  } finally {
+    if (prevKey === undefined) delete process.env.RECOGNITION_API_KEY;
+    else process.env.RECOGNITION_API_KEY = prevKey;
+    if (prevProvider === undefined) delete process.env.RECOGNITION_PROVIDER;
+    else process.env.RECOGNITION_PROVIDER = prevProvider;
+    if (prevFree === undefined) delete process.env.RECOGNITION_FREE_TIER;
+    else process.env.RECOGNITION_FREE_TIER = prevFree;
+  }
+
+  // Local matching when reference images are unavailable falls back to structural candidates or unknown.
+  const noRefsStone = evaluateLocalSamples({
+    evidence: {
+      brightness: 0.52,
+      warmth: 0.58,
+      saturation: 0.16,
+      green: 0.04,
+      horizontal: 0.72,
+      vertical: 0.22,
+    },
+    shotPatch: makePatch(140, 128, 112),
+    refs: [],
+  });
+  assert.equal(noRefsStone.result.note, "references-unavailable");
+  assert.notEqual(noRefsStone.result.outcome, "identified");
+
+  // Low-light frame is flagged as low-light and returns unknown with zero candidates.
+  const unrelated = evaluateLocalSamples({
+    evidence: {
+      brightness: 0.01,
+      warmth: 0.1,
+      saturation: 0.95,
+      green: 0.9,
+      horizontal: 0,
+      vertical: 0,
+    },
+    shotPatch: makePatch(0, 250, 0),
+    refs: [
+      {
+        slug: "stone-bridge",
+        evidence: {
+          brightness: 0.55,
+          warmth: 0.58,
+          saturation: 0.18,
+          green: 0.05,
+          horizontal: 0.7,
+          vertical: 0.25,
+        },
+        patch: makePatch(150, 140, 130),
+      },
+    ],
+  });
+  assert.equal(unrelated.qualityIssue, "low-light");
+  assert.equal(unrelated.result.outcome, "unknown");
+  assert.equal(unrelated.result.candidates.length, 0);
+
   console.log("recognition fusion tests passed");
 }
 
-run();
+void run();

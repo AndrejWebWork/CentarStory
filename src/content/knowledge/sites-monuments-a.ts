@@ -1,0 +1,637 @@
+import { L } from "@/content/copy";
+import type { Copy, Coordinates, Motif, PlaceKind } from "@/content/types";
+import type { EntityType, MonumentCategory, SiteRecord, VerificationStatus } from "@/content/knowledge/schema";
+
+type MonumentSeed = {
+  slug: string;
+  osmId: string;
+  wikidataId?: string;
+  entityType: EntityType;
+  monumentCategory: MonumentCategory;
+  kinds: PlaceKind[];
+  verificationStatus?: VerificationStatus;
+  name: Copy;
+  nameMk: string;
+  aliases: string[];
+  translit: string[];
+  coordinates: Coordinates;
+  address: Copy;
+  eyebrow: Copy;
+  era: Copy;
+  installationDate?: string;
+  commemorates: Copy;
+  creator?: Copy;
+  materials?: Copy;
+  features: Copy;
+  summary: Copy;
+  storyLead: Copy;
+  storyBody: Copy;
+  claimText: Copy;
+  interpText?: Copy;
+  missingOrDisputed?: Copy;
+  sourceIds: string[];
+  related: string[];
+  images?: string[];
+  motif: Motif;
+  palette: [string, string];
+};
+
+function buildMonument(seed: MonumentSeed): SiteRecord {
+  const checked = "2026-10-30";
+  const claims: SiteRecord["claims"] = [
+    {
+      id: `${seed.slug}-claim-doc`,
+      kind: "documented-fact",
+      sourceIds: seed.sourceIds,
+      text: seed.claimText,
+    },
+  ];
+  if (seed.interpText) {
+    claims.push({
+      id: `${seed.slug}-claim-interp`,
+      kind: "interpretation",
+      sourceIds: seed.sourceIds,
+      text: seed.interpText,
+    });
+  }
+  const milestones: SiteRecord["milestones"] = seed.installationDate
+    ? [
+        {
+          id: `${seed.slug}-m-install`,
+          date: seed.installationDate,
+          precision: seed.installationDate.length > 4 ? "day" : "year",
+          kind: "documented-fact",
+          sourceIds: seed.sourceIds,
+          label: seed.storyLead,
+        },
+      ]
+    : [];
+
+  return {
+    id: `site-${seed.slug}`,
+    slug: seed.slug,
+    osmId: seed.osmId,
+    wikidataId: seed.wikidataId,
+    entityType: seed.entityType,
+    monumentCategory: seed.monumentCategory,
+    kinds: seed.kinds,
+    officialName: seed.name,
+    nameMk: seed.nameMk,
+    alternativeNames: seed.aliases,
+    transliterations: seed.translit,
+    coordinates: seed.coordinates,
+    coordinateSourceId: "osm-overpass-centar",
+    coordinatePrecision: "polygon-checked",
+    municipality: "centar",
+    address: seed.address,
+    historicalPeriod: seed.era,
+    installationDate: seed.installationDate,
+    commemorates: seed.commemorates,
+    creator: seed.creator,
+    materials: seed.materials,
+    missingOrDisputed: seed.missingOrDisputed,
+    architecturalStyle: seed.eyebrow,
+    architecturalFeatures: seed.features,
+    significance: seed.summary,
+    milestones,
+    claims,
+    myths: [
+      {
+        id: `${seed.slug}-myth-none`,
+        kind: "unverified",
+        sourceIds: ["osm-overpass-centar"],
+        text: L(
+          `No independently verified folkloric legend attached specifically to the physical monument "${seed.name.en}" was found in the sources consulted; historical commemoration is separated from folklore.`,
+          `Во консултираните извори не е пронајдена посебно потврдена фолклорна легенда за физичкиот споменик „${seed.name.mk}“; историското одбележување е одвоено од фолклорот.`,
+          `U konsultovanim izvorima nije pronađena posebno potvrđena folklorna legenda za fizički spomenik „${seed.name.sr}“; istorijsko obeležavanje je odvojeno od folklora.`,
+          `Danışılan kaynaklarda "${seed.name.tr}" физикsel anıtına özgü doğrulanmış bir folklor efsanesi bulunamadı; tarihsel anma folklordan ayrılmıştır.`,
+          `У використаних джерелах не знайдено окремо підтвердженої фольклорної легенди щодо фізичного пам'ятника «${seed.name.uk}»; історичне вшанування відокремлене від фольклору.`,
+        ),
+      },
+    ],
+    related: seed.related,
+    images: seed.images ?? [],
+    translationStatus: "complete",
+    verificationStatus: seed.verificationStatus ?? "confirmed",
+    lastChecked: checked,
+    summary: seed.summary,
+    story: [seed.storyLead, seed.storyBody],
+    visit: L(
+      "Located in open public space within the Municipality of Centar; accessible on foot at all hours.",
+      "Сместен во отворен јавен простор во Општина Центар; достапен пеш во секое време.",
+      "Smešten u otvorenom javnom prostoru u Opštini Centar; dostupan peške u svako doba.",
+      "Centar Belediyesi içinde açık kamusal alanda yer alır; her saat yürüyerek erişilebilir.",
+      "Розташований у відкритому громадському просторі громади Центар; доступний пішки цілодобово.",
+    ),
+    eyebrow: seed.eyebrow,
+    era: seed.era,
+    palette: seed.palette,
+    motif: seed.motif,
+  };
+}
+
+const seeds: MonumentSeed[] = [
+  {
+    slug: "goce-delcev-square",
+    osmId: "node/5711419372",
+    wikidataId: "Q20569889",
+    entityType: "monument",
+    monumentCategory: "monumental-statue",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to Goce Delčev (Macedonia Square)",
+      "Споменик на Гоце Делчев (Плоштад Македонија)",
+      "Spomenik Goce Delčevu (Trg Makedonija)",
+      "Goce Delçev Anıtı (Makedonya Meydanı)",
+      "Пам'ятник Гоце Делчеву (Площа Македонія)",
+    ),
+    nameMk: "Споменик на Гоце Делчев",
+    aliases: ["Goce Delchev Monument", "Гоце Делчев Камен мост"],
+    translit: ["Spomenik na Goce Delcev"],
+    coordinates: { lat: 41.9963635, lng: 21.4323421 },
+    address: L(
+      "Macedonia Square by the Stone Bridge, Centar",
+      "Плоштад Македонија покрај Камениот мост, Центар",
+      "Trg Makedonija pored Kamenog mosta, Centar",
+      "Taş Köprü yanı Makedonya Meydanı, Centar",
+      "Площа Македонія біля Кам'яного мосту, Центар",
+    ),
+    eyebrow: L("Bronze equestrian statue", "Бронзен коњанички споменик", "Bronzani konjanički spomenik", "Bronz atlı heykel", "Бронзова кінна статуя"),
+    era: L("Skopje 2014 (installed May 2011)", "Скопје 2014 (поставен мај 2011)", "Skoplje 2014 (postavljen maj 2011)", "Üsküp 2014 (Mayıs 2011)", "Скоп'є 2014 (травень 2011)"),
+    installationDate: "2011-05",
+    commemorates: L(
+      "Goce Delčev (1872–1903), teacher and leading ideologue of the Macedonian revolutionary movement.",
+      "Гоце Делчев (1872–1903), учител и водечки идеолог на македонското револуционерно движење.",
+      "Goce Delčev (1872–1903), učitelj i vodeći ideolog makedonskog revolucionarnog pokreta.",
+      "Goce Delçev (1872–1903), öğretmen ve Makedon devrimci hareketinin önde gelen ideoloğu.",
+      "Гоце Делчев (1872–1903), учитель і провідний ідеолог македонського революційного руху.",
+    ),
+    creator: L(
+      "Sculptor Žarko Bašeski; cast at Fonderia Ferdinando Marinelli, Florence; investor Municipality of Centar.",
+      "Вајар Жарко Башески; излеан во леарницата Фердинандо Маринели, Фиренца; инвеститор Општина Центар.",
+      "Vajar Žarko Bašeski; izliven u livnici Ferdinando Marinelli, Firenca; investitor Opština Centar.",
+      "Heykeltıraş Jarko Başeski; Floransa Ferdinando Marinelli dökümhanesi; yatırımcı Centar Belediyesi.",
+      "Скульптор Жарко Башескі; відлитий у ливарні Фердінандо Марінеллі, Флоренція; інвестор громада Центар.",
+    ),
+    materials: L("Bronze statue on stone pedestal with bronze reliefs", "Бронзена статуа на камен постамент со бронзени релјефи", "Bronzana statua na kamenom postamentu sa bronzanim reljefima", "Bronz kabartmalı taş kaide üzerinde bronz heykel", "Бронзова статуя на кам'яному постаменті з рельєфами"),
+    features: L(
+      "Equestrian bronze flanking the southern approach to the Stone Bridge, paired symmetrically with the monument to Dame Gruev.",
+      "Бронзен коњаник на јужниот пристап кон Камениот мост, симетрично поставен во пар со споменикот на Даме Груев.",
+      "Bronzani konjanik na južnom prilazu Kamenom mostu, simetrično uparen sa spomenikom Dame Gruevu.",
+      "Taş Köprü’nün güney girişinde Dame Gruev anıtıyla simetrik yerleştirilmiş bronz atlı heykel.",
+      "Бронзовий вершник біля південного підходу до Кам'яного мосту, симетрично спарений із пам'ятником Даме Груєву.",
+    ),
+    summary: L(
+      "Equestrian bronze monument to Goce Delčev at the southern approach to the Stone Bridge.",
+      "Коњанички бронзен споменик на Гоце Делчев на јужниот влез на Камениот мост.",
+      "Konjanički bronzani spomenik Goce Delčevu na južnom ulazu na Kameni most.",
+      "Taş Köprü’nün güney girişinde Goce Delçev’in bronz atlı anıtı.",
+      "Кінний бронзовий пам'ятник Гоце Делчеву біля південного входу на Кам'яний міст.",
+    ),
+    storyLead: L(
+      "Installed in early May 2011 alongside Dame Gruev as one of the first monumental bronzes of Skopje 2014 on Macedonia Square.",
+      "Поставен во почетокот на мај 2011 заедно со Даме Груев како еден од првите монументални бронзени споменици од Скопје 2014 на плоштадот Македонија.",
+      "Postavljen početkom maja 2011. zajedno sa Dame Gruevim kao jedan od prvih monumentalnih bronzanih spomenika Skoplja 2014 na trgu Makedonija.",
+      "Mayıs 2011 başında Dame Gruev ile birlikte Makedonya Meydanı’na yerleştirilen ilk Üsküp 2014 bronz anıtlarından biridir.",
+      "Встановлений на початку травня 2011 року разом із Даме Груєвим як один із перших монументальних бронзових пам'ятників «Скоп'є 2014» на площі Македонія.",
+    ),
+    storyBody: L(
+      "Note that a second, older monument to Goce Delčev (1946, by Ljubomir Stefanović) stands in City Park; this record documents the 2011 equestrian statue by the Stone Bridge.",
+      "Внимавајте дека втор, постар споменик на Гоце Делчев (1946, од Љубомир Стефановиќ) стои во Градскиот парк; овој запис го документира коњаничкиот споменик од 2011 покрај Камениот мост.",
+      "Obratite pažnju da drugi, stariji spomenik Goce Delčevu (1946, Ljubomir Stefanović) stoji u Gradskom parku; ovaj zapis dokumentuje konjanički spomenik iz 2011. pored Kamenog mosta.",
+      "Şehir Parkı’nda Goce Delçev’in ikinci ve daha eski bir anıtı (1946, Ljubomir Stefanović) bulunduğuna dikkat edin; bu kayıt Taş Köprü yanındaki 2011 atlı heykelini belgeler.",
+      "Зверніть увагу, що другий, старіший пам'ятник Гоце Делчеву (1946, Любомир Стефанович) стоїть у Міському парку; цей запис документує кінну статую 2011 року біля Кам'яного мосту.",
+    ),
+    claimText: L(
+      "OSM node 5711419372, Wikidata Q20569889, and the Prizma Skopje 2014 procurement archive document the equestrian bronze of Goce Delčev cast at Fonderia Marinelli in Florence and placed at the Stone Bridge approach in May 2011.",
+      "OSM јазолот 5711419372, Wikidata Q20569889 и архивата на Призма за Скопје 2014 го документираат бронзениот коњаник на Гоце Делчев излеан во леарницата Маринели во Фиренца и поставен пред Камениот мост во мај 2011.",
+      "OSM čvor 5711419372, Wikidata Q20569889 i arhiva Prizme za Skoplje 2014 dokumentuju bronzanog konjanika Goce Delčeva izlivenog u livnici Marinelli u Firenci i postavljenog pred Kameni most u maju 2011.",
+      "OSM düğümü 5711419372, Wikidata Q20569889 ve Prizma Üsküp 2014 arşivi, Floransa Marinelli dökümhanesinde dökülen ve Mayıs 2011’de Taş Köprü girişine konulan Goce Delçev atlı bronz heykelini belgeler.",
+      "Вузол OSM 5711419372, Wikidata Q20569889 та архів Prizma «Скоп'є 2014» документують бронзового вершника Гоце Делчева, відлитого у Флоренції та встановленого біля Кам'яного мосту в травні 2011 року.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-delcev", "commons-delcev", "mkwiki-monuments"],
+    related: ["dame-gruev-square", "stone-bridge", "macedonia-square", "goce-delcev-park"],
+    images: ["img-goce-delcev"],
+    motif: "rider",
+    palette: ["#6e563a", "#261f18"],
+  },
+  {
+    slug: "dame-gruev-square",
+    osmId: "node/4161113452",
+    wikidataId: "Q20566163",
+    entityType: "monument",
+    monumentCategory: "monumental-statue",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to Dame Gruev",
+      "Споменик на Даме Груев",
+      "Spomenik Dame Gruevu",
+      "Dame Gruev Anıtı",
+      "Пам'ятник Даме Груєву",
+    ),
+    nameMk: "Споменик на Даме Груев",
+    aliases: ["Dame Gruev equestrian statue", "Даме Груев Плоштад Македонија"],
+    translit: ["Spomenik na Dame Gruev"],
+    coordinates: { lat: 41.9965251, lng: 21.4321439 },
+    address: L(
+      "Macedonia Square, western side of Stone Bridge approach, Centar",
+      "Плоштад Македонија, западна страна од пристапот кон Камениот мост, Центар",
+      "Trg Makedonija, zapadna strana prilaza Kamenom mostu, Centar",
+      "Makedonya Meydanı, Taş Köprü girişinin batı yanı, Centar",
+      "Площа Македонія, західний бік підходу до Кам'яного мосту, Центар",
+    ),
+    eyebrow: L("Bronze equestrian statue", "Бронзен коњанички споменик", "Bronzani konjanički spomenik", "Bronz atlı heykel", "Бронзова кінна статуя"),
+    era: L("Skopje 2014 (installed May 2011)", "Скопје 2014 (поставен мај 2011)", "Skoplje 2014 (postavljen maj 2011)", "Üsküp 2014 (Mayıs 2011)", "Скоп'є 2014 (травень 2011)"),
+    installationDate: "2011-05",
+    commemorates: L(
+      "Dame Gruev (1871–1906), teacher and co-founder of the Macedonian Revolutionary Organization (1893).",
+      "Даме Груев (1871–1906), учител и соосновач на Македонската револуционерна организација (1893).",
+      "Dame Gruev (1871–1906), učitelj i suosnivač Makedonske revolucionarne organizacije (1893).",
+      "Dame Gruev (1871–1906), öğretmen ve Makedon Devrimci Örgütü’nün (1893) kurucu ortağı.",
+      "Даме Груєв (1871–1906), учитель і співзасновник Македонської революційної організації (1893).",
+    ),
+    creator: L(
+      "Sculptor Žarko Bašeski; cast at Fonderia Ferdinando Marinelli, Florence; investor Municipality of Centar.",
+      "Вајар Жарко Башески; излеан во леарницата Фердинандо Маринели, Фиренца; инвеститор Општина Центар.",
+      "Vajar Žarko Bašeski; izliven u livnici Ferdinando Marinelli, Firenca; investitor Opština Centar.",
+      "Heykeltıraş Jarko Başeski; Floransa Ferdinando Marinelli dökümhanesi; yatırımcı Centar Belediyesi.",
+      "Скульптор Жарко Башескі; відлитий у ливарні Фердінандо Марінеллі, Флоренція; інвестор громада Центар.",
+    ),
+    materials: L("Bronze equestrian figure on stone pedestal", "Бронзен коњаник на камен постамент", "Bronzani konjanik na kamenom postamentu", "Taş kaide üzerinde bronz atlı figür", "Бронзовий вершник на кам'яному постаменті"),
+    features: L(
+      "Depicts Dame Gruev on horseback holding a Mannlicher rifle, paired with Goce Delčev across the axis of the Stone Bridge.",
+      "Го прикажува Даме Груев на коњ со пушка манлихера, поставен во пар со Гоце Делчев од двете страни на оската на Камениот мост.",
+      "Prikazuje Dame Grueva na konju sa puškom manliherkom, uparenog sa Goce Delčevim sa obe strane ose Kamenog mosta.",
+      "Taş Köprü ekseninin iki yanında Goce Delçev ile eşleştirilmiş, elinde Mannlicher tüfeğiyle at üzerindeki Dame Gruev’i betimler.",
+      "Зображує Даме Груєва на коні з гвинтівкою Манліхера, спареного з Гоце Делчевим обабіч осі Кам'яного мосту.",
+    ),
+    summary: L(
+      "Equestrian bronze monument to revolutionary co-founder Dame Gruev beside the Stone Bridge.",
+      "Коњанички бронзен споменик на револуционерниот соосновач Даме Груев покрај Камениот мост.",
+      "Konjanički bronzani spomenik revolucionarnom suosnivaču Dame Gruevu pored Kamenog mosta.",
+      "Taş Köprü yanında devrimci kurucu ortak Dame Gruev’in bronz atlı anıtı.",
+      "Кінний бронзовий пам'ятник співзасновнику революційного руху Даме Груєву біля Кам'яного мосту.",
+    ),
+    storyLead: L(
+      "Erected in May 2011 at the western flank of the Stone Bridge approach on Macedonia Square.",
+      "Подигнат во мај 2011 на западната страна од пристапот кон Камениот мост на плоштадот Македонија.",
+      "Podignut u maju 2011. na zapadnoj strani prilaza Kamenom mostu na trgu Makedonija.",
+      "Mayıs 2011’de Makedonya Meydanı’nda Taş Köprü girişinin batı kanadına dikildi.",
+      "Встановлений у травні 2011 року на західному фланзі підходу до Кам'яного мосту на площі Македонія.",
+    ),
+    storyBody: L(
+      "Gruev also appears within the six-figure ensemble of the Founders of IMRO in Woman-Warrior Park.",
+      "Груев е претставен и во групниот споменик на шестмината основачи на МРО во паркот „Жена-борец“.",
+      "Gruev je predstavljen i u grupnom spomeniku šestorici osnivača MRO u parku „Žena-borac“.",
+      "Gruev ayrıca Kadın Savaşçı Parkı’ndaki altı figürlü MRO Kurucuları topluluğunda da yer alır.",
+      "Груєв також зображений у шестифігурному ансамблі засновників МРО в парку «Жінка-борець».",
+    ),
+    claimText: L(
+      "Documented by OSM node 4161113452, Wikidata Q20566163, and Prizma's Skopje 2014 database as a bronze equestrian statue cast in Florence and installed in May 2011.",
+      "Документиран преку OSM јазолот 4161113452, Wikidata Q20566163 и базата на Призма за Скопје 2014 како бронзен коњаник излеан во Фиренца и поставен во мај 2011.",
+      "Dokumentovan kroz OSM čvor 4161113452, Wikidata Q20566163 i bazu Prizme za Skoplje 2014 kao bronzani konjanik izliven u Firenci i postavljen u maju 2011.",
+      "OSM düğümü 4161113452, Wikidata Q20566163 ve Prizma Üsküp 2014 veri tabanında Floransa’da dökülüp Mayıs 2011’de yerleştirilen bronz atlı heykel olarak belgelenmiştir.",
+      "Задокументований вузлом OSM 4161113452, Wikidata Q20566163 та базою Prizma «Скоп'є 2014» як бронзовий кінний пам'ятник, відлитий у Флоренції та встановлений у травні 2011 року.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-gruev", "commons-gruev", "mkwiki-monuments"],
+    related: ["goce-delcev-square", "stone-bridge", "macedonia-square", "imro-founders-monument"],
+    images: ["img-dame-gruev"],
+    motif: "rider",
+    palette: ["#5e4a32", "#1e1914"],
+  },
+  {
+    slug: "tsar-samoil-monument",
+    osmId: "node/4149143991",
+    wikidataId: "Q12910631",
+    entityType: "monument",
+    monumentCategory: "monumental-statue",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to Tsar Samoil",
+      "Споменик на Цар Самоил",
+      "Spomenik Caru Samuilu",
+      "Çar Samoil Anıtı",
+      "Пам'ятник Царю Самуїлу",
+    ),
+    nameMk: "Споменик на Цар Самоил",
+    aliases: ["Tsar Samuel Monument", "Цар Самоил Плоштад Македонија"],
+    translit: ["Spomenik na Car Samoil"],
+    coordinates: { lat: 41.995384, lng: 21.4312416 },
+    address: L(
+      "Macedonia Square, entrance to Makedonija Street, Centar",
+      "Плоштад Македонија, пред влезот на ул. Македонија, Центар",
+      "Trg Makedonija, pred ulazom u ul. Makedonija, Centar",
+      "Makedonya Meydanı, Makedonya Caddesi girişi, Centar",
+      "Площа Македонія, перед входом на вул. Македонія, Центар",
+    ),
+    eyebrow: L("White marble enthroned statue", "Бел мермерен споменик на престол", "Beli mermerni spomenik na prestolu", "Beyaz mermer taht heykeli", "Біломармурова статуя на престолі"),
+    era: L("Skopje 2014 (installed 28 June 2011)", "Скопје 2014 (поставен 28 јуни 2011)", "Skoplje 2014 (postavljen 28. juna 2011)", "Üsküp 2014 (28 Haziran 2011)", "Скоп'є 2014 (28 червня 2011)"),
+    installationDate: "2011-06-28",
+    commemorates: L(
+      "Tsar Samoil (r. 997–1014), medieval ruler whose realm included Skopje and Ohrid.",
+      "Цар Самоил (вл. 997–1014), средновековен владетел чија држава ги опфаќала Скопје и Охрид.",
+      "Car Samuilo (vl. 997–1014), srednjovekovni vladar čija je država obuhvatala Skoplje i Ohrid.",
+      "Çar Samoil (h. 997–1014), Üsküp ve Ohri’yi kapsayan ortaçağ hükümdarı.",
+      "Цар Самуїл (пр. 997–1014), середньовічний правитель, держава якого охоплювала Скоп'є та Охрид.",
+    ),
+    creator: L(
+      "Sculptor Dimitar Filipovski; carved at Galleria Pietro Bazzanti & Figlio and cast reliefs at Fonderia Ferdinando Marinelli, Florence.",
+      "Вајар Димитар Филиповски; изработен во галеријата Пјетро Базанти и Фиљо и леарницата Фердинандо Маринели, Фиренца.",
+      "Vajar Dimitar Filipovski; izrađen u galeriji Pietro Bazzanti & Figlio i livnici Ferdinando Marinelli, Firenca.",
+      "Heykeltıraş Dimitar Filipovski; Floransa Pietro Bazzanti & Figlio galerisi ve Ferdinando Marinelli dökümhanesi.",
+      "Скульптор Димитар Филиповські; виконаний у галереї П'єтро Баццанті та ливарні Марінеллі у Флоренції.",
+    ),
+    materials: L("5 m white marble statue on 3.5 m white marble pedestal with bronze reliefs", "5 м статуа од бел мермер на 3,5 м постамент од бел мермер со бронзени релјефи", "5 m statua od belog mermera na 3,5 m postamentu sa bronzanim reljefima", "3,5 m mermer kaide ve bronz kabartmalar üzerinde 5 m beyaz mermer heykel", "5-метрова статуя з білого мармуру на 3,5-метровому постаменті з бронзовими рельєфами"),
+    features: L(
+      "Enthroned figure in white marble holding a sceptre at the southern edge of Macedonia Square where Makedonija pedestrian street begins.",
+      "Седечка фигура во бел мермер со жезол на јужниот раб на плоштадот Македонија, каде што почнува пешачката улица Македонија.",
+      "Sedeća figura u belom mermeru sa žezlom na južnom rubu trga Makedonija, gde počinje pešačka ulica Makedonija.",
+      "Makedonya Meydanı’nın güney ucunda, Makedonya yaya caddesinin başladığı noktada asa tutan beyaz mermer taht figürü.",
+      "Сидяча постать із білого мармуру зі скіпетром на південному краю площі Македонія на початку вулиці Македонія.",
+    ),
+    summary: L(
+      "White marble monument to Tsar Samoil at the southern edge of Macedonia Square.",
+      "Бел мермерен споменик на Цар Самоил на јужниот раб од плоштадот Македонија.",
+      "Beli mermerni spomenik Caru Samuilu na južnom rubu trga Makedonija.",
+      "Makedonya Meydanı’nın güney kenarında Çar Samoil’in beyaz mermer anıtı.",
+      "Біломармуровий пам'ятник Царю Самуїлу на південному краю площі Македонія.",
+    ),
+    storyLead: L(
+      "Installed on 28 June 2011 at the mouth of Makedonija Street on Macedonia Square.",
+      "Поставен на 28 јуни 2011 на почетокот на улица Македонија на плоштадот Македонија.",
+      "Postavljen 28. juna 2011. na početku ulice Makedonija na trgu Makedonija.",
+      "28 Haziran 2011’de Makedonya Meydanı’nda Makedonya Caddesi’nin başına yerleştirildi.",
+      "Встановлений 28 червня 2011 року на початку вулиці Македонія на площі Македонія.",
+    ),
+    storyBody: L(
+      "Carved in white Carrara marble in Florence to a design by Dimitar Filipovski, pairing in material with the Justinian I monument on the Vardar quay.",
+      "Изработен во бел мермер во Фиренца според решение на Димитар Филиповски, во ист материјал со споменикот на Јустинијан I на кејот на Вардар.",
+      "Izrađen u belom mermeru u Firenci prema rešenju Dimitra Filipovskog, u istom materijalu kao i spomenik Justinijanu I na keju Vardara.",
+      "Dimitar Filipovski’nin tasarımıyla Floransa’da beyaz mermerden يونتulmuş olup Vardar kıyısındaki I. Justinianus anıtıyla malzeme bütünlüğü kurar.",
+      "Вирізьблений із білого мармуру у Флоренції за проєктом Димитара Филиповські, перегукуючись за матеріалом із пам'ятником Юстиніану I на набережній Вардару.",
+    ),
+    claimText: L(
+      "OSM node 4149143991, Wikidata Q12910631, and Prizma's Skopje 2014 database record sculptor Dimitar Filipovski, installation date 28 June 2011, and white marble fabrication at Galleria Pietro Bazzanti & Figlio in Florence.",
+      "OSM јазолот 4149143991, Wikidata Q12910631 и базата на Призма за Скопје 2014 ги бележат вајарот Димитар Филиповски, датумот на поставување 28 јуни 2011 и изработката од бел мермер во Фиренца.",
+      "OSM čvor 4149143991, Wikidata Q12910631 i baza Prizme za Skoplje 2014 beleže vajara Dimitra Filipovskog, datum postavljanja 28. jun 2011. i izradu od belog mermera u Firenci.",
+      "OSM düğümü 4149143991, Wikidata Q12910631 ve Prizma Üsküp 2014 veri tabanı, heykeltıraş Dimitar Filipovski’yi, 28 Haziran 2011 tarihini ve Floransa’daki beyaz mermer işçiliğini kaydeder.",
+      "Вузол OSM 4149143991, Wikidata Q12910631 та база Prizma фіксують скульптора Димитара Филиповські, дату встановлення 28 червня 2011 року та виготовлення з білого мармуру у Флоренції.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-samoil", "mkwiki-monuments"],
+    related: ["macedonia-square", "justinian-i-monument", "metodija-andonov-cento", "skopje-fortress"],
+    motif: "arch",
+    palette: ["#dfd8cc", "#5d564c"],
+  },
+  {
+    slug: "justinian-i-monument",
+    osmId: "node/4161113453",
+    wikidataId: "Q12910626",
+    entityType: "monument",
+    monumentCategory: "monumental-statue",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to Justinian I",
+      "Споменик на Јустинијан I",
+      "Spomenik Justinijanu I",
+      "I. Justinianus Anıtı",
+      "Пам'ятник Юстиніану I",
+    ),
+    nameMk: "Споменик на Јустинијан I",
+    aliases: ["Justinian I Statue Skopje", "Јустинијан Први"],
+    translit: ["Spomenik na Justinijan I"],
+    coordinates: { lat: 41.996887, lng: 21.4322543 },
+    address: L(
+      "Right-bank Vardar Quay by the Stone Bridge, Centar",
+      "Кеј 13 Ноември покрај Камениот мост, Центар",
+      "Kej 13. Novembar pored Kamenog mosta, Centar",
+      "Taş Köprü yanı Vardar sağ kıyı rıhtımı, Centar",
+      "Набережна Вардару біля Кам'яного мосту, Центар",
+    ),
+    eyebrow: L("White marble enthroned statue", "Бел мермерен споменик", "Beli mermerni spomenik", "Beyaz mermer anıt", "Біломармуровий пам'ятник"),
+    era: L("Skopje 2014 (installed 16 June 2011)", "Скопје 2014 (поставен 16 јуни 2011)", "Skoplje 2014 (postavljen 16. juna 2011)", "Üsküp 2014 (16 Haziran 2011)", "Скоп'є 2014 (16 червня 2011)"),
+    installationDate: "2011-06-16",
+    commemorates: L(
+      "Byzantine Emperor Justinian I (r. 527–565), associated in scholarship with Tauresium in the Skopje region.",
+      "Византискиот император Јустинијан I (вл. 527–565), поврзан со Тауресиум во Скопско.",
+      "Vizantijski car Justinijan I (vl. 527–565), povezan sa Tauresijumom u Skopskom kraju.",
+      "Üsküp bölgesindeki Tauresium ile ilişkilendirilen Bizans İmparatoru I. Justinianus (h. 527–565).",
+      "Візантійський імператор Юстиніан I (пр. 527–565), пов'язаний із Таурезієм у Скопському краї.",
+    ),
+    creator: L(
+      "Sculptor Roza Pavleska; carved at Galleria Pietro Bazzanti & Figlio and Fonderia Ferdinando Marinelli, Florence.",
+      "Вајарка Роза Павлеска; изработен во Пјетро Базанти и Фиљо и леарницата Фердинандо Маринели, Фиренца.",
+      "Vajarka Roza Pavleska; izrađen u Pietro Bazzanti & Figlio i livnici Ferdinando Marinelli, Firenca.",
+      "Heykeltıraş Roza Pavleska; Floransa Pietro Bazzanti & Figlio ve Ferdinando Marinelli dökümhanesi.",
+      "Скульпторка Роза Павлеска; виконаний у П'єтро Баццанті та ливарні Марінеллі у Флоренції.",
+    ),
+    materials: L("5 m white marble sculpture on 3.5 m marble pedestal with 10.5 m² of bronze reliefs", "5 м скулптура од бел мермер на 3,5 м мермерен постамент со 10,5 м² бронзени релјефи", "5 m skulptura od belog mermera na 3,5 m postamentu sa 10,5 m² bronzanih reljefa", "10,5 m² bronz kabartmalı 3,5 m mermer kaide üzerinde 5 m beyaz mermer heykel", "5-метрова скульптура з білого мармуру на 3,5-метровому постаменті з бронзовими рельєфами"),
+    features: L(
+      "Seated emperor in white marble on the right-bank Vardar quay immediately west of the Stone Bridge.",
+      "Седечки император во бел мермер на десниот кеј на Вардар непосредно западно од Камениот мост.",
+      "Sedeći car u belom mermeru na desnom keju Vardara neposredno zapadno od Kamenog mosta.",
+      "Taş Köprü’nün hemen batısında, Vardar’ın sağ kıyısında beyaz mermerden oturan imparator heykeli.",
+      "Сидячий імператор у білому мармурі на правому березі Вардару безпосередньо на захід від Кам'яного мосту.",
+    ),
+    summary: L(
+      "White marble monument to Emperor Justinian I on the Vardar quay beside the Stone Bridge.",
+      "Бел мермерен споменик на императорот Јустинијан I на кејот на Вардар покрај Камениот мост.",
+      "Beli mermerni spomenik caru Justinijanu I na keju Vardara pored Kamenog mosta.",
+      "Taş Köprü yanında Vardar rıhtımında İmparator I. Justinianus’un beyaz mermer anıtı.",
+      "Біломармуровий пам'ятник імператору Юстиніану I на набережній Вардару біля Кам'яного мосту.",
+    ),
+    storyLead: L(
+      "Installed on 16 June 2011 on the right-bank quay by the Stone Bridge.",
+      "Поставен на 16 јуни 2011 на десниот кеј покрај Камениот мост.",
+      "Postavljen 16. juna 2011. na desnom keju pored Kamenog mosta.",
+      "16 Haziran 2011’de Taş Köprü yanındaki sağ kıyı rıhtımına yerleştirildi.",
+      "Встановлений 16 червня 2011 року на правому березі біля Кам'яного мосту.",
+    ),
+    storyBody: L(
+      "Designed by Roza Pavleska and executed in Florence in white marble with bronze pedestal reliefs.",
+      "Авторско дело на Роза Павлеска, изработено во Фиренца во бел мермер со бронзени релјефи на постаментот.",
+      "Autorsko delo Roze Pavleske, izrađeno u Firenci u belom mermeru sa bronzanim reljefima na postamentu.",
+      "Roza Pavleska tarafından tasarlanmış, Floransa’da beyaz mermer ve kaide üzerindeki bronz kabartmalarla üretilmiştir.",
+      "Авторська робота Рози Павлески, виконана у Флоренції з білого мармуру з бронзовими рельєфами на постаменті.",
+    ),
+    claimText: L(
+      "OSM node 4161113453, Wikidata Q12910626, and Prizma's Skopje 2014 archive document sculptor Roza Pavleska and installation date 16 June 2011.",
+      "OSM јазолот 4161113453, Wikidata Q12910626 и архивата на Призма за Скопје 2014 ги документираат вајарката Роза Павлеска и датумот 16 јуни 2011.",
+      "OSM čvor 4161113453, Wikidata Q12910626 i arhiva Prizme za Skoplje 2014 dokumentuju vajarku Rozu Pavlesku i datum 16. jun 2011.",
+      "OSM düğümü 4161113453, Wikidata Q12910626 ve Prizma Üsküp 2014 arşivi, heykeltıraş Roza Pavleska’yı ve 16 Haziran 2011 tarihini belgeler.",
+      "Вузол OSM 4161113453, Wikidata Q12910626 та архів Prizma документують скульпторку Розу Павлеску і дату 16 червня 2011 року.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-justinian", "mkwiki-monuments"],
+    related: ["stone-bridge", "tsar-samoil-monument", "vardar-quay", "macedonia-square"],
+    motif: "arch",
+    palette: ["#dcd4c6", "#4b453c"],
+  },
+  {
+    slug: "metodija-andonov-cento",
+    osmId: "node/6054048485",
+    wikidataId: "Q20570666",
+    entityType: "monument",
+    monumentCategory: "historical-figure",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to Metodija Andonov-Čento",
+      "Споменик на Методија Андонов-Ченто",
+      "Spomenik Metodiju Andonovu-Čentu",
+      "Metodija Andonov-Çento Anıtı",
+      "Пам'ятник Методії Андонову-Ченто",
+    ),
+    nameMk: "Споменик на Методија Андонов-Ченто",
+    aliases: ["Chento Monument", "Методија Андонов Ченто"],
+    translit: ["Spomenik na Metodija Andonov Cento"],
+    coordinates: { lat: 41.9957342, lng: 21.4305961 },
+    address: L(
+      "Macedonia Square beside Ristik Palace, Centar",
+      "Плоштад Македонија покрај Ристиќевата палата, Центар",
+      "Trg Makedonija pored Ristićeve palate, Centar",
+      "Ristić Sarayı yanı Makedonya Meydanı, Centar",
+      "Площа Македонія біля палацу Ристича, Центар",
+    ),
+    eyebrow: L("White marble standing statue", "Бел мермерен стоечки споменик", "Beli mermerni stojeći spomenik", "Beyaz mermer ayakta heykel", "Біломармурова стояча статуя"),
+    era: L("Skopje 2014 (installed June 2010)", "Скопје 2014 (поставен јуни 2010)", "Skoplje 2014 (postavljen jun 2010)", "Üsküp 2014 (Haziran 2010)", "Скоп'є 2014 (червень 2010)"),
+    installationDate: "2010-06",
+    commemorates: L(
+      "Metodija Andonov-Čento (1902–1957), first President of the Presidium of ASNOM.",
+      "Методија Андонов-Ченто (1902–1957), прв претседател на Президиумот на АСНОМ.",
+      "Metodija Andonov-Čento (1902–1957), prvi predsednik Prezidijuma ASNOM-a.",
+      "Metodija Andonov-Çento (1902–1957), ASNOM Prezidyumu’nun ilk başkanı.",
+      "Методія Андонов-Ченто (1902–1957), перший голова Президії АСНОМ.",
+    ),
+    creator: L(
+      "Sculptor Dimitar Filipovski; carved at Galleria Pietro Bazzanti & Figlio, Florence.",
+      "Вајар Димитар Филиповски; изработен во галеријата Пјетро Базанти и Фиљо, Фиренца.",
+      "Vajar Dimitar Filipovski; izrađen u galeriji Pietro Bazzanti & Figlio, Firenca.",
+      "Heykeltıraş Dimitar Filipovski; Floransa Pietro Bazzanti & Figlio galerisi.",
+      "Скульптор Димитар Филиповські; виконаний у галереї П'єтро Баццанті у Флоренції.",
+    ),
+    materials: L("5 m, 25-ton white marble statue", "5 м висока, 25 тони тешка статуа од бел мермер", "5 m visoka, 25 tona teška statua od belog mermera", "5 m yüksekliğinde, 25 ton ağırlığında beyaz mermer heykel", "5-метрова 25-тонна статуя з білого мармуру"),
+    features: L(
+      "Standing marble figure beside Ristik Palace on the site of the pre-1963 Hotel Makedonija.",
+      "Стоечка мермерна фигура покрај Ристиќевата палата, на местото на предземјотресниот Хотел Македонија.",
+      "Stojeća mermerna figura pored Ristićeve palate, na mestu predzemljotresnog Hotela Makedonija.",
+      "Ristić Sarayı yanında, 1963 depremi öncesi Makedonya Oteli’nin bulunduğu noktada ayakta mermer figür.",
+      "Стояча мармурова постать біля палацу Ристича на місці довоєнного готелю «Македонія».",
+    ),
+    summary: L(
+      "White marble monument to ASNOM president Metodija Andonov-Čento beside Ristik Palace.",
+      "Бел мермерен споменик на претседателот на АСНОМ Методија Андонов-Ченто до Ристиќевата палата.",
+      "Beli mermerni spomenik predsedniku ASNOM-a Metodiju Andonovu-Čentu uz Ristićevu palatu.",
+      "Ristić Sarayı yanında ASNOM Başkanı Metodija Andonov-Çento’nun beyaz mermer anıtı.",
+      "Біломармуровий пам'ятник голові АСНОМ Методії Андонову-Ченто біля палацу Ристича.",
+    ),
+    storyLead: L(
+      "Unveiled in June 2010 on the western side of Macedonia Square next to Ristik Palace.",
+      "Откриен во јуни 2010 на западната страна на плоштадот Македонија веднаш до Ристиќевата палата.",
+      "Otkriven u junu 2010. na zapadnoj strani trga Makedonija tik uz Ristićevu palatu.",
+      "Haziran 2010’da Makedonya Meydanı’nın batı yakasında, Ristić Sarayı’nın yanında açıldı.",
+      "Відкритий у червні 2010 року на західному боці площі Македонія поруч із палацом Ристича.",
+    ),
+    storyBody: L(
+      "The 5-metre marble sculpture by Dimitar Filipovski stands where Hotel Makedonija stood before the 1963 earthquake.",
+      "Петметарската мермерна скулптура на Димитар Филиповски стои на местото каде што пред земјотресот од 1963 се наоѓал Хотелот Македонија.",
+      "Petometarska mermerna skulptura Dimitra Filipovskog stoji na mestu gde se pre zemljotresa 1963. nalazio Hotel Makedonija.",
+      "Dimitar Filipovski’nin 5 metrelik mermer heykeli, 1963 depreminden önce Makedonya Oteli’nin bulunduğu yerde durur.",
+      "П'ятиметрова мармурова скульптура Димитара Филиповські стоїть там, де до землетрусу 1963 року був готель «Македонія».",
+    ),
+    claimText: L(
+      "OSM node 6054048485, Wikidata Q20570666, and Prizma's Skopje 2014 archive document the 5-metre marble monument by Dimitar Filipovski installed in June 2010.",
+      "OSM јазолот 6054048485, Wikidata Q20570666 и архивата на Призма го документираат петметарскиот мермерен споменик од Димитар Филиповски поставен во јуни 2010.",
+      "OSM čvor 6054048485, Wikidata Q20570666 i arhiva Prizme dokumentuju petometarski mermerni spomenik Dimitra Filipovskog postavljen u junu 2010.",
+      "OSM düğümü 6054048485, Wikidata Q20570666 ve Prizma arşivi, Dimitar Filipovski’nin Haziran 2010’da yerleştirilen 5 metrelik mermer anıtını belgeler.",
+      "Вузол OSM 6054048485, Wikidata Q20570666 та архів Prizma документують 5-метровий мармуровий пам'ятник Димитара Филиповські, встановлений у червні 2010 року.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-cento", "mkwiki-monuments"],
+    related: ["ristik-palace", "macedonia-square", "asnom-monument"],
+    motif: "hall",
+    palette: ["#ded6c8", "#4a433b"],
+  },
+  {
+    slug: "gemidzii-monument",
+    osmId: "node/14213844964",
+    wikidataId: "Q12910627",
+    entityType: "monument",
+    monumentCategory: "sculptural-ensemble",
+    kinds: ["monument", "memorial"],
+    name: L(
+      "Monument to the Gemidžii",
+      "Споменик на Гемиџиите",
+      "Spomenik Gemidžijama",
+      "Gemiciler (Gemidžii) Anıtı",
+      "Пам'ятник Геміджіям",
+    ),
+    nameMk: "Споменик на Гемиџиите",
+    aliases: ["Boatmen of Thessaloniki Monument", "Гемиџии Плоштад Македонија"],
+    translit: ["Spomenik na Gemidziite"],
+    coordinates: { lat: 41.9964099, lng: 21.43284 },
+    address: L(
+      "Right-bank Vardar Quay east of the Stone Bridge, Centar",
+      "Кеј 13 Ноември источно од Камениот мост, Центар",
+      "Kej 13. Novembar istočno od Kamenog mosta, Centar",
+      "Taş Köprü’nün doğusunda Vardar rıhtımı, Centar",
+      "Набережна Вардару на схід від Кам'яного мосту, Центар",
+    ),
+    eyebrow: L("Bronze sculptural group", "Бронзена скулптурална група", "Bronzana skulpturalna grupa", "Bronz heykel grubu", "Бронзова скульптурна група"),
+    era: L("Skopje 2014 (installed 27 July 2010)", "Скопје 2014 (поставен 27 јули 2010)", "Skoplje 2014 (postavljen 27. jula 2010)", "Üsküp 2014 (27 Temmuz 2010)", "Скоп'є 2014 (27 липня 2010)"),
+    installationDate: "2010-07-27",
+    commemorates: L(
+      "The Gemidžii (Boatmen of Salonica), young anarchist revolutionaries of the 1903 Thessaloniki actions, including Pavel Šatev.",
+      "Гемиџиите (Солунските атентатори) од 1903 година, меѓу кои и Павел Шатев.",
+      "Gemidžije (Solunski atentatori) iz 1903. godine, među kojima i Pavel Šatev.",
+      "Aralarında Pavel Şatev’in de bulunduğu 1903 Selanik eylemlerinin genç devrimci grubu Gemiciler (Gemidžii).",
+      "Геміджії (Солунські підпільники) 1903 року, серед яких Павел Шатев.",
+    ),
+    creator: L(
+      "Sculptor Angel Korunovski; cast in Florence; municipal decision of Centar Council in June 2008.",
+      "Вајар Ангел Коруновски; излеан во Фиренца; одлука на Советот на Општина Центар од јуни 2008.",
+      "Vajar Angel Korunovski; izliven u Firenci; odluka Saveta Opštine Centar iz juna 2008.",
+      "Heykeltıraş Angel Korunovski; Floransa dökümü; Centar Belediye Meclisi’nin Haziran 2008 kararı.",
+      "Скульптор Ангел Коруновські; відлитий у Флоренції; рішення ради громади Центар від червня 2008 року.",
+    ),
+    materials: L("Bronze multi-figure ensemble around a stone obelisk", "Бронзена повеќефигурна композиција околу камен обелиск", "Bronzana višefigurna kompozicija oko kamenog obeliska", "Taş dikilitaş çevresinde çok figürlü bronz композиција", "Бронзова багатофігурна композиція навколо кам'яного обеліска"),
+    features: L(
+      "Group of bronze figures arranged around a boat and tall stone obelisk on the right bank of the Vardar.",
+      "Група бронзени фигури распоредени околу чамец и висок камен обелиск на десниот брег на Вардар.",
+      "Grupa bronzanih figura raspoređenih oko čamca i visokog kamenog obeliska na desnoj obali Vardara.",
+      "Vardar’ın sağ kıyısında bir kayık ve yüksek taş dikilitaş etrafında dizilmiş bronz figürler grubu.",
+      "Група бронзових постатей навколо човна і високого кам'яного обеліска на правому березі Вардару.",
+    ),
+    summary: L(
+      "Bronze sculptural ensemble and obelisk to the Gemidžii on the Vardar quay.",
+      "Бронзена скулптурална композиција и обелиск на Гемиџиите на кејот на Вардар.",
+      "Bronzana skulpturalna kompozicija i obelisk Gemidžijama na keju Vardara.",
+      "Vardar rıhtımında Gemiciler (Gemidžii) bronz heykel topluluğu ve dikilitaşı.",
+      "Бронзовий скульптурний ансамбль і обеліск Геміджіям на набережній Вардару.",
+    ),
+    storyLead: L(
+      "Installed on 27 July 2010 on the right bank of the Vardar east of the Stone Bridge.",
+      "Поставен на 27 јули 2010 на десниот брег на Вардар источно од Камениот мост.",
+      "Postavljen 27. jula 2010. na desnoj obali Vardara istočno od Kamenog mosta.",
+      "27 Temmuz 2010’da Taş Köprü’nün doğusunda Vardar’ın sağ kıyısına yerleştirildi.",
+      "Встановлений 27 липня 2010 року на правому березі Вардару на схід від Кам'яного мосту.",
+    ),
+    storyBody: L(
+      "Designed by Veles sculptor Angel Korunovski following a June 2008 decision of the Municipality of Centar Council.",
+      "Изработен според дело на велешкиот вајар Ангел Коруновски, по одлука на Советот на Општина Центар од јуни 2008.",
+      "Izrađen prema delu veleškog vajara Angela Korunovskog, po odluci Saveta Opštine Centar iz juna 2008.",
+      "Centar Belediye Meclisi’nin Haziran 2008 kararıyla Velesli heykeltıraş Angel Korunovski tarafından tasarlanmıştır.",
+      "Створений велеським скульптором Ангелом Коруновські за рішенням ради громади Центар від червня 2008 року.",
+    ),
+    claimText: L(
+      "OSM node 14213844964, Wikidata Q12910627, and Prizma's Skopje 2014 archive record sculptor Angel Korunovski and installation on 27 July 2010.",
+      "OSM јазолот 14213844964, Wikidata Q12910627 и архивата на Призма ги бележат вајарот Ангел Коруновски и поставувањето на 27 јули 2010.",
+      "OSM čvor 14213844964, Wikidata Q12910627 i arhiva Prizme beleže vajara Angela Korunovskog i postavljanje 27. jula 2010.",
+      "OSM düğümü 14213844964, Wikidata Q12910627 ve Prizma arşivi, heykeltıraş Angel Korunovski’yi ve 27 Temmuz 2010 tarihini kaydeder.",
+      "Вузол OSM 14213844964, Wikidata Q12910627 та архів Prizma фіксують скульптора Ангела Коруновські та дату 27 липня 2010 року.",
+    ),
+    sourceIds: ["osm-overpass-centar", "prizma-gemidzii", "mkwiki-monuments"],
+    related: ["stone-bridge", "pavel-satev-monument", "vardar-quay"],
+    motif: "memorial",
+    palette: ["#6b533e", "#241d17"],
+  },
+];
+
+export { buildMonument, type MonumentSeed };
+export const coreMonumentsPart1: SiteRecord[] = seeds.map(buildMonument);

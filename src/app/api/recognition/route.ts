@@ -49,10 +49,12 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(result);
   } catch (error) {
-    const timedOut = error instanceof Error && /timeout|aborted/i.test(error.message);
+    const message = error instanceof Error ? error.message : "";
+    const timedOut = /timeout|aborted/i.test(message);
+    const quota = /quota-exhausted/i.test(message);
     return NextResponse.json(
-      { error: timedOut ? "timeout" : "provider-failed" },
-      { status: timedOut ? 504 : 502 },
+      { error: quota ? "quota-exhausted" : timedOut ? "timeout" : "provider-failed" },
+      { status: quota ? 429 : timedOut ? 504 : 502 },
     );
   }
 }

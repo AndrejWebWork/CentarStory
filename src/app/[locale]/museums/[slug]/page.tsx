@@ -28,12 +28,15 @@ export async function generateMetadata({
 
 export default async function MuseumPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { slug } = await params;
+  const { from } = await searchParams;
   const locale = await resolveLocale(params);
   const place = getPlace(slug);
   if (!place?.institution) notFound();
-  return <SiteStory place={place} locale={locale} />;
+  return <SiteStory place={place} locale={locale} cinematic={from === "scan"} />;
 }

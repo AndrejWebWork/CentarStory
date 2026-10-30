@@ -6,11 +6,11 @@ import { locales, type Locale } from "@/i18n/locales";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
 const names: Record<Locale, string> = {
-  en: "English",
-  tr: "Türkçe",
-  sr: "Srpski",
-  mk: "Македонски",
-  uk: "Українська",
+  en: "EN · English",
+  tr: "TR · Türkçe",
+  sr: "SR · Srpski",
+  mk: "МК · Македонски",
+  uk: "УК · Українська",
 };
 
 export function LanguageSwitcher() {
@@ -21,10 +21,10 @@ export function LanguageSwitcher() {
   const search = useSearchParams();
 
   return (
-    <label className="flex items-center gap-2 text-[11px] tracking-[0.16em] text-brass uppercase">
+    <label className="flex items-center border border-ink bg-foam px-2.5 text-[11px] tracking-[0.14em] uppercase">
       <span className="sr-only">{t("language")}</span>
       <select
-        className="h-11 max-w-44 bg-transparent pr-1 text-sm tracking-normal text-ink"
+        className="h-9 max-w-44 bg-transparent pr-1 text-xs tracking-[0.12em] text-ink uppercase"
         value={locale}
         aria-label={t("language")}
         title={t("scriptStrategy")}

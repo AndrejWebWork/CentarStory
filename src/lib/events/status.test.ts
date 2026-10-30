@@ -26,6 +26,13 @@ function run() {
   assert.ok(summer);
   assert.equal(resolveEvent(summer, new Date("2026-10-29T12:00:00+02:00")).status, "recurring-confirm-dates");
 
+  const municipal = programmes.filter((event) => event.host === "municipality");
+  assert.ok(municipal.length >= 9);
+  const walk = programmes.find((event) => event.slug === "vremeplov-centar-2026");
+  assert.ok(walk);
+  assert.equal(resolveEvent(walk, new Date("2026-10-29T12:00:00+02:00")).status, "past");
+  assert.equal(resolveEvent(walk, new Date("2026-06-24T12:00:00+02:00")).status, "ongoing");
+
   const expired = resolveEvent(
     {
       ...opera,

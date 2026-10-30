@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { getSite } from "@/content/knowledge/catalog";
 import { venues } from "@/content/knowledge/culinary";
+import { aroundThemeDefault, aroundThemeForYear } from "@/lib/itinerary/around-theme";
 import { planItinerary } from "@/lib/itinerary/engine";
 
 function run() {
@@ -53,6 +54,17 @@ function run() {
   assert.equal(far.startSlug, "macedonia-square");
 
   assert.ok(venues.find((venue) => venue.slug === "destan" && !venue.coordinates));
+
+  assert.equal(aroundThemeDefault().themeId, "civic-axis");
+  assert.equal(aroundThemeForYear(1958)?.themeId, "1963-memory");
+  assert.equal(aroundThemeForYear(2014)?.themeId, "skopje-2014");
+  assert.equal(aroundThemeForYear(1899), null);
+  const fromYear = planItinerary({
+    start: { kind: "site", slug: "macedonia-square" },
+    themeId: aroundThemeForYear(2012)!.themeId,
+    budget: { mode: "stops", count: 5 },
+  });
+  assert.ok(fromYear.stops.length >= 2);
   console.log("itinerary ok");
 }
 

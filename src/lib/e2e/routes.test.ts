@@ -8,6 +8,7 @@ function run() {
   const paths = [
     "/",
     "/scan",
+    "/events",
     "/museums",
     "/food",
     "/around",
@@ -23,6 +24,7 @@ function run() {
   const prefixed = locales.flatMap((locale) =>
     paths.map((path) => (locale === "en" ? path : `/${locale}${path === "/" ? "" : path}`)),
   );
+  assert.ok(prefixed.includes("/mk/events"));
   assert.ok(prefixed.includes("/mk/museums"));
   assert.ok(prefixed.includes("/tr/scan"));
   console.log("route table ok", paths.length, "paths,", prefixed.length, "locale URLs");

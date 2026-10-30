@@ -19,10 +19,8 @@ export async function requestRemoteRecognition(input: {
       }),
       signal: controller.signal,
     });
-    if (response.status === 501) {
-      const error = new Error("unconfigured");
-      throw error;
-    }
+    if (response.status === 501) throw new Error("unconfigured");
+    if (response.status === 429) throw new Error("quota");
     if (response.status === 504) throw new Error("timeout");
     if (!response.ok) throw new Error("network");
     return (await response.json()) as RecognitionResult;

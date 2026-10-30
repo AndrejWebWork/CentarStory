@@ -9,7 +9,7 @@ import MapGL, {
   Source,
   type MapRef,
 } from "react-map-gl/maplibre";
-import type { FilterSpecification } from "maplibre-gl";
+import type { FilterSpecification, Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CENTAR_BBOX, CENTAR_POLYGON } from "@/content/knowledge/polygon";
 import {
@@ -25,7 +25,7 @@ export type AtlasMarker = {
   lat: number;
   lng: number;
   label: string;
-  tone: "site" | "kitchen" | "nearby";
+  tone: "site" | "kitchen" | "nearby" | "candidate";
 };
 
 export type MapBounds = {
@@ -46,8 +46,52 @@ const boundaryData = {
 };
 
 function pinClass(active: boolean, tone: AtlasMarker["tone"]) {
-  const extra = tone === "kitchen" ? " is-kitchen" : tone === "nearby" ? " is-nearby" : "";
+  const extra =
+    tone === "kitchen"
+      ? " is-kitchen"
+      : tone === "nearby" || tone === "candidate"
+        ? " is-nearby"
+        : "";
   return `cs-pin${active ? " is-active" : ""}${extra}`;
+}
+
+function applyCentarCartography(map: MapLibreMap) {
+  try {
+    const layers = map.getStyle()?.layers ?? [];
+    for (const layer of layers) {
+      const id = layer.id.toLowerCase();
+      if (layer.type === "background") {
+        map.setPaintProperty(layer.id, "background-color", "#f1ebe0");
+      } else if (layer.type === "fill") {
+        if (id.includes("water")) {
+          map.setPaintProperty(layer.id, "fill-color", "#b8cad8");
+        } else if (id.includes("park") || id.includes("grass") || id.includes("wood") || id.includes("green")) {
+          map.setPaintProperty(layer.id, "fill-color", "#d5ddcf");
+        } else if (id.includes("building")) {
+          map.setPaintProperty(layer.id, "fill-color", "#ded4c3");
+        }
+      } else if (layer.type === "fill-extrusion" && id.includes("building")) {
+        map.setPaintProperty(layer.id, "fill-extrusion-color", "#d8cebc");
+        map.setPaintProperty(layer.id, "fill-extrusion-opacity", 0.55);
+      } else if (layer.type === "line" && (id.includes("road") || id.includes("street") || id.includes("highway") || id.includes("bridge"))) {
+        if (id.includes("casing")) {
+          map.setPaintProperty(layer.id, "line-color", "#cfc4b1");
+        } else {
+          map.setPaintProperty(layer.id, "line-color", "#faf6ef");
+        }
+      } else if (layer.type === "symbol") {
+        if (id.includes("poi")) {
+          map.setLayoutProperty(layer.id, "visibility", "none");
+        } else {
+          map.setPaintProperty(layer.id, "text-color", "#2b251e");
+          map.setPaintProperty(layer.id, "text-halo-color", "#f1ebe0");
+          map.setPaintProperty(layer.id, "text-halo-width", 1.4);
+        }
+      }
+    }
+  } catch {
+    /* Vector layer names vary across styles; ignore unsupported property overrides. */
+  }
 }
 
 export function ExploreMap({
@@ -88,7 +132,7 @@ export function ExploreMap({
 
   const style = styleFailed ? OSM_RASTER_STYLE : mapStyle();
   const attribution = styleFailed ? OSM_ATTRIBUTION : MAP_ATTRIBUTION;
-  const clusterActive = cluster && zoom < 14.2;
+  const clusterActive = cluster && zoom < 13.8;
 
   const points = useMemo(
     () => ({
@@ -139,7 +183,7 @@ export function ExploreMap({
           [Math.min(...lngs), Math.min(...lats)],
           [Math.max(...lngs), Math.max(...lats)],
         ],
-        { padding: 48, maxZoom: 16, duration: reduce ? 0 : 700 },
+        { padding: 52, maxZoom: 16.4, duration: reduce ? 0 : 700 },
       );
       return;
     }
@@ -147,8 +191,9 @@ export function ExploreMap({
     if (selected) {
       map.flyTo({
         center: [selected.lng, selected.lat],
-        zoom: Math.max(map.getZoom(), 16),
-        duration: reduce ? 0 : 550,
+        zoom: Math.max(map.getZoom(), 16.1),
+        pitch: reduce ? 0 : 28,
+        duration: reduce ? 0 : 600,
       });
     }
   }, [line, markers, selectedId]);
@@ -162,7 +207,7 @@ export function ExploreMap({
         [CENTAR_BBOX.west, CENTAR_BBOX.south],
         [CENTAR_BBOX.east, CENTAR_BBOX.north],
       ],
-      { padding: 32, duration: reduceRef.current ? 0 : 600 },
+      { padding: 32, pitch: 0, bearing: 0, duration: reduceRef.current ? 0 : 600 },
     );
   }, [resetNonce]);
 
@@ -191,6 +236,7 @@ export function ExploreMap({
             const data = new ImageData(1, 1);
             event.target.addImage(missing.id, data);
           });
+          applyCentarCartography(event.target);
           event.target.resize();
           emitBounds();
         }}
@@ -218,23 +264,23 @@ export function ExploreMap({
           });
         }}
       >
-        <NavigationControl position="top-right" showCompass={false} />
+        <NavigationControl position="top-right" showCompass />
         <AttributionControl compact position="bottom-right" customAttribution={attribution} />
         {showBoundary ? (
           <Source id="centar-boundary" type="geojson" data={boundaryData}>
             <Layer
               id="centar-fill"
               type="fill"
-              paint={{ "fill-color": "#7a3b2a", "fill-opacity": 0.05 }}
+              paint={{ "fill-color": "#1736b5", "fill-opacity": 0.035 }}
             />
             <Layer
               id="centar-outline"
               type="line"
               paint={{
-                "line-color": "#7a3b2a",
-                "line-width": 1.4,
-                "line-dasharray": [2, 1.4],
-                "line-opacity": 0.7,
+                "line-color": "#12100d",
+                "line-width": 1.6,
+                "line-dasharray": [2.2, 1.4],
+                "line-opacity": 0.78,
               }}
             />
           </Source>
@@ -242,26 +288,37 @@ export function ExploreMap({
         {route ? (
           <Source id="cs-route" type="geojson" data={route}>
             <Layer
+              id="cs-route-casing"
+              type="line"
+              paint={{
+                "line-color": "#faf6ef",
+                "line-width": 6.5,
+                "line-opacity": 0.9,
+              }}
+            />
+            <Layer
               id="cs-route-line"
               type="line"
               paint={{
-                "line-color": "#7a3b2a",
-                "line-width": 3.4,
-                "line-opacity": 0.9,
+                "line-color": "#1736b5",
+                "line-width": 3.6,
+                "line-opacity": 0.96,
               }}
             />
           </Source>
         ) : null}
         {cluster ? (
-          <Source id="cs-points" type="geojson" data={points} cluster clusterMaxZoom={14} clusterRadius={44}>
+          <Source id="cs-points" type="geojson" data={points} cluster clusterMaxZoom={13.5} clusterRadius={40}>
             <Layer
               id="cs-clusters"
               type="circle"
               filter={["has", "point_count"] as FilterSpecification}
               paint={{
-                "circle-color": "#7a3b2a",
-                "circle-radius": ["step", ["get", "point_count"], 16, 8, 20, 16, 26],
-                "circle-opacity": 0.92,
+                "circle-color": "#12100d",
+                "circle-stroke-color": "#faf6ef",
+                "circle-stroke-width": 2,
+                "circle-radius": ["step", ["get", "point_count"], 17, 8, 21, 16, 26],
+                "circle-opacity": 0.94,
               }}
             />
           </Source>

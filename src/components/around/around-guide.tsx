@@ -1,323 +1,348 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { Navigation, RotateCcw } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { AtlasMarker } from "@/components/map/explore-map";
 import { pick } from "@/content/copy";
-import { haversineMeters, MACEDONIA_SQUARE } from "@/content/knowledge/boundary";
-import { enjoyExample, enjoyTariff, jspHow, wiziExample, wiziTariff, ammPublishedStops, binbin } from "@/content/mobility";
-import { institutions, places, sitePath } from "@/content/places";
-import { venues } from "@/content/knowledge/culinary";
-import { airportTaxi, jspFares, transportLinks } from "@/content/transport";
+import { getSite } from "@/content/knowledge/catalog";
+import { getPlace, sitePath } from "@/content/places";
 import { Link } from "@/i18n/navigation";
-import { formatCount, formatMkd } from "@/lib/format";
+import { coordinatesOf } from "@/lib/graph/query";
+import {
+  AROUND_YEAR_MAX,
+  AROUND_YEAR_MIN,
+  aroundThemeDefault,
+  aroundThemeForYear,
+  type AroundThemeChoice,
+} from "@/lib/itinerary/around-theme";
+import { planItinerary, type ItineraryPlan } from "@/lib/itinerary";
+import { useWalkingPath } from "@/lib/mapping/use-walking-path";
 import { pedestrianNavigation } from "@/lib/mapping/walk";
 
-const modes = ["walk", "bus", "bicycle", "scooter", "taxi", "compare"] as const;
+const Atlas = dynamic(
+  () => import("@/components/map/explore-map").then((mod) => mod.ExploreMap),
+  { ssr: false, loading: () => <div className="h-full w-full bg-paper-2" /> },
+);
 
-type Destination = {
-  id: string;
-  kind: "place" | "museum" | "kitchen";
-  name: string;
-  href: string;
-  coordinates?: { lat: number; lng: number };
-  walkMinutes?: number;
-  unmapped?: boolean;
-};
+const BUILD_STEPS = ["gather", "order", "hours", "path", "lock"] as const;
+
+function themeKey(id: string) {
+  return `theme_${id.replace(/[:.-]/g, "_")}`;
+}
 
 export function AroundGuide() {
   const t = useTranslations("around");
+  const te = useTranslations("explore");
   const locale = useLocale();
-  const [mode, setMode] = useState<(typeof modes)[number]>("walk");
-  const destinations = useMemo<Destination[]>(() => {
-    const sites = places.map((place) => ({
-      id: place.slug,
-      kind: place.institution ? ("museum" as const) : ("place" as const),
-      name: pick(place.name, locale),
-      href: sitePath(place),
-      coordinates: place.coordinates,
-      walkMinutes: place.walkMinutes,
-    }));
-    const kitchens = venues.map((house) => ({
-      id: `kitchen-${house.slug}`,
-      kind: "kitchen" as const,
-      name: house.name,
-      href: `/food/places/${house.slug}`,
-      coordinates: house.coordinates,
-      unmapped: !house.coordinates,
-    }));
-    return [...sites, ...kitchens];
-  }, [locale]);
-  const [destinationId, setDestinationId] = useState(destinations[0]?.id ?? "");
-  const destination = destinations.find((item) => item.id === destinationId);
-  const ordered = [...places].sort((a, b) => a.walkMinutes - b.walkMinutes);
-  const straightKm = destination?.coordinates
-    ? haversineMeters(MACEDONIA_SQUARE, destination.coordinates) / 1000
-    : null;
-  const taxi = straightKm != null ? wiziExample(straightKm) : null;
-  const walkMin = destination?.walkMinutes;
-  const scooterMinutes = walkMin != null && walkMin > 0 ? Math.max(1, Math.round(walkMin * 0.4)) : walkMin === 0 ? 1 : null;
-  const scooterQuote = scooterMinutes != null ? enjoyExample(scooterMinutes) : null;
-  const nav =
-    destination?.coordinates &&
-    pedestrianNavigation([MACEDONIA_SQUARE, destination.coordinates]);
+  const reduce = useReducedMotion();
+  const [yearText, setYearText] = useState("");
+  const [yearError, setYearError] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "building" | "ready">("idle");
+  const [step, setStep] = useState(0);
+  const [choice, setChoice] = useState<AroundThemeChoice | null>(null);
+  const [plan, setPlan] = useState<ItineraryPlan | null>(null);
+  const [selectedStop, setSelectedStop] = useState<string | null>(null);
+
+  const points = useMemo(() => {
+    if (!plan) return null;
+    const mapped = plan.stops
+      .map((stop) => coordinatesOf(stop.slug))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+    return mapped.length > 1 ? mapped : null;
+  }, [plan]);
+  const { status: pathStatus, path } = useWalkingPath(points);
+  const nav = points ? pedestrianNavigation(points) : { osm: null, google: null };
+
+  const routeMarkers: AtlasMarker[] = useMemo(() => {
+    if (!plan) return [];
+    return plan.stops.flatMap((stop) => {
+      const site = getSite(stop.slug);
+      if (!site) return [];
+      return [
+        {
+          id: site.slug,
+          lat: site.coordinates.lat,
+          lng: site.coordinates.lng,
+          label: pick(site.officialName, locale),
+          tone: "site" as const,
+        },
+      ];
+    });
+  }, [locale, plan]);
+
+  useEffect(() => {
+    if (phase !== "building") return;
+    if (reduce) {
+      setPhase("ready");
+      return;
+    }
+    const started = Date.now();
+    const tick = window.setInterval(() => {
+      const elapsed = Date.now() - started;
+      setStep(Math.min(BUILD_STEPS.length - 1, Math.floor(elapsed / 780)));
+      if (elapsed >= BUILD_STEPS.length * 780) setPhase("ready");
+    }, 80);
+    return () => window.clearInterval(tick);
+  }, [phase, reduce]);
+
+  function build(next: AroundThemeChoice) {
+    const planned = planItinerary({
+      start: { kind: "site", slug: "macedonia-square" },
+      themeId: next.themeId,
+      budget: { mode: "stops", count: 5 },
+    });
+    setChoice(next);
+    setPlan(planned);
+    setSelectedStop(planned.stops[0]?.slug ?? null);
+    setStep(0);
+    setYearError(false);
+    setPhase(reduce ? "ready" : "building");
+  }
+
+  function makeDefault() {
+    build(aroundThemeDefault());
+  }
+
+  function makeFromYear() {
+    const year = Number(yearText.trim());
+    const next = aroundThemeForYear(year);
+    if (!next) {
+      setYearError(true);
+      return;
+    }
+    build(next);
+  }
+
+  function reset() {
+    setPhase("idle");
+    setPlan(null);
+    setChoice(null);
+    setSelectedStop(null);
+    setStep(0);
+    setYearError(false);
+  }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8 lg:py-12" suppressHydrationWarning>
-      <header className="grid gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <p className="text-[11px] tracking-[0.22em] text-brass uppercase">05 — {t("kicker")}</p>
-          <h1 className="mt-3 font-display text-5xl leading-[0.92] sm:text-7xl">{t("title")}</h1>
-        </div>
-        <p className="max-w-md leading-relaxed text-ink-soft lg:col-span-4 lg:col-start-9 lg:pt-10">{t("lede")}</p>
-      </header>
-      <label className="mt-8 block max-w-xl">
-        <span className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("destination")}</span>
-        <select
-          className="mt-2 h-12 w-full border border-line bg-transparent px-3"
-          value={destinationId}
-          onChange={(event) => setDestinationId(event.target.value)}
+    <div suppressHydrationWarning>
+      {/* COBALT WAYFINDING HEADER */}
+      <header className="relative overflow-hidden border-b border-ink bg-cobalt text-foam">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.1] sm:text-[15rem]"
         >
-          {destinations.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-              {item.unmapped ? ` (${t("unmapped")})` : ""}
-            </option>
-          ))}
-        </select>
-      </label>
-      {destination?.unmapped ? <p className="mt-3 max-w-xl text-sm text-copper">{t("destUnmapped")}</p> : null}
-      <div className="mt-8 flex flex-wrap gap-2" role="tablist" aria-label={t("modes")}>
-        {modes.map((item) => (
-          <button
-            key={item}
-            type="button"
-            role="tab"
-            id={`mode-${item}`}
-            aria-selected={mode === item}
-            aria-controls={`panel-${item}`}
-            onClick={() => setMode(item)}
-            className={`h-11 border px-3 text-sm ${mode === item ? "border-ink bg-ink text-foam" : "border-line"}`}
-          >
-            {t(item)}
-          </button>
-        ))}
-      </div>
-      <div className="mt-8" role="tabpanel" id={`panel-${mode}`} aria-labelledby={`mode-${mode}`}>
-        {mode === "walk" ? (
-          <div>
-            <p className="max-w-2xl leading-relaxed">{t("walkBody")}</p>
-            {destination && nav?.osm ? (
-              <p className="mt-4 text-sm">
-                <a className="text-copper" href={nav.osm} target="_blank" rel="noreferrer">
-                  {t("osmWalk")}
-                </a>
-                {nav.google ? (
-                  <>
-                    {" · "}
-                    <a href={nav.google} target="_blank" rel="noreferrer">
-                      {t("googleWalk")}
-                    </a>
-                  </>
+          05
+        </span>
+        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
+          <div className="lg:col-span-8">
+            <p className="cs-kicker text-foam/80">
+              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
+              05 — {t("kicker")}
+            </p>
+            <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
+              {t("title")}
+            </h1>
+          </div>
+          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
+            <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[96rem] px-4 py-8 sm:px-5 sm:py-12 lg:px-8 lg:py-16">
+        <AnimatePresence mode="wait">
+          {phase === "idle" ? (
+            <motion.div
+              key="idle"
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? undefined : { opacity: 0, y: -8 }}
+              className="grid border border-ink bg-foam lg:grid-cols-12"
+            >
+              <div className="flex flex-col justify-between border-b border-ink p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
+                <p className="cs-kicker">01 — 41.9957°N · 21.4312°E</p>
+                <button
+                  type="button"
+                  className="mt-6 h-16 w-full bg-ink px-5 font-display text-3xl text-foam hover:bg-cobalt sm:mt-10 sm:h-20 sm:text-4xl"
+                  onClick={makeDefault}
+                >
+                  {t("makeRoute")}
+                </button>
+              </div>
+              <form
+                className="p-5 sm:p-10 lg:col-span-6"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  makeFromYear();
+                }}
+              >
+                <label className="block">
+                  <span className="cs-kicker">02 — {t("yearLabel")}</span>
+                  <input
+                    className="mt-3 h-16 w-full border-b-2 border-ink bg-transparent font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
+                    inputMode="numeric"
+                    type="number"
+                    min={AROUND_YEAR_MIN}
+                    max={AROUND_YEAR_MAX}
+                    placeholder={t("yearPlaceholder")}
+                    value={yearText}
+                    onChange={(event) => {
+                      setYearText(event.target.value);
+                      setYearError(false);
+                    }}
+                    aria-invalid={yearError}
+                  />
+                </label>
+                <p className="mt-3 text-xs text-ink-soft">{t("yearHint", { min: AROUND_YEAR_MIN, max: AROUND_YEAR_MAX })}</p>
+                {yearError ? (
+                  <p className="mt-2 text-sm text-copper" role="alert">
+                    {t("yearInvalid", { min: AROUND_YEAR_MIN, max: AROUND_YEAR_MAX })}
+                  </p>
                 ) : null}
-              </p>
-            ) : null}
-            <ul className="mt-6 divide-y divide-line border-y border-line">
-              {ordered.map((place) => (
-                <li key={place.slug} className="grid gap-2 py-4 sm:grid-cols-12 sm:items-baseline">
-                  <span className="text-sm text-brass sm:col-span-3">
-                    {place.walkMinutes === 0 ? t("fromSquare") : `${place.walkMinutes} min`}
-                  </span>
-                  <Link href={sitePath(place)} className="font-display text-2xl sm:col-span-5">
-                    {pick(place.name, locale)}
-                  </Link>
-                  <span className="text-sm text-ink-soft sm:col-span-4">{pick(place.address, locale)}</span>
-                </li>
+                <button type="submit" className="cs-btn cs-btn-cobalt mt-5 h-12 w-full">
+                  {t("yearSubmit")}
+                </button>
+              </form>
+            </motion.div>
+          ) : null}
+
+          {phase === "building" ? (
+            <motion.div
+              key="building"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduce ? undefined : { opacity: 0 }}
+              className="border border-ink bg-ink px-5 py-16 text-foam sm:px-12 sm:py-20"
+              aria-live="polite"
+            >
+              <div className="flex items-center justify-between text-[11px] tracking-[0.22em] text-brass uppercase">
+                <span>{t("buildingTitle")}</span>
+                <span>0{step + 1} / 0{BUILD_STEPS.length}</span>
+              </div>
+              <div className="mt-5 h-1 w-full bg-foam/15">
+                <motion.div
+                  className="h-full bg-cobalt"
+                  animate={{ width: `${((step + 1) / BUILD_STEPS.length) * 100}%` }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                />
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={BUILD_STEPS[step]}
+                  className="mt-10 font-display text-4xl leading-[0.92] sm:text-7xl"
+                  initial={reduce ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? undefined : { opacity: 0, y: -12 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  {t(`building_${BUILD_STEPS[step]}`)}
+                </motion.p>
+              </AnimatePresence>
+            </motion.div>
+          ) : null}
+
+          {phase === "ready" && plan && choice ? (
+            <motion.div
+              key="ready"
+              initial={reduce ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="grid gap-4 border-b border-ink pb-6 lg:grid-cols-12">
+                <div className="lg:col-span-7">
+                  <p className="cs-kicker">{te(themeKey(choice.themeId))}</p>
+                  <h2 className="mt-2 font-display text-4xl leading-[0.9] sm:text-7xl">{t("yourRoute")}</h2>
+                </div>
+                <div className="lg:col-span-5 lg:self-end">
+                  <p className="text-sm leading-relaxed text-ink-soft">{pick(choice.note, locale)}</p>
+                  <p className="mt-3 text-xs tracking-[0.16em] text-brass uppercase">
+                    {te("stopCount", { count: plan.stops.length })}
+                    {pathStatus === "loading" ? ` · ${t("drawingStreets")}` : null}
+                    {path?.source === "street" && path.minutes && path.meters
+                      ? ` · ${te("streetMeters", { minutes: path.minutes, meters: path.meters })}`
+                      : null}
+                    {path?.source !== "street" && plan.estimatedMinutes
+                      ? ` · ${te("planningEstimate", { minutes: plan.estimatedMinutes })}`
+                      : null}
+                  </p>
+                </div>
+              </div>
+
+              <div className="h-72 overflow-hidden border border-ink sm:h-96">
+                <Atlas
+                  markers={routeMarkers}
+                  selectedId={selectedStop}
+                  onSelect={setSelectedStop}
+                  line={path?.positions ?? null}
+                  user={null}
+                  label={t("yourRoute")}
+                  numberedStops={plan.stops.map((stop) => stop.slug)}
+                />
+              </div>
+
+              {plan.warnings.map((warning, index) => (
+                <p key={index} className="text-sm text-copper">
+                  {pick(warning, locale)}
+                </p>
               ))}
-            </ul>
-          </div>
-        ) : null}
-        {mode === "bus" ? (
-          <div className="max-w-3xl space-y-5">
-            <p className="leading-relaxed">{t("busBody")}</p>
-            <p className="leading-relaxed">{t("busHow")}</p>
-            <p className="leading-relaxed">{t("busAccount")}</p>
-            <p className="leading-relaxed">{t("busValidate")}</p>
-            <p className="text-sm text-ink-soft">{t("busNoLive")}</p>
-            <table className="mt-2 w-full text-left text-sm">
-              <tbody>
-                {jspFares.map((fare) => (
-                  <tr key={fare.id} className="border-b border-line">
-                    <th scope="row" className="py-3 pr-4 font-normal">
-                      {t(fare.labelKey)}
-                    </th>
-                    <td className="py-3 text-right">{fare.amount}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="text-sm text-ink-soft">
-              {t("confirm")} {t("fareCaptured", { date: transportLinks.fareListCaptured, checked: transportLinks.fareListChecked })}
-            </p>
-            <div className="flex flex-wrap gap-4 text-sm">
-              <a className="inline-flex h-11 items-center text-copper" href={transportLinks.priceList}>
-                {t("officialList")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={transportLinks.planner}>
-                {t("planner")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={jspHow.faq}>
-                {t("faq")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={jspHow.announcements}>
-                {t("announcements")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={jspHow.webTickets}>
-                {t("webTickets")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={jspHow.playStore}>
-                {t("playStore")}
-              </a>
-              <a className="inline-flex h-11 items-center" href={transportLinks.phone}>
-                {t("phone")} {transportLinks.phoneDisplay}
-              </a>
-            </div>
-            <h2 className="font-display text-3xl">{t("ammStopsTitle")}</h2>
-            <p className="text-sm leading-relaxed text-ink-soft">{t("ammStopsBody")}</p>
-            <ul className="divide-y divide-line border-y border-line text-sm">
-              {ammPublishedStops.stops.map((stop) => (
-                <li key={stop.name} className="flex justify-between gap-4 py-3">
-                  <span>{stop.name}</span>
-                  <span className="text-ink-soft">{stop.lines}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-xs text-brass">{t("lastChecked", { date: ammPublishedStops.lastChecked })}</p>
-          </div>
-        ) : null}
-        {mode === "bicycle" ? (
-          <div className="max-w-2xl space-y-4 leading-relaxed">
-            <p>{t("bicycleBody")}</p>
-            <p>{t("bicycleShare")}</p>
-            <p>{t("bicycleShop")}</p>
-          </div>
-        ) : null}
-        {mode === "scooter" ? (
-          <div className="max-w-3xl space-y-6">
-            <p className="leading-relaxed">{t("scooterIntro")}</p>
-            <article className="border border-line p-5">
-              <h2 className="font-display text-3xl">{t("enjoyTitle")}</h2>
-              <p className="mt-3 text-sm leading-relaxed">{t("enjoyBody")}</p>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li>{t("enjoyStart", { amount: formatCount(enjoyTariff.startMkd, locale) })}</li>
-                <li>{t("enjoyMinute", { amount: formatCount(enjoyTariff.perMinuteMkd, locale) })}</li>
-                <li>{t("enjoyReserve", { amount: formatCount(enjoyTariff.reservationPer10MinMkd, locale) })}</li>
-                <li>{t("enjoyPause", { amount: formatCount(enjoyTariff.pausePerMinuteMkd, locale) })}</li>
-              </ul>
-              <p className="mt-3 text-xs text-brass">{t("lastChecked", { date: enjoyTariff.lastChecked })}</p>
-              <a className="mt-3 inline-flex h-11 items-center text-sm text-copper" href={enjoyTariff.url}>
-                {t("enjoySource")}
-              </a>
-            </article>
-            <article className="border border-line p-5">
-              <h2 className="font-display text-3xl">{t("binbinTitle")}</h2>
-              <p className="mt-3 text-sm leading-relaxed">{t("binbinBody")}</p>
-              <a className="mt-3 inline-flex h-11 items-center text-sm text-copper" href={binbin.help}>
-                {t("binbinSource")}
-              </a>
-              <p className="mt-2 text-xs text-brass">{t("lastChecked", { date: binbin.lastChecked })}</p>
-            </article>
-          </div>
-        ) : null}
-        {mode === "taxi" ? (
-          <div className="max-w-2xl space-y-4 leading-relaxed">
-            <p>{t("taxiBody")}</p>
-            <article className="border border-line p-5">
-              <h2 className="font-display text-3xl">{t("wiziTitle")}</h2>
-              <p className="mt-3 text-sm">{t("wiziBody")}</p>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li>{t("wiziStart", { amount: formatCount(wiziTariff.startMkd, locale) })}</li>
-                <li>{t("wiziKm", { amount: formatCount(wiziTariff.perKmMkd, locale) })}</li>
-                <li>{t("wiziWait", { amount: formatCount(wiziTariff.waitingHourMkd, locale) })}</li>
-              </ul>
-              <p className="mt-3 text-sm">
-                <a href={wiziTariff.tel}>{wiziTariff.phone}</a>
-              </p>
-              <a className="mt-2 inline-flex h-11 items-center text-sm text-copper" href={wiziTariff.url}>
-                {t("wiziSource")}
-              </a>
-              <p className="text-xs text-brass">{t("lastChecked", { date: wiziTariff.lastChecked })}</p>
-            </article>
-            <p>{t("noRideHail")}</p>
-            <p>{t("airportBody", { amount: airportTaxi.amount, distance: airportTaxi.distance })}</p>
-          </div>
-        ) : null}
-        {mode === "compare" ? (
-          <div className="max-w-3xl">
-            <p className="leading-relaxed">{t("compareIntro")}</p>
-            <table className="mt-6 w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-line">
-                  <th className="py-3 font-normal">{t("compareMode")}</th>
-                  <th className="py-3 font-normal">{t("comparePrice")}</th>
-                  <th className="py-3 font-normal">{t("compareTime")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-line">
-                  <td className="py-3">{t("walk")}</td>
-                  <td className="py-3">{t("compareWalkPrice")}</td>
-                  <td className="py-3">{walkMin != null ? t("compareWalkTime", { minutes: walkMin }) : t("compareUnknown")}</td>
-                </tr>
-                <tr className="border-b border-line">
-                  <td className="py-3">{t("bus")}</td>
-                  <td className="py-3">{t("compareBusPrice")}</td>
-                  <td className="py-3">{t("compareBusTime")}</td>
-                </tr>
-                <tr className="border-b border-line">
-                  <td className="py-3">{t("scooter")}</td>
-                  <td className="py-3">
-                    {scooterQuote != null && scooterMinutes != null
-                      ? t("compareScooterPrice", {
-                          minutes: formatCount(scooterMinutes, locale),
-                          amount: formatMkd(scooterQuote, locale).replace(" MKD", ""),
-                        })
-                      : t("compareUnknown")}
-                  </td>
-                  <td className="py-3">{t("compareScooterTime")}</td>
-                </tr>
-                <tr className="border-b border-line">
-                  <td className="py-3">{t("taxi")}</td>
-                  <td className="py-3">
-                    {taxi
-                      ? t("compareTaxiPrice", {
-                          km: formatCount(taxi.assumedRoadKm, locale),
-                          amount: formatCount(taxi.mkd, locale),
-                        })
-                      : t("compareUnknown")}
-                  </td>
-                  <td className="py-3">{t("compareTaxiTime")}</td>
-                </tr>
-                <tr className="border-b border-line">
-                  <td className="py-3">{t("bicycle")}</td>
-                  <td className="py-3">{t("compareBikePrice")}</td>
-                  <td className="py-3">{t("compareUnknown")}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p className="mt-4 text-sm text-ink-soft">{t("compareAssumptions")}</p>
-            {destination ? (
-              <p className="mt-4 text-sm">
-                <Link href={destination.href} className="text-copper">
-                  {destination.name}
-                </Link>
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+              <ol className="divide-y divide-ink border-y border-ink">
+                {plan.stops.map((stop, index) => {
+                  const site = getSite(stop.slug);
+                  const place = getPlace(stop.slug);
+                  if (!site) return null;
+                  const leg = index > 0 ? plan.legs[index - 1] : null;
+                  return (
+                    <li key={`${stop.slug}-${index}`} className="grid gap-3 py-6 sm:py-8 lg:grid-cols-12 lg:items-baseline">
+                      <p className="font-display text-4xl leading-none text-cobalt sm:text-5xl lg:col-span-2">
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
+                      <div className="lg:col-span-8">
+                        <p className="font-display text-3xl leading-none sm:text-4xl">{pick(site.officialName, locale)}</p>
+                        {index === 0 ? (
+                          <p className="mt-2 text-sm text-ink-soft">{te("whyStart")}</p>
+                        ) : leg ? (
+                          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">
+                            {pick(leg.explanation, locale)}
+                          </p>
+                        ) : null}
+                        {stop.likelyClosedToday && stop.openingNote ? (
+                          <p className="mt-2 text-sm text-copper">{pick(stop.openingNote, locale)}</p>
+                        ) : null}
+                      </div>
+                      <div className="lg:col-span-2 lg:text-right">
+                        {place ? (
+                          <Link href={sitePath(place)} className="cs-btn cs-btn-ghost w-full sm:w-auto">
+                            {te("openStory")}
+                          </Link>
+                        ) : null}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+              <div className="flex flex-wrap gap-3">
+                {nav.osm ? (
+                  <a href={nav.osm} className="cs-btn cs-btn-cobalt flex-1 sm:flex-none" target="_blank" rel="noreferrer">
+                    <Navigation className="size-4" aria-hidden="true" />
+                    {t("osmWalk")}
+                  </a>
+                ) : null}
+                {nav.google ? (
+                  <a href={nav.google} className="cs-btn cs-btn-ghost flex-1 sm:flex-none" target="_blank" rel="noreferrer">
+                    {t("googleWalk")}
+                  </a>
+                ) : null}
+                <button type="button" className="cs-btn cs-btn-ink w-full sm:w-auto" onClick={reset}>
+                  <RotateCcw className="size-4" aria-hidden="true" />
+                  {t("again")}
+                </button>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
-            <p className="mt-10 text-xs text-ink-soft">
-              {t("museumsOnFoot", { count: formatCount(institutions().length, locale) })}
-            </p>
     </div>
   );
 }

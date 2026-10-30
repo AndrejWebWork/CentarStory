@@ -67,15 +67,19 @@ export type Dish = {
   story: [Copy, Copy];
   eat: Copy;
   palette: [string, string];
+  imageId?: string;
 };
 
 export type Restaurant = {
   slug: string;
   name: string;
   district: string;
+  venueKind?: "kafana" | "national-house" | "kebab-grill" | "city-dining";
   serves: string[];
   summary: Copy;
   practical: Copy;
+  hours?: Copy;
+  osmOpeningHours?: string;
   municipality: MunicipalityScope;
   verificationStatus: VerificationStatus;
   nearbyNote?: Copy;
@@ -106,6 +110,7 @@ export type Walk = {
 };
 
 export type EventStatus = "upcoming" | "ongoing" | "past" | "recurring-confirm-dates";
+export type EventHost = "municipality" | "institution" | "city";
 
 export type CulturalEvent = {
   slug: string;
@@ -114,6 +119,7 @@ export type CulturalEvent = {
   summary: Copy;
   story: Copy;
   venues: string[];
+  host: EventHost;
   officialUrl: string;
   status: EventStatus;
   startDate?: string;

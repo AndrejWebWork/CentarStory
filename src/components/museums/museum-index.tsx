@@ -1,8 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { ArrowDownRight, CalendarDays, MapPinned } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
+import { Plate } from "@/components/atlas/plate";
 import { CulturalCalendar } from "@/components/events/cultural-calendar";
+import type { AtlasMarker } from "@/components/map/explore-map";
 import { pick } from "@/content/copy";
 import { getSite } from "@/content/knowledge/catalog";
 import { getMedia } from "@/content/knowledge/media";
@@ -14,6 +18,11 @@ import { mediaSrc } from "@/lib/media/src";
 import { useMounted } from "@/lib/use-mounted";
 import { openState } from "@/lib/visit/hours";
 
+const Atlas = dynamic(
+  () => import("@/components/map/explore-map").then((mod) => mod.ExploreMap),
+  { ssr: false, loading: () => <div className="h-full w-full bg-paper-2" /> },
+);
+
 const kinds: Array<"all" | InstitutionKind> = ["all", "collection", "memorial", "stage"];
 
 function HoursBadge({ slug }: { slug: string }) {
@@ -24,139 +33,256 @@ function HoursBadge({ slug }: { slug: string }) {
   if (!ops) return <span className="text-xs text-ink-soft">{t("hoursUnverified")}</span>;
   const state = mounted ? openState(ops.windows) : { computed: false, open: null };
   return (
-    <span className="text-xs">
+    <div className="space-y-1 text-xs">
       {state.computed ? (
-        <span className={state.open ? "text-copper" : "text-ink-soft"}>{state.open ? t("openToday") : t("closedToday")}</span>
+        <p className={`font-medium ${state.open ? "text-patina" : "text-copper"}`}>
+          {state.open ? t("openToday") : t("closedToday")}
+        </p>
       ) : (
-        <span className="text-ink-soft">{t("noOpenToday")}</span>
+        <p className="text-ink-soft">{t("noOpenToday")}</p>
       )}
-      <span className="mt-1 block text-ink-soft">{pick(ops.timetable, locale)}</span>
-      <span className="mt-1 block text-[11px] tracking-[0.12em] text-brass uppercase">
+      <p className="text-ink-soft">{pick(ops.timetable, locale)}</p>
+      <p className="text-[10px] tracking-[0.18em] text-brass uppercase">
         {t("verifiedOn", { date: ops.lastChecked })}
-      </span>
-    </span>
+      </p>
+    </div>
   );
 }
 
-function MuseumCard({ place, index }: { place: Place; index: number }) {
+function MuseumRow({
+  place,
+  index,
+  selected,
+  onSelect,
+}: {
+  place: Place;
+  index: number;
+  selected: boolean;
+  onSelect: () => void;
+}) {
   const locale = useLocale();
   const t = useTranslations("museums");
+  const common = useTranslations("common");
   const site = getSite(place.slug);
   const ops = getVisitOps(place.slug);
   const image = site?.images?.[0] ? getMedia(site.images[0]) : undefined;
+  const folio = String(index + 1).padStart(2, "0");
+
   return (
-    <article className="overflow-hidden border border-line">
-      <Link href={sitePath(place)} className="grid gap-0 lg:grid-cols-12">
-        <div
-          className="relative min-h-48 lg:col-span-5"
-          style={{ background: `linear-gradient(135deg, ${place.palette[0]}, ${place.palette[1]})` }}
+    <article className={`border-b border-ink ${selected ? "bg-paper-2" : "bg-foam"}`}>
+      <div className="grid lg:grid-cols-12">
+        <Link
+          href={sitePath(place)}
+          className="relative block h-48 overflow-hidden border-b border-ink sm:h-56 lg:col-span-4 lg:h-auto lg:min-h-60 lg:border-r lg:border-b-0"
         >
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={mediaSrc(image, 960)}
-              alt=""
+              alt={pick(image.caption, locale)}
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="h-full w-full object-cover"
             />
           ) : (
-            <p className="absolute right-4 bottom-4 text-[11px] tracking-[0.16em] text-foam uppercase">{t("noPhotograph")}</p>
+            <Plate
+              motif={place.motif}
+              palette={place.palette}
+              index={folio}
+              title={pick(place.name, locale)}
+              eyebrow={t("noPhotograph")}
+            />
           )}
-        </div>
-        <div className="p-5 lg:col-span-7 lg:p-7">
-          <p className="text-[11px] tracking-[0.18em] text-brass uppercase">
-            {String(index + 1).padStart(2, "0")} · {t(place.institution ?? "collection")}
-          </p>
-          <h2 className="mt-2 font-display text-4xl leading-none">{pick(place.name, locale)}</h2>
-          <p className="mt-3 text-sm text-ink-soft">{pick(place.address, locale)}</p>
-          <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-            {place.collection ? pick(place.collection, locale) : pick(place.summary, locale)}
-          </p>
-          <div className="mt-4">
-            <HoursBadge slug={place.slug} />
+          <span className="absolute top-3 left-3 bg-patina px-2.5 py-1 text-[10px] tracking-[0.2em] text-foam uppercase">
+            {folio} · {t(place.institution ?? "collection")}
+          </span>
+        </Link>
+
+        <div className="flex flex-col justify-between p-4 sm:p-6 lg:col-span-8">
+          <div>
+            <div className="flex items-start justify-between gap-3">
+              <Link href={sitePath(place)} className="group">
+                <h2 className="font-display text-3xl leading-[0.92] group-hover:text-patina sm:text-5xl">
+                  {pick(place.name, locale)}
+                </h2>
+              </Link>
+              <button
+                type="button"
+                onClick={onSelect}
+                className="grid size-11 shrink-0 place-items-center border border-ink bg-paper text-ink hover:bg-patina hover:text-foam"
+                aria-label={common("onMap")}
+                title={common("onMap")}
+              >
+                <MapPinned className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            <p className="mt-1.5 text-xs text-ink-soft">{pick(place.address, locale)}</p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
+              {place.collection ? pick(place.collection, locale) : pick(place.summary, locale)}
+            </p>
           </div>
-          {ops?.tickets ? <p className="mt-3 text-sm leading-relaxed">{pick(ops.tickets, locale)}</p> : null}
+          <div className="mt-4 grid gap-3 border-t border-line pt-3 sm:grid-cols-2">
+            <HoursBadge slug={place.slug} />
+            <div className="flex flex-col justify-between gap-2">
+              {ops?.tickets ? (
+                <p className="text-xs leading-relaxed text-ink-soft">{pick(ops.tickets, locale)}</p>
+              ) : null}
+              <Link
+                href={sitePath(place)}
+                className="inline-flex h-10 items-center gap-1.5 text-xs tracking-[0.18em] text-patina uppercase underline"
+              >
+                <span>{common("openStory")}</span>
+                <ArrowDownRight className="size-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }
 
 export function MuseumIndex() {
   const t = useTranslations("museums");
+  const nav = useTranslations("nav");
   const locale = useLocale();
   const [kind, setKind] = useState<(typeof kinds)[number]>("all");
   const [query, setQuery] = useState("");
+  const allInstitutions = useMemo(() => institutions(), []);
+  const [selected, setSelected] = useState<string | null>(allInstitutions[0]?.slug ?? null);
+
   const list = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return institutions().filter((place) => {
+    return allInstitutions.filter((place) => {
       if (kind !== "all" && place.institution !== kind) return false;
       if (!needle) return true;
       const blob = `${pick(place.name, locale)} ${pick(place.summary, locale)} ${pick(place.address, locale)}`.toLowerCase();
       return blob.includes(needle);
     });
-  }, [kind, locale, query]);
+  }, [allInstitutions, kind, locale, query]);
+
+  const markers: AtlasMarker[] = useMemo(
+    () =>
+      list.map((place) => ({
+        id: place.slug,
+        lat: place.coordinates.lat,
+        lng: place.coordinates.lng,
+        label: pick(place.name, locale),
+        tone: "site" as const,
+      })),
+    [list, locale],
+  );
 
   return (
     <div>
-      <header className="relative overflow-hidden bg-ink text-foam">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 lg:grid-cols-12 lg:px-8 lg:py-24">
-          <div className="lg:col-span-7">
-            <p className="text-[11px] tracking-[0.22em] text-brass uppercase">03 — {t("kicker")}</p>
-            <h1 className="mt-3 font-display text-5xl leading-[0.9] sm:text-7xl">{t("title")}</h1>
+      {/* PATINA ARCHIVAL HEADER */}
+      <header className="relative overflow-hidden border-b border-ink bg-patina text-foam">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.08] sm:text-[15rem]"
+        >
+          03
+        </span>
+        <div className="relative mx-auto grid max-w-[96rem] gap-5 px-4 py-9 sm:px-5 sm:py-14 lg:grid-cols-12 lg:px-8 lg:py-20">
+          <div className="lg:col-span-8">
+            <p className="cs-kicker text-foam/75">
+              <span className="inline-block h-2 w-2 bg-paper" aria-hidden="true" />
+              03 — {t("kicker")}
+            </p>
+            <h1 className="mt-3 font-display text-[clamp(2.85rem,11vw,6.2rem)] leading-[0.86] tracking-tight">
+              {t("title")}
+            </h1>
           </div>
-          <p className="max-w-md text-base leading-relaxed text-foam/80 lg:col-span-4 lg:col-start-9 lg:pt-10">{t("lede")}</p>
+          <div className="border-t border-foam/25 pt-4 lg:col-span-4 lg:border-t-0 lg:border-l lg:pt-2 lg:pl-7">
+            <p className="text-sm leading-relaxed text-foam/85 sm:text-base">{t("lede")}</p>
+            <Link href="/events" className="cs-btn mt-5 w-full bg-foam text-ink sm:w-auto">
+              <CalendarDays className="size-4" aria-hidden="true" />
+              {nav("events")}
+            </Link>
+          </div>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8 lg:py-12">
-        <label className="block">
-          <span className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("search")}</span>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="mt-2 h-12 w-full border border-line bg-transparent px-3"
-            placeholder={t("searchHint")}
-          />
-        </label>
-        <fieldset className="mt-8">
-          <legend className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("filters")}</legend>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {kinds.map((item) => (
-              <button
-                key={item}
-                type="button"
-                aria-pressed={kind === item}
-                onClick={() => setKind(item)}
-                className={`h-11 border px-3 text-sm ${kind === item ? "border-ink bg-ink text-foam" : "border-line"}`}
-              >
-                {t(item)}
-              </button>
-            ))}
+
+      <div className="mx-auto max-w-[96rem]">
+        {/* STICKY PHONE FILTER BAR + INTERACTIVE QUAY MAP */}
+        <div className="grid border-b border-ink bg-paper-2 lg:grid-cols-12">
+          <div className="border-b border-ink p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
+            <label className="block">
+              <span className="cs-kicker">{t("search")}</span>
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="cs-field mt-2"
+                placeholder={t("searchHint")}
+              />
+            </label>
+            <fieldset className="mt-4">
+              <legend className="cs-kicker">{t("filters")}</legend>
+              <div className="cs-no-scrollbar mt-2 flex gap-2 overflow-x-auto pb-1">
+                {kinds.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    aria-pressed={kind === item}
+                    onClick={() => setKind(item)}
+                    className={`cs-chip ${kind === item ? "is-on" : ""}`}
+                  >
+                    {t(item)}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <p className="mt-3 text-xs leading-relaxed text-ink-soft">{t("inventoryNote")}</p>
           </div>
-        </fieldset>
-        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-soft">{t("inventoryNote")}</p>
+
+          <div className="h-64 sm:h-72 lg:col-span-6 lg:h-auto lg:min-h-[16rem]">
+            <Atlas
+              markers={markers}
+              selectedId={selected}
+              onSelect={setSelected}
+              line={null}
+              user={null}
+              label={t("title")}
+            />
+          </div>
+        </div>
+
         {list.length === 0 ? (
-          <p className="mt-8 text-sm">{t("empty")}</p>
+          <p className="px-4 py-12 text-sm lg:px-8">{t("empty")}</p>
         ) : (
-          <ol className="mt-8 grid gap-6">
+          <ol className="border-b border-ink">
             {list.map((place, index) => (
               <li key={place.slug}>
-                <MuseumCard place={place} index={index} />
+                <MuseumRow
+                  place={place}
+                  index={index}
+                  selected={selected === place.slug}
+                  onSelect={() => setSelected(place.slug)}
+                />
               </li>
             ))}
           </ol>
         )}
-        <section className="mt-16">
-          <h2 className="font-display text-4xl">{t("nearbyTitle")}</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">{t("nearbyBody")}</p>
-        </section>
-        <section className="mt-16">
-          <h2 className="font-display text-4xl">{t("exhibitions")}</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">{t("exhibitionsLede")}</p>
-          <div className="mt-6">
-            <CulturalCalendar />
+
+        <section className="grid border-b border-ink bg-paper lg:grid-cols-12">
+          <div className="border-b border-ink p-5 sm:p-8 lg:col-span-5 lg:border-r lg:border-b-0">
+            <h2 className="font-display text-3xl sm:text-4xl">{t("nearbyTitle")}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t("nearbyBody")}</p>
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-8 lg:col-span-7">
+            <div>
+              <p className="cs-kicker">{nav("events")}</p>
+              <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">{t("exhibitions")}</h2>
+              <p className="mt-2 max-w-xl text-sm text-ink-soft">{t("exhibitionsLede")}</p>
+            </div>
+            <Link href="/events" className="cs-btn cs-btn-patina">
+              {nav("events")}
+            </Link>
+          </div>
+        </section>
+
+        <section className="px-4 py-12 sm:px-5 lg:px-8">
+          <CulturalCalendar />
         </section>
       </div>
     </div>

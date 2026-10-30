@@ -18,15 +18,10 @@ export const mobileDestinations = [
 
 export function activeDestination(pathname: string): DestinationId | null {
   if (pathname.startsWith("/scan")) return "scan";
-  if (pathname.startsWith("/museums")) return "museums";
+  if (pathname.startsWith("/museums") || pathname.startsWith("/events")) return "museums";
   if (pathname.startsWith("/food")) return "food";
   if (pathname.startsWith("/around")) return "around";
-  if (
-    pathname === "/" ||
-    pathname.startsWith("/places") ||
-    pathname.startsWith("/routes") ||
-    pathname.startsWith("/events")
-  ) {
+  if (pathname === "/" || pathname.startsWith("/places") || pathname.startsWith("/routes")) {
     return "explore";
   }
   return null;

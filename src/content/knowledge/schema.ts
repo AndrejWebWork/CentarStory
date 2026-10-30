@@ -29,6 +29,24 @@ export type EntityType =
   | "landscape"
   | "plaque";
 
+export type MonumentCategory =
+  | "monumental-statue"
+  | "historical-figure"
+  | "military-monument"
+  | "bust"
+  | "public-sculpture"
+  | "memorial-monument"
+  | "memorial-plaque"
+  | "relief-panel"
+  | "obelisk-column"
+  | "historical-marker"
+  | "sculptural-ensemble"
+  | "war-tragedy-memorial"
+  | "writer-artist-scientist"
+  | "public-artwork"
+  | "architectural-landmark"
+  | "cultural-institution";
+
 export type TranslationStatus = "complete" | "partial";
 
 export type SourceRecord = {
@@ -85,6 +103,12 @@ export type SiteRecord = {
   id: string;
   slug: string;
   entityType: EntityType;
+  monumentCategory?: MonumentCategory;
+  osmId?: string;
+  wikidataId?: string;
+  installationDate?: string;
+  materials?: Copy;
+  missingOrDisputed?: Copy;
   kinds: PlaceKind[];
   institution?: InstitutionKind;
   officialName: Copy;
@@ -133,6 +157,7 @@ export type DishRecord = {
   story: [Copy, Copy];
   eat: Copy;
   palette: [string, string];
+  imageId?: string;
   claims: Claim[];
   myths: Claim[];
   verificationStatus: VerificationStatus;
@@ -140,14 +165,19 @@ export type DishRecord = {
   translationStatus: TranslationStatus;
 };
 
+export type VenueKind = "kafana" | "national-house" | "kebab-grill" | "city-dining";
+
 export type VenueRecord = {
   id: string;
   slug: string;
   name: string;
   district: string;
+  venueKind?: VenueKind;
   serves: string[];
   summary: Copy;
   practical: Copy;
+  hours?: Copy;
+  osmOpeningHours?: string;
   municipality: MunicipalityScope;
   coordinates?: Coordinates;
   address?: Copy;
@@ -173,6 +203,8 @@ export type DistrictRecord = {
   nearbyNote?: Copy;
 };
 
+export type EventHost = "municipality" | "institution" | "city";
+
 export type EventCalendarKind = "annual-fixed-date" | "annual-season" | "recurring" | "dated-run";
 
 export type EventCalendar = {
@@ -192,6 +224,7 @@ export type EventRecord = {
   summary: Copy;
   story: Copy;
   venues: string[];
+  host: EventHost;
   sourceIds: string[];
   verificationStatus: VerificationStatus;
   lastChecked: string;

@@ -1,59 +1,62 @@
 "use client";
 
-import { Camera, ImageUp, MapPin, RotateCcw } from "lucide-react";
+import { ArrowDownRight, ImageUp, ListFilter, RotateCcw, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Plate } from "@/components/atlas/plate";
+import { SCAN_CAPTURE_STORAGE_KEY } from "@/components/story/cinematic-scenes";
 import { pick } from "@/content/copy";
-import { getPlace, places, sitePath } from "@/content/places";
+import { getSite } from "@/content/knowledge/catalog";
 import { getMedia } from "@/content/knowledge/media";
+import { getPlace, places, sitePath } from "@/content/places";
 import { walksThrough } from "@/content/journeys";
 import { Link } from "@/i18n/navigation";
-import type { Evidence } from "@/lib/recognition/analyze";
-import { requestRemoteRecognition } from "@/lib/recognition/client";
-import { capDisplayedScore } from "@/lib/recognition/fuse";
-import { recognizeOnDevice } from "@/lib/recognition/on-device";
-import { canvasFromFile, canvasFromVideo, jpegFromCanvas, validateFile } from "@/lib/recognition/prepare";
-import { referenceBindings } from "@/lib/recognition/catalogue";
-import type { LocationHint, RecognitionResult } from "@/lib/recognition/types";
 import { mediaSrc } from "@/lib/media/src";
-import { useMounted } from "@/lib/use-mounted";
+import type { ImageQualityIssue } from "@/lib/recognition/analyze";
+import { requestRemoteRecognition } from "@/lib/recognition/client";
+import { recognizeOnDevice } from "@/lib/recognition/on-device";
+import { canvasFromFile, canvasFromVideo, jpegFromCanvas, type PrepareError } from "@/lib/recognition/prepare";
+import type { RecognitionResult } from "@/lib/recognition/types";
 
-type Phase = "idle" | "live" | "review" | "reading" | "result";
-type ScanError = "camera" | "permission" | "unsupported" | "file" | "type" | "size" | "network" | "timeout";
-type Stage = "decode" | "sample" | "compare" | "remote";
+type Phase = "live" | "reading" | "result";
+type ScanError = "camera" | "permission" | "unsupported" | PrepareError | "network" | "timeout";
 type Mode = "unknown" | "demo" | "remote";
 
 export function ScanStudio() {
   const t = useTranslations("scan");
   const locale = useLocale();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const shotRef = useRef<HTMLCanvasElement | null>(null);
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [stage, setStage] = useState<Stage>("decode");
+  const shotRef = useRef<HTMLCanvasElement>(null);
+  const [phase, setPhase] = useState<Phase>("live");
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<ScanError | null>(null);
-  const [evidence, setEvidence] = useState<Evidence | null>(null);
+  const [qualityIssue, setQualityIssue] = useState<ImageQualityIssue>(null);
   const [result, setResult] = useState<RecognitionResult | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("unknown");
-  const [location, setLocation] = useState<LocationHint | null>(null);
-  const [locating, setLocating] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let cancelled = false;
     fetch("/api/integrations/status")
       .then((response) => response.json())
       .then((data: { recognition?: { mode?: string } }) => {
-        if (cancelled) return;
-        setMode(data.recognition?.mode === "remote" ? "remote" : "demo");
+        if (!cancelled) setMode(data.recognition?.mode === "remote" ? "remote" : "demo");
       })
       .catch(() => {
         if (!cancelled) setMode("demo");
       });
+
+    void openCamera();
+
     return () => {
       cancelled = true;
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      stopCamera();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -68,8 +71,13 @@ export function ScanStudio() {
     streamRef.current = null;
   }
 
-  async function startCamera() {
+  async function openCamera() {
     setError(null);
+    setQualityIssue(null);
+    setResult(null);
+    setSelectedSlug(null);
+    setPreview(null);
+    shotRef.current = null;
     if (!navigator.mediaDevices?.getUserMedia) {
       setError("unsupported");
       return;
@@ -87,46 +95,30 @@ export function ScanStudio() {
     }
   }
 
-  function capture() {
+  async function capture() {
     const video = videoRef.current;
     if (!video) return;
     const canvas = canvasFromVideo(video);
     shotRef.current = canvas;
     setPreview(canvas.toDataURL("image/jpeg", 0.9));
     stopCamera();
-    setPhase("review");
+    await readPhotograph();
   }
 
-  async function loadFile(file: File) {
+  async function pickFile(file: File | undefined) {
+    if (!file) return;
     setError(null);
-    const invalid = validateFile(file);
-    if (invalid) {
-      setError(invalid);
-      return;
-    }
+    setQualityIssue(null);
     try {
       const canvas = await canvasFromFile(file);
       shotRef.current = canvas;
       setPreview(canvas.toDataURL("image/jpeg", 0.9));
       stopCamera();
-      setPhase("review");
+      await readPhotograph();
     } catch (caught) {
       const code = caught instanceof Error ? caught.message : "file";
       setError(code === "type" || code === "size" ? code : "file");
     }
-  }
-
-  function askLocation() {
-    if (!navigator.geolocation) return;
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-        setLocating(false);
-      },
-      () => setLocating(false),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30_000 },
-    );
   }
 
   async function readPhotograph() {
@@ -134,373 +126,417 @@ export function ScanStudio() {
     if (!shot) return;
     setPhase("reading");
     setError(null);
-    setStage("decode");
-    await wait(40);
     let jpeg: { canvas: HTMLCanvasElement; dataUrl: string };
     try {
       jpeg = jpegFromCanvas(shot);
-    } catch {
-      setError("file");
-      setPhase("review");
+    } catch (caught) {
+      const code = caught instanceof Error && caught.message === "size" ? "size" : "file";
+      setError(code);
+      void openCamera();
       return;
     }
-    setStage("sample");
-    const local = await recognizeOnDevice(jpeg.canvas, location);
-    setEvidence(local.evidence);
-    setStage("compare");
-    await wait(40);
+    const local = await recognizeOnDevice(jpeg.canvas);
+    setQualityIssue(local.qualityIssue);
 
     if (mode === "remote") {
-      setStage("remote");
       try {
         const remote = await requestRemoteRecognition({
           dataUrl: jpeg.dataUrl,
-          location,
           structure: local.structure,
         });
         setResult(remote);
+        setSelectedSlug(remote.candidates[0]?.slug ?? null);
         setPhase("result");
         return;
       } catch (caught) {
         const message = caught instanceof Error ? caught.message : "network";
-        setError(message === "timeout" ? "timeout" : "network");
-        setResult({ ...local.result, note: "fallback-local" });
+        if (message !== "unconfigured") {
+          setError(message === "timeout" ? "timeout" : "network");
+        }
+        const fallback = { ...local.result, note: "fallback-local" };
+        setResult(fallback);
+        setSelectedSlug(fallback.candidates[0]?.slug ?? null);
         setPhase("result");
         return;
       }
     }
 
     setResult(local.result);
+    setSelectedSlug(local.result.candidates[0]?.slug ?? null);
     setPhase("result");
   }
 
-  function resetShot() {
-    setPreview(null);
-    shotRef.current = null;
-    setResult(null);
-    setEvidence(null);
-    setPhase("idle");
-  }
+  const filteredCatalog = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return places;
+    return places.filter((place) => {
+      const site = getSite(place.slug);
+      const aliases = site ? `${site.nameMk} ${site.alternativeNames.join(" ")} ${site.transliterations.join(" ")}` : "";
+      return `${pick(place.name, locale)} ${pick(place.eyebrow, locale)} ${pick(place.address, locale)} ${aliases}`
+        .toLowerCase()
+        .includes(needle);
+    });
+  }, [locale, query]);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-8 lg:px-8 lg:py-10">
-      <header className="max-w-2xl">
-        <p className="text-[11px] tracking-[0.22em] text-brass uppercase">02 — {t("kicker")}</p>
-        <h1 className="mt-3 font-display text-5xl leading-[0.92] sm:text-7xl">{t("title")}</h1>
-        <p className="mt-5 text-base leading-relaxed text-ink-soft">{t("lede")}</p>
-        <p className="mt-4 text-sm text-patina" role="status">
-          {mode === "remote" ? t("modeRemote") : mode === "demo" ? t("modeDemo") : t("modeUnknown")}
-        </p>
-        <p className="mt-2 text-sm text-ink-soft">{mode === "remote" ? t("privacyRemote") : t("privacy")}</p>
-      </header>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <div
-            className="relative overflow-hidden border border-line bg-ink"
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={(event) => {
-              event.preventDefault();
-              const file = event.dataTransfer.files[0];
-              if (file) void loadFile(file);
-            }}
+    <div className="relative min-h-[calc(100dvh-3.5rem)] overflow-hidden bg-ink lg:min-h-[calc(100dvh-4.4rem)]">
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        aria-label={t("upload")}
+        onChange={(event) => {
+          void pickFile(event.target.files?.[0]);
+          event.target.value = "";
+        }}
+      />
+      {phase === "live" ? (
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover"
+          playsInline
+          muted
+          autoPlay
+          aria-label={t("liveLabel")}
+        />
+      ) : preview ? (
+        // Visitor's own photograph, produced in this browser.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={preview} alt={t("previewAlt")} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 bg-ink" />
+      )}
+      <div className="pointer-events-none absolute inset-5 sm:inset-10" aria-hidden="true">
+        <span className="absolute top-0 left-0 h-10 w-10 border-t-2 border-l-2 border-foam" />
+        <span className="absolute top-0 right-0 h-10 w-10 border-t-2 border-r-2 border-foam" />
+        <span className="absolute bottom-0 left-0 h-10 w-10 border-b-2 border-l-2 border-foam" />
+        <span className="absolute right-0 bottom-0 h-10 w-10 border-b-2 border-r-2 border-foam" />
+        <span className="absolute top-1/2 left-1/2 h-6 w-px -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
+        <span className="absolute top-1/2 left-1/2 h-px w-6 -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
+        <span className="absolute top-2 left-3 text-[10px] tracking-[0.24em] text-foam/75 uppercase">
+          41.9957°N · 21.4312°E
+        </span>
+      </div>
+      {phase === "reading" ? (
+        <>
+          <div className="cs-lens-scan pointer-events-none absolute inset-x-6 top-1/3 h-px bg-cobalt sm:inset-x-10" />
+          <p
+            className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 text-center text-xs tracking-[0.22em] text-foam uppercase"
+            role="status"
           >
-            {phase === "live" ? (
-              <video
-                ref={videoRef}
-                className="h-[70vh] min-h-[420px] w-full object-cover"
-                playsInline
-                muted
-                aria-label={t("liveLabel")}
-              />
-            ) : preview ? (
-              // Visitor's own photograph, produced in this browser.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt={t("previewAlt")} className="h-[70vh] min-h-[420px] w-full object-cover" />
-            ) : (
-              <div className="flex h-[70vh] min-h-[420px] flex-col justify-end bg-[radial-gradient(circle_at_50%_40%,#3a2e27,transparent_55%),linear-gradient(180deg,#1c1612,#2a211c)] p-7 text-foam">
-                <p className="font-display text-4xl leading-none">{t("lensIdle")}</p>
-                <p className="mt-3 max-w-sm text-sm text-foam/70">{t("lensHint")}</p>
-              </div>
-            )}
-            <LensGuides live={phase === "live"} reading={phase === "reading"} />
-            {phase === "reading" ? (
-              <div className="absolute inset-x-0 bottom-0 bg-ink/70 px-5 py-4 text-sm text-foam" role="status">
-                {t("reading")} — {t(`stage${capitalize(stage)}`)}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {phase !== "live" ? (
-              <button type="button" onClick={startCamera} className="inline-flex h-12 items-center gap-2 bg-ink px-5 text-sm text-foam">
-                <Camera className="size-4" aria-hidden="true" />
-                {t("startCamera")}
+            {t("reading")}
+          </p>
+        </>
+      ) : null}
+      <div className="absolute inset-x-0 bottom-[4.75rem] z-10 mx-auto flex w-full max-w-xl flex-col items-center gap-3 px-4 pb-[env(safe-area-inset-bottom)] lg:bottom-8">
+        {phase === "result" && result ? (
+          <Results
+            result={result}
+            qualityIssue={qualityIssue}
+            locale={locale}
+            selectedSlug={selectedSlug}
+            onSelect={setSelectedSlug}
+            onOpenCatalog={() => setCatalogOpen(true)}
+          />
+        ) : null}
+        {error ? (
+          <p className="border border-foam/30 bg-ink/85 px-4 py-2 text-center text-xs text-foam" role="alert">
+            {t(`errors.${error}`)}
+          </p>
+        ) : null}
+        {phase === "live" ? (
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="grid size-12 place-items-center border border-foam/60 bg-ink/70 text-foam hover:border-foam"
+                aria-label={t("upload")}
+                title={t("upload")}
+              >
+                <ImageUp className="size-5" aria-hidden="true" />
               </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={capture}
-                  className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-copper text-foam"
-                  aria-label={t("shutter")}
-                >
-                  <span className="h-8 w-8 rounded-full border-2 border-foam" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    stopCamera();
-                    setPhase("idle");
-                  }}
-                  className="inline-flex h-12 items-center border border-line px-4 text-sm"
-                >
-                  {t("stopCamera")}
-                </button>
-              </>
-            )}
-            <label className="inline-flex h-12 cursor-pointer items-center gap-2 border border-line px-4 text-sm">
+              <button
+                type="button"
+                onClick={() => void capture()}
+                className="grid size-16 place-items-center border-2 border-foam bg-ink/60"
+                aria-label={t("shutter")}
+                title={t("shutter")}
+              >
+                <span className="size-10 bg-cobalt" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setCatalogOpen(true)}
+                className="grid size-12 place-items-center border border-foam/60 bg-ink/70 text-foam hover:border-foam"
+                aria-label={t("catalog")}
+                title={t("catalog")}
+              >
+                <ListFilter className="size-5" aria-hidden="true" />
+              </button>
+            </div>
+            <p className="max-w-xs text-center text-[10px] leading-snug text-foam/65">
+              {mode === "remote" ? t("privacyRemote") : t("privacy")}
+            </p>
+          </div>
+        ) : phase !== "reading" ? (
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => void openCamera()}
+              className="cs-btn cs-btn-ink h-11 border border-foam"
+            >
+              <RotateCcw className="size-4" aria-hidden="true" />
+              {t("retake")}
+            </button>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="cs-btn cs-btn-ink h-11 border border-foam/60"
+            >
               <ImageUp className="size-4" aria-hidden="true" />
               {t("upload")}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="sr-only"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) void loadFile(file);
-                  event.target.value = "";
-                }}
-              />
-            </label>
-            {phase === "review" || (phase === "result" && preview) ? (
-              <>
-                {phase === "review" ? (
-                  <button type="button" onClick={readPhotograph} className="inline-flex h-12 items-center bg-copper px-4 text-sm text-foam">
-                    {t("read")}
-                  </button>
-                ) : null}
-                <button type="button" onClick={resetShot} className="inline-flex h-12 items-center gap-2 px-4 text-sm">
-                  <RotateCcw className="size-4" aria-hidden="true" />
-                  {t("retake")}
-                </button>
-              </>
-            ) : null}
-            {phase === "result" && error === "network" ? (
-              <button type="button" onClick={readPhotograph} className="inline-flex h-12 items-center border border-line px-4 text-sm">
-                {t("retry")}
-              </button>
-            ) : null}
-            <button type="button" onClick={askLocation} className="inline-flex h-12 items-center gap-2 px-3 text-sm text-ink-soft">
-              <MapPin className="size-4" aria-hidden="true" />
-              {locating ? t("locating") : location ? t("located") : t("useLocation")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setCatalogOpen(true)}
+              className="cs-btn cs-btn-ink h-11 border border-foam/60"
+            >
+              <ListFilter className="size-4" aria-hidden="true" />
+              {t("catalog")}
             </button>
           </div>
-          <div aria-live="polite" className="mt-4 text-sm text-copper">
-            {error ? <p>{t(`errors.${error}`)}</p> : null}
-          </div>
-        </div>
-
-        <aside className="lg:col-span-5">
-          {phase === "result" && result ? (
-            <Results result={result} evidence={evidence} locale={locale} />
-          ) : (
-            <div className="border border-line bg-foam p-5">
-              <h2 className="font-display text-3xl">{t("how")}</h2>
-              <ol className="mt-4 space-y-3 text-sm leading-relaxed text-ink-soft">
-                <li>1. {t("stepCamera")}</li>
-                <li>2. {t("stepReview")}</li>
-                <li>3. {t("stepMatch")}</li>
-                <li>4. {t("stepStory")}</li>
-              </ol>
-            </div>
-          )}
-        </aside>
+        ) : null}
       </div>
 
-      {mode !== "remote" ? <ReferenceCatalog locale={locale} /> : null}
-
-      <section className="mt-12">
-        <h2 className="font-display text-3xl">{t("catalog")}</h2>
-        <p className="mt-2 max-w-xl text-sm text-ink-soft">{t("catalogNote")}</p>
-        <ul className="mt-4 divide-y divide-line border-y border-line">
-          {places.map((place) => (
-            <li key={place.slug}>
-              <Link href={sitePath(place)} className="flex min-h-14 items-center justify-between gap-4 py-3">
-                <span>{pick(place.name, locale)}</span>
-                <span className="text-sm text-brass">
-                  {place.municipality === "nearby" ? `${t("nearby")} · ` : ""}
-                  {pick(place.era, locale)}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {catalogOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-ink/95 p-4 pb-24 text-foam sm:p-8 lg:pb-8"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("catalog")}
+        >
+          <div className="mx-auto flex w-full max-w-3xl items-center justify-between border-b border-foam/25 pb-4">
+            <div>
+              <p className="text-[10px] tracking-[0.22em] text-brass uppercase">{t("catalogNote")}</p>
+              <h2 className="mt-1 font-display text-3xl">{t("catalog")}</h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCatalogOpen(false)}
+              className="grid size-11 place-items-center border border-foam/40"
+              aria-label={t("stopCamera")}
+            >
+              <X className="size-5" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mx-auto mt-4 w-full max-w-3xl">
+            <label className="relative block">
+              <Search
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-brass"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t("catalog")}
+                className="h-12 w-full border border-foam/35 bg-ink pr-3 pl-10 text-sm text-foam"
+              />
+            </label>
+          </div>
+          <ul className="mx-auto mt-4 w-full max-w-3xl flex-1 divide-y divide-foam/20 overflow-y-auto border-y border-foam/20">
+            {filteredCatalog.map((place, index) => (
+              <li key={place.slug}>
+                <Link
+                  href={`${sitePath(place)}?from=scan`}
+                  className="flex items-baseline justify-between gap-4 py-4 hover:text-brass"
+                >
+                  <div>
+                    <span className="mr-3 font-display text-lg text-brass">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-display text-2xl">{pick(place.name, locale)}</span>
+                  </div>
+                  <span className="text-[10px] tracking-[0.18em] text-foam/65 uppercase">
+                    {pick(place.eyebrow, locale)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function Results({
   result,
-  evidence,
+  qualityIssue,
   locale,
+  selectedSlug,
+  onSelect,
+  onOpenCatalog,
 }: {
   result: RecognitionResult;
-  evidence: Evidence | null;
+  qualityIssue: ImageQualityIssue;
   locale: string;
+  selectedSlug: string | null;
+  onSelect: (slug: string) => void;
+  onOpenCatalog: () => void;
 }) {
   const t = useTranslations("scan");
-  const headline =
-    result.outcome === "identified"
-      ? t("identified")
-      : result.outcome === "candidates"
-        ? t("choose")
-        : result.outcome === "out-of-catalogue"
-          ? t("outOfCatalogue")
-          : t("unknown");
+  const story = useTranslations("story");
+  const candidates = result.candidates
+    .map((candidate) => ({ candidate, place: getPlace(candidate.slug) }))
+    .filter(
+      (
+        entry,
+      ): entry is {
+        candidate: (typeof result.candidates)[number];
+        place: NonNullable<ReturnType<typeof getPlace>>;
+      } => Boolean(entry.place),
+    );
+  const active = candidates.find((entry) => entry.place.slug === selectedSlug) ?? candidates[0];
 
-  return (
-    <section className="border border-line bg-foam p-5">
-      <p className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("resultKicker")}</p>
-      <h2 className="mt-2 font-display text-4xl leading-none">{headline}</h2>
-      <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-        {result.mode === "remote" ? t("resultRemote") : t("resultDemo")}
-      </p>
-      {result.note === "fallback-local" ? <p className="mt-2 text-sm text-copper">{t("fallbackLocal")}</p> : null}
-      {result.usedLocation ? <p className="mt-2 text-xs text-ink-soft">{t("locationUsed")}</p> : null}
-      {result.candidates.length === 0 ? <p className="mt-4 text-sm">{t("unknownBody")}</p> : null}
-      <ul className="mt-5 space-y-3">
-        {result.candidates.map((candidate, index) => {
-          const place = getPlace(candidate.slug);
-          if (!place) return null;
-          const walks = walksThrough(place.slug);
-          const path = sitePath(place);
-          return (
-            <li key={candidate.slug} className="border border-line p-4">
-              <p className="text-[11px] tracking-[0.16em] text-brass uppercase">
-                {index === 0 && result.outcome === "identified" ? t("leading") : t("candidate")}
-              </p>
-              <p className="mt-1 font-display text-3xl leading-none">{pick(place.name, locale)}</p>
-              <p className="mt-2 text-sm text-ink-soft">
-                {t("score", { score: capDisplayedScore(candidate.score) })} · {candidate.sources.join(" · ")}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                <Link href={path} className="text-copper">
-                  {t("open")}
-                </Link>
-                <Link href={`${path}#architecture`} className="text-copper">
-                  {t("openArchitecture")}
-                </Link>
-                <Link href={`${path}#legends`} className="text-copper">
-                  {t("openLegends")}
-                </Link>
-                <Link href={`/?place=${place.slug}`} className="text-copper">
-                  {t("onMap")}
-                </Link>
-                {walks[0] ? (
-                  <Link href={`/?walk=${walks[0].slug}`} className="text-copper">
-                    {t("makeRoute")}
-                  </Link>
-                ) : null}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-      {evidence ? <EvidenceMeters evidence={evidence} /> : null}
-    </section>
-  );
-}
+  if (result.outcome === "unknown" || result.outcome === "out-of-catalogue" || !active) {
+    return (
+      <section className="w-full border border-ink bg-paper p-5 shadow-[10px_10px_0_var(--ink)]">
+        <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
+          {result.outcome === "out-of-catalogue" ? t("outOfCatalogue") : t("resultKicker")}
+        </p>
+        <p className="mt-2 font-display text-3xl leading-none">{t("unknown")}</p>
+        <p className="mt-2 text-xs leading-relaxed text-ink-soft">{t("unknownBody")}</p>
+        {qualityIssue ? (
+          <p className="mt-2 border-l-2 border-copper pl-3 text-xs text-copper">
+            {qualityIssue === "low-light" ? t("reasons.cool") : t("uncertain")}
+          </p>
+        ) : null}
+        <button type="button" onClick={onOpenCatalog} className="cs-btn cs-btn-cobalt mt-4 w-full">
+          {t("catalog")}
+        </button>
+      </section>
+    );
+  }
 
-function ReferenceCatalog({ locale }: { locale: string }) {
-  const t = useTranslations("scan");
-  const ready = useMounted();
-  const refs = referenceBindings()
-    .map((binding) => {
-      const place = getPlace(binding.slug);
-      const image = getMedia(binding.imageId);
-      if (!place || !image) return null;
-      return { place, image };
-    })
-    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const { place } = active;
+  const site = getSite(place.slug);
+  const image = site?.images[0] ? getMedia(site.images[0]) : undefined;
+  const folio = String(places.findIndex((item) => item.slug === place.slug) + 1).padStart(2, "0");
+  const path = `${sitePath(place)}?from=scan`;
+  const walk = walksThrough(place.slug)[0];
+  const isSingleMatch = result.outcome === "identified";
 
-  if (refs.length === 0) return null;
+  function rememberCaptureForStory(slug: string) {
+    try {
+      const imgEl = document.querySelector<HTMLImageElement>("img[src^='data:image/']");
+      if (imgEl?.src) {
+        window.sessionStorage.setItem(
+          SCAN_CAPTURE_STORAGE_KEY,
+          JSON.stringify({ slug, dataUrl: imgEl.src }),
+        );
+      }
+    } catch {
+      /* Session storage optional. */
+    }
+  }
 
-  return (
-    <section className="mt-12">
-      <h2 className="font-display text-3xl">{t("references")}</h2>
-      <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t("referencesNote")}</p>
-      {ready ? (
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {refs.map(({ place, image }) => (
-            <li key={`${place.slug}-${image.id}`} className="border border-line bg-foam">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={mediaSrc(image, 640)} alt={pick(image.caption, locale)} className="aspect-[16/10] w-full object-cover" />
-              <div className="p-4">
-                <p className="font-display text-2xl leading-none">{pick(place.name, locale)}</p>
-                <p className="mt-2 text-xs text-ink-soft">
-                  {image.credit} · {image.license}
-                </p>
-                <Link href={sitePath(place)} className="mt-3 inline-flex h-10 items-center text-sm text-copper">
-                  {t("open")}
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="mt-6 h-40 bg-paper-2" />
-      )}
-    </section>
-  );
-}
-
-function EvidenceMeters({ evidence }: { evidence: Evidence }) {
-  const t = useTranslations("scan");
-  const rows: { key: keyof Evidence; label: string }[] = [
-    { key: "brightness", label: t("brightness") },
-    { key: "warmth", label: t("warmth") },
-    { key: "saturation", label: t("saturation") },
-    { key: "horizontal", label: t("horizontal") },
-    { key: "vertical", label: t("vertical") },
-    { key: "green", label: t("green") },
-  ];
-  return (
-    <div className="mt-6">
-      <h3 className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("evidence")}</h3>
-      <dl className="mt-3 space-y-2">
-        {rows.map((row) => (
-          <div key={row.key} className="grid grid-cols-[7rem_1fr_2.5rem] items-center gap-3 text-sm">
-            <dt>{row.label}</dt>
-            <dd className="h-1 bg-paper-2">
-              <span className="block h-1 bg-copper" style={{ width: `${Math.round(evidence[row.key] * 100)}%` }} />
-            </dd>
-            <dd className="text-right text-ink-soft">{Math.round(evidence[row.key] * 100)}</dd>
+  if (isSingleMatch) {
+    return (
+      <section className="w-full overflow-hidden border border-ink bg-paper shadow-[10px_10px_0_var(--ink)]">
+        <div className="grid sm:grid-cols-[8.5rem_1fr]">
+          <div className="relative h-36 overflow-hidden border-b border-ink bg-ink sm:h-auto sm:border-r sm:border-b-0">
+            {image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={mediaSrc(image, 640)}
+                alt={pick(image.caption, locale)}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Plate
+                motif={place.motif}
+                palette={place.palette}
+                index={folio}
+                title={pick(place.name, locale)}
+                eyebrow={story("noPhotograph")}
+              />
+            )}
           </div>
-        ))}
-      </dl>
-    </div>
-  );
-}
+          <div className="p-4 sm:p-5">
+            <p className="text-[10px] tracking-[0.22em] text-cobalt uppercase">{t("identified")}</p>
+            <h2 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
+            <p className="mt-1 text-[11px] tracking-[0.14em] text-brass uppercase">{pick(place.eyebrow, locale)}</p>
+            <p className="mt-2.5 line-clamp-3 text-xs leading-relaxed text-ink-soft">
+              {pick(place.summary, locale)}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                href={path}
+                onClick={() => rememberCaptureForStory(place.slug)}
+                className="cs-btn cs-btn-cobalt flex-1"
+              >
+                <span>{t("open")}</span>
+                <ArrowDownRight className="size-4" aria-hidden="true" />
+              </Link>
+              <Link href={`/?place=${place.slug}`} className="cs-btn cs-btn-ghost">
+                {t("onMap")}
+              </Link>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenCatalog}
+              className="mt-3 block text-[11px] tracking-[0.14em] text-ink-soft uppercase underline"
+            >
+              {t("catalog")}
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-function LensGuides({ live, reading }: { live: boolean; reading: boolean }) {
   return (
-    <div className="pointer-events-none absolute inset-4" aria-hidden="true">
-      <span className="absolute top-0 left-0 h-8 w-8 border-t border-l border-foam/70" />
-      <span className="absolute top-0 right-0 h-8 w-8 border-t border-r border-foam/70" />
-      <span className="absolute bottom-0 left-0 h-8 w-8 border-b border-l border-foam/70" />
-      <span className="absolute right-0 bottom-0 h-8 w-8 border-b border-r border-foam/70" />
-      {live || reading ? <span className="absolute inset-x-10 top-1/2 h-px bg-copper/50" /> : null}
-      {reading ? <span className="cs-lens-scan absolute inset-x-8 h-16 bg-[linear-gradient(180deg,transparent,rgba(122,59,42,0.35),transparent)]" /> : null}
-    </div>
+    <section className="w-full border border-ink bg-paper p-5 shadow-[10px_10px_0_var(--ink)]">
+      <p className="text-[10px] tracking-[0.22em] text-copper uppercase">{t("choose")}</p>
+      <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
+      <p className="mt-2 text-xs leading-relaxed text-ink-soft">{pick(place.summary, locale)}</p>
+
+      {candidates.length > 1 ? (
+        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-line pt-3">
+          {candidates.map((item) => (
+            <button
+              key={item.place.slug}
+              type="button"
+              onClick={() => onSelect(item.place.slug)}
+              className={`cs-chip h-9 px-3 text-[11px] ${item.place.slug === place.slug ? "is-on" : ""}`}
+            >
+              {pick(item.place.name, locale)}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link
+          href={path}
+          onClick={() => rememberCaptureForStory(place.slug)}
+          className="cs-btn cs-btn-cobalt flex-1"
+        >
+          <span>{t("open")}</span>
+          <ArrowDownRight className="size-4" aria-hidden="true" />
+        </Link>
+        <Link href={`/?place=${place.slug}`} className="cs-btn cs-btn-ghost">
+          {t("onMap")}
+        </Link>
+        {walk ? (
+          <Link href={`/?walk=${walk.slug}`} className="cs-btn cs-btn-ghost">
+            {t("makeRoute")}
+          </Link>
+        ) : null}
+      </div>
+    </section>
   );
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-function wait(ms: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }

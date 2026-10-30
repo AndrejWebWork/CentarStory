@@ -21,6 +21,10 @@ const icons: Record<DestinationId, typeof Compass> = {
   around: Signpost,
 };
 
+function labelFor(t: ReturnType<typeof useTranslations>, id: DestinationId) {
+  return id === "museums" ? t("explore.museums") : t(`nav.${id}`);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations();
   const pathname = usePathname();
@@ -32,79 +36,105 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#content">
         {t("common.skip")}
       </a>
-      <header className="sticky top-0 z-40 border-b border-line bg-paper">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 lg:h-20 lg:px-8">
-          <Link href="/" className="min-w-0">
-            <span className="block font-display text-[1.65rem] leading-none tracking-tight">
-              CentarStory
-            </span>
-            <span className="mt-1 hidden text-[10px] tracking-[0.2em] text-brass uppercase sm:block">
-              Centar · Skopje
+      <header className="cs-glass sticky top-0 z-40 border-b border-ink">
+        <div className="mx-auto grid h-14 max-w-[96rem] grid-cols-[1fr_auto] items-stretch lg:h-[4.4rem] lg:grid-cols-[auto_1fr_auto_auto]">
+          <Link href="/" className="flex items-center gap-4 border-r border-ink px-4 lg:px-7">
+            <span className="font-display text-2xl leading-none tracking-tight sm:text-3xl">CentarStory</span>
+            <span className="hidden border-l border-line pl-4 text-[10px] tracking-[0.24em] text-brass uppercase sm:block">
+              41.9957°N · 21.4312°E
             </span>
           </Link>
-          <nav className="ml-auto hidden items-center gap-1 lg:flex" aria-label={t("nav.primary")}>
+          <div className="hidden items-center px-6 text-[10px] tracking-[0.24em] text-ink-soft uppercase xl:flex">
+            {t("explore.kicker")} · Skopje
+          </div>
+          <nav className="hidden items-stretch border-l border-ink lg:flex" aria-label={t("nav.primary")}>
             {destinations.map((item) => {
+              const Icon = icons[item.id];
               const active = current === item.id;
               const emphasis = "emphasis" in item && item.emphasis;
+              const name = labelFor(t, item.id);
               return (
                 <Link
                   key={item.id}
                   href={item.href}
+                  title={name}
+                  aria-label={name}
                   aria-current={active ? "page" : undefined}
                   className={
                     emphasis
-                      ? `inline-flex h-11 items-center gap-2 bg-ink px-4 text-[11px] tracking-[0.18em] text-foam uppercase ${active ? "bg-copper" : ""}`
-                      : `inline-flex h-11 items-center px-3 text-[12px] tracking-[0.14em] uppercase ${active ? "text-copper" : "text-ink-soft"}`
+                      ? `grid w-16 place-items-center border-r border-ink ${active ? "bg-cobalt text-foam" : "bg-copper text-foam hover:bg-copper-deep"}`
+                      : `grid w-16 place-items-center border-r border-ink ${active ? "bg-ink text-foam" : "text-ink hover:bg-paper-2"}`
                   }
                 >
-                  {emphasis ? <Camera className="size-4" aria-hidden="true" /> : null}
-                  {t(`nav.${item.id}`)}
+                  <Icon className="size-5" aria-hidden="true" />
                 </Link>
               );
             })}
           </nav>
-          <Suspense fallback={<span className="inline-block h-11 w-28" />}>
-            <LanguageSwitcher />
-          </Suspense>
+          <div className="flex items-center px-3 lg:px-5">
+            <Suspense fallback={<span className="inline-block h-9 w-24" />}>
+              <LanguageSwitcher />
+            </Suspense>
+          </div>
         </div>
       </header>
       <motion.div
         key={pathname}
         id="content"
         tabIndex={-1}
-        className="relative z-[1]"
-        initial={reduce ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className={`relative z-[1] overflow-x-clip ${pathname.startsWith("/scan") ? "" : "max-lg:pb-24"}`}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         {children}
-        <footer className="mx-auto max-w-6xl px-5 pt-16 pb-32 lg:px-8 lg:pb-16">
-          <p className="font-display text-3xl">CentarStory</p>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">{t("common.disclaimer")}</p>
-        </footer>
+        {pathname.startsWith("/scan") ? null : (
+          <footer className="border-t border-ink bg-ink text-foam">
+            <div className="mx-auto grid max-w-[96rem] gap-8 px-5 py-12 pb-28 lg:grid-cols-12 lg:px-8 lg:py-20">
+              <div className="lg:col-span-5">
+                <p className="text-[10px] tracking-[0.26em] text-brass uppercase">
+                  OSM Relation 2439777 · Europe/Skopje
+                </p>
+                <p className="mt-3 font-display text-5xl leading-[0.86] tracking-tight sm:text-7xl">
+                  CentarStory
+                </p>
+                <p className="mt-4">
+                  <Link href="/events" className="text-xs tracking-[0.18em] text-brass uppercase underline">
+                    {t("nav.events")} →
+                  </Link>
+                </p>
+              </div>
+              <p className="max-w-xl text-sm leading-relaxed text-foam/75 lg:col-span-6 lg:col-start-7 lg:self-end">
+                {t("common.disclaimer")}
+              </p>
+            </div>
+          </footer>
+        )}
       </motion.div>
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper pb-[env(safe-area-inset-bottom)] lg:hidden"
+        className="cs-dock fixed inset-x-0 bottom-0 z-40 border-t border-foam/20 pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label={t("nav.primary")}
       >
-        <ul className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-5">
+        <ul className="mx-auto grid h-16 max-w-lg grid-cols-5">
           {mobileDestinations.map((item) => {
             const Icon = icons[item.id];
             const active = current === item.id;
             const emphasis = "emphasis" in item && item.emphasis;
+            const name = labelFor(t, item.id);
             if (emphasis) {
               return (
                 <li key={item.id}>
                   <Link
                     href={item.href}
+                    title={name}
+                    aria-label={name}
                     aria-current={active ? "page" : undefined}
-                    className={`flex h-full flex-col items-center justify-end pb-2 ${active ? "text-copper" : "text-foam"}`}
+                    className="flex h-full items-center justify-center"
                   >
-                    <span className="-mt-8 mb-1 flex h-14 w-14 items-center justify-center rounded-full bg-ink text-foam ring-4 ring-paper">
-                      <Camera className="size-5" aria-hidden="true" />
-                    </span>
-                    <span className="max-w-[4.5rem] text-center text-[10px] leading-tight tracking-normal text-ink">
-                      {t("nav.scan")}
+                    <span
+                      className={`-mt-5 flex size-14 items-center justify-center border-2 border-paper ${active ? "bg-cobalt text-foam" : "bg-copper text-foam"}`}
+                    >
+                      <Icon className="size-5" aria-hidden="true" />
                     </span>
                   </Link>
                 </li>
@@ -114,11 +144,12 @@ export function AppShell({ children }: { children: ReactNode }) {
               <li key={item.id}>
                 <Link
                   href={item.href}
+                  title={name}
+                  aria-label={name}
                   aria-current={active ? "page" : undefined}
-                  className={`flex h-full flex-col items-center justify-center gap-1 px-1 text-[10px] leading-tight tracking-normal ${active ? "text-copper" : "text-ink-soft"}`}
+                  className={`flex h-full items-center justify-center ${active ? "bg-foam/10 text-paper" : "text-foam/55"}`}
                 >
                   <Icon className="size-5" aria-hidden="true" />
-                  <span className="text-center">{t(`nav.${item.id}`)}</span>
                 </Link>
               </li>
             );

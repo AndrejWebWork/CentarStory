@@ -36,7 +36,7 @@
     "primary": "Primary",
     "explore": "Explore",
     "scan": "Scan",
-    "museums": "Museums",
+    "events": "Events",
     "food": "Traditional Food",
     "around": "Get Around"
   },
@@ -130,7 +130,8 @@
     "eventsEmpty": "No dated event is verified as current.",
     "eventsEmptyBody": "Use the official calendars rather than an invented listing.",
     "eventsConfirmTitle": "Recurring programmes — confirm dates",
-    "eventsClosedTitle": "Recently closed dated listings",
+    "eventsClosedTitle": "Already held",
+    "unmappedVenue": "The official notice names a place that is not a verified atlas pin.",
     "calMsu": "Museum of Contemporary Art",
     "calOpera": "National Opera and Ballet",
     "calCity": "City of Skopje",
@@ -227,6 +228,12 @@
       "timeout": "Recognition took too long. Retry, or choose the place by hand."
     }
   },
+  "events": {
+    "title": "Municipal events",
+    "kicker": "Municipality of Centar",
+    "lede": "Dated notices from the official 2026 culture programme of the Municipality of Centar. Past listings stay labelled past. Nothing here is a ticket.",
+    "inventoryNote": "This list is built from official centar.gov.mk activity notices. It is not every cultural happening in Centar, and it is not a live booking calendar."
+  },
   "museums": {
     "title": "Houses of memory",
     "kicker": "Collections and institutions",
@@ -287,9 +294,9 @@
     }
   },
   "around": {
-    "title": "How to move",
+    "title": "A walking route",
     "kicker": "Get Around",
-    "lede": "The historic core of Centar is a walk. Buses, bicycles, scooters, and taxis cover the rest. Fares below are cited, not invented.",
+    "lede": "Tap for a route, or type the year you were born. Stops come from the verified atlas, not from invented places.",
     "modes": "Ways to move",
     "walk": "On foot",
     "bus": "City bus",
@@ -371,7 +378,23 @@
     "compareAssumptions": "Walking times are atlas estimates from Macedonia Square. Scooter minutes assume 40% of that figure. Taxi kilometres assume straight-line distance × 1.35. Confirm in the operator app or at the stop.",
     "osmWalk": "OpenStreetMap walking directions",
     "googleWalk": "Google walking directions",
-    "museumsOnFoot": "{count} verified institutions are in the museum atlas."
+    "museumsOnFoot": "{count} verified institutions are in the museum atlas.",
+    "makeRoute": "Make me a route",
+    "orYear": "or write your year",
+    "yearLabel": "Year of birth",
+    "yearPlaceholder": "1994",
+    "yearHint": "A whole year between {min} and {max}. It only chooses a documented walking theme.",
+    "yearInvalid": "Enter a year between {min} and {max}.",
+    "yearSubmit": "Build from this year",
+    "buildingTitle": "Building the route",
+    "building_gather": "Gathering verified stops",
+    "building_order": "Ordering a walk from the square",
+    "building_hours": "Checking printed hours for today",
+    "building_path": "Drawing a foot path",
+    "building_lock": "Locking the sequence",
+    "yourRoute": "Your walk",
+    "drawingStreets": "Asking the public foot router for streets",
+    "again": "Make another route"
   },
   "detail": {
     "walks": "Walks that pass here",

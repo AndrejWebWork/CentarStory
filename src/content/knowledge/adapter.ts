@@ -69,15 +69,19 @@ export const dishes: Dish[] = dishRecords.map((dish) => ({
   story: dish.story,
   eat: dish.eat,
   palette: dish.palette,
+  imageId: dish.imageId,
 }));
 
 export const restaurants: Restaurant[] = venues.map((venue) => ({
   slug: venue.slug,
   name: venue.name,
   district: venue.district,
+  venueKind: venue.venueKind,
   serves: venue.serves,
   summary: venue.summary,
   practical: venue.practical,
+  hours: venue.hours,
+  osmOpeningHours: venue.osmOpeningHours,
   municipality: venue.municipality,
   verificationStatus: venue.verificationStatus,
   nearbyNote: venue.nearbyNote,
@@ -99,6 +103,7 @@ export const walks: Walk[] = routes.map((route) => ({
 
 export function listEvents(today: Date = new Date()): CulturalEvent[] {
   return programmes.map((event) => {
+    // Resolve status in Skopje time from the sourced calendar.
     const resolved = resolveEvent(event, today);
     return {
       slug: event.slug,
@@ -107,6 +112,7 @@ export function listEvents(today: Date = new Date()): CulturalEvent[] {
       summary: event.summary,
       story: event.story,
       venues: event.venues,
+      host: event.host,
       officialUrl: event.officialUrl,
       status: resolved.status,
       startDate: resolved.startDate,

@@ -1,6 +1,8 @@
-import type { Profile } from "@/lib/recognition/analyze";
+import { sites } from "@/content/knowledge/catalog";
+import type { SiteRecord } from "@/content/knowledge/schema";
+import type { Band, Evidence, Profile } from "@/lib/recognition/analyze";
 
-export const profiles: Profile[] = [
+const manualProfiles: Profile[] = [
   {
     slug: "stone-bridge",
     bands: {
@@ -92,4 +94,42 @@ export const profiles: Profile[] = [
       vertical: { min: 0.25, max: 0.75, weight: 0.5, reason: "vertical" },
     },
   },
+];
+
+function autoProfileForSite(site: SiteRecord): Profile {
+  const mat = (site.materials?.en ?? site.architecturalFeatures?.en ?? "").toLowerCase();
+  const isMarble = /marble|travertine|stone plaque|colonnade/.test(mat);
+  const isPark = /park|cemetery|kale|fortress/.test(site.address.en.toLowerCase());
+  const isBridgeOrPlaque = site.motif === "bridge" || site.entityType === "plaque";
+
+  const bands: Partial<Record<keyof Evidence, Band>> = {
+    brightness: isMarble
+      ? { min: 0.48, max: 0.92, weight: 1.2, reason: "pale" }
+      : { min: 0.28, max: 0.76, weight: 0.8, reason: "bright" },
+    warmth: isMarble
+      ? { min: 0.42, max: 0.64, weight: 0.9, reason: "cool" }
+      : { min: 0.48, max: 0.78, weight: 1.2, reason: "warmth" },
+    saturation: isMarble
+      ? { min: 0.02, max: 0.28, weight: 1.0, reason: "muted" }
+      : { min: 0.1, max: 0.52, weight: 0.8, reason: "warmth" },
+    vertical: isBridgeOrPlaque
+      ? { min: 0.12, max: 0.58, weight: 0.7, reason: "horizontal" }
+      : { min: 0.34, max: 0.92, weight: 1.3, reason: "vertical" },
+    horizontal: isBridgeOrPlaque
+      ? { min: 0.36, max: 0.95, weight: 1.4, reason: "horizontal" }
+      : { min: 0.18, max: 0.68, weight: 0.7, reason: "horizontal" },
+  };
+
+  if (isPark) {
+    bands.green = { min: 0.08, max: 0.85, weight: 1.1, reason: "green" };
+  }
+
+  return { slug: site.slug, bands };
+}
+
+const manualSlugs = new Set(manualProfiles.map((p) => p.slug));
+
+export const profiles: Profile[] = [
+  ...manualProfiles,
+  ...sites.filter((site) => !manualSlugs.has(site.slug)).map(autoProfileForSite),
 ];

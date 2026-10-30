@@ -3,12 +3,16 @@ import { events, listEvents, walks } from "@/content/knowledge/adapter";
 
 export { events, listEvents, walks };
 
+export function listMunicipalEvents(today?: Date) {
+  return listEvents(today).filter((event) => event.host === "municipality");
+}
+
 export function getWalk(slug: string) {
   return walks.find((walk) => walk.slug === slug);
 }
 
-export function getEvent(slug: string) {
-  return listEvents().find((event) => event.slug === slug);
+export function getEvent(slug: string, today: Date = new Date()) {
+  return listEvents(today).find((event) => event.slug === slug);
 }
 
 export function walksThrough(placeSlug: string) {

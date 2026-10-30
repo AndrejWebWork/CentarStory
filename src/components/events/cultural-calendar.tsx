@@ -1,12 +1,13 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "motion/react";
 import { pick } from "@/content/copy";
 import { listEvents } from "@/content/journeys";
 import { formatIsoDay } from "@/lib/format";
 import { calendarLinks } from "@/content/mobility";
-import { getPlace } from "@/content/places";
-import type { CulturalEvent } from "@/content/types";
+import { getPlace, sitePath } from "@/content/places";
+import type { CulturalEvent, EventHost } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { closedEvents, confirmDateEvents, liveEvents } from "@/lib/events/group";
 
@@ -21,49 +22,71 @@ function Status({ event }: { event: CulturalEvent }) {
   return t("eventConfirm");
 }
 
-function EventCard({ event }: { event: CulturalEvent }) {
+function EventRow({ event, index }: { event: CulturalEvent; index: number }) {
   const locale = useLocale();
   const t = useTranslations("explore");
   const venue = event.venues[0] ? getPlace(event.venues[0]) : undefined;
   return (
-    <article className="border border-line p-5">
-      <p className="text-[11px] tracking-[0.16em] text-brass uppercase">
-        <Status event={event} />
-      </p>
-      <h3 className="mt-3 font-display text-3xl leading-none">
-        <Link href={`/events/${event.slug}`}>{pick(event.name, locale)}</Link>
-      </h3>
-      <p className="mt-2 text-sm text-ink-soft">{pick(event.season, locale)}</p>
-      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{pick(event.summary, locale)}</p>
-      {venue ? <p className="mt-3 text-sm">{pick(venue.name, locale)}</p> : null}
-      <div className="mt-4 flex flex-wrap gap-4 text-sm">
-        <a href={event.officialUrl} className="text-copper" target="_blank" rel="noreferrer">
-          {t("officialSource")}
-        </a>
-        <span className="text-ink-soft">{t("lastVerified", { date: event.lastChecked })}</span>
+    <article className="grid gap-4 border-b border-ink py-7 lg:grid-cols-12 lg:items-baseline">
+      <div className="lg:col-span-3">
+        <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
+          {String(index + 1).padStart(2, "0")} · <Status event={event} />
+        </p>
+        <p className="mt-2 font-display text-3xl leading-none text-brass">{pick(event.season, locale)}</p>
+      </div>
+      <div className="lg:col-span-6">
+        <h3 className="font-display text-4xl leading-[0.92]">
+          <Link href={`/events/${event.slug}`} className="hover:text-cobalt">
+            {pick(event.name, locale)}
+          </Link>
+        </h3>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">{pick(event.summary, locale)}</p>
+      </div>
+      <div className="text-xs lg:col-span-3 lg:text-right">
+        {venue ? (
+          <Link href={sitePath(venue)} className="block font-medium text-ink hover:text-cobalt">
+            {pick(venue.name, locale)}
+          </Link>
+        ) : (
+          <p className="text-ink-soft">{t("unmappedVenue")}</p>
+        )}
+        <p className="mt-3">
+          <a href={event.officialUrl} className="text-[11px] tracking-[0.16em] text-copper uppercase underline" target="_blank" rel="noreferrer">
+            {t("officialSource")}
+          </a>
+        </p>
+        <p className="mt-1 text-[11px] text-ink-soft">{t("lastVerified", { date: event.lastChecked })}</p>
       </div>
     </article>
   );
 }
 
-export function CulturalCalendar({ venue }: { venue?: string }) {
+export function CulturalCalendar({ venue, host }: { venue?: string; host?: EventHost }) {
   const t = useTranslations("explore");
+  const reduce = useReducedMotion();
   const events = listEvents();
-  const list = venue ? events.filter((event) => event.venues.includes(venue)) : events;
+  const list = events.filter((event) => {
+    if (venue && !event.venues.includes(venue)) return false;
+    if (host && event.host !== host) return false;
+    return true;
+  });
   const live = liveEvents(list);
   const closed = closedEvents(list);
   const confirm = confirmDateEvents(list);
+  const official = host === "municipality" ? calendarLinks.filter((link) => link.id === "centar") : calendarLinks;
 
   return (
     <div suppressHydrationWarning>
       {live.length === 0 ? (
-        <div className="border border-line bg-paper-2 p-6">
-          <p className="font-display text-3xl">{t("eventsEmpty")}</p>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">{t("eventsEmptyBody")}</p>
-          <ul className="mt-4 flex flex-wrap gap-4 text-sm">
-            {calendarLinks.map((link) => (
+        <div className="grid gap-6 border border-ink bg-foam p-6 lg:grid-cols-12 lg:p-8">
+          <div className="lg:col-span-7">
+            <p className="font-display text-4xl leading-none">{t("eventsEmpty")}</p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">{t("eventsEmptyBody")}</p>
+          </div>
+          <ul className="flex flex-wrap items-end gap-2 lg:col-span-5 lg:justify-end">
+            {official.map((link) => (
               <li key={link.id}>
-                <a href={link.href} className="text-copper" target="_blank" rel="noreferrer">
+                <a href={link.href} className="cs-btn cs-btn-ink" target="_blank" rel="noreferrer">
                   {t(link.labelKey)}
                 </a>
               </li>
@@ -71,34 +94,46 @@ export function CulturalCalendar({ venue }: { venue?: string }) {
           </ul>
         </div>
       ) : (
-        <ul className="grid gap-4 lg:grid-cols-2">
-          {live.map((event) => (
-            <li key={event.slug}>
-              <EventCard event={event} />
-            </li>
+        <ul className="border-t border-ink">
+          {live.map((event, index) => (
+            <motion.li
+              key={event.slug}
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: Math.min(index * 0.04, 0.2) }}
+            >
+              <EventRow event={event} index={index} />
+            </motion.li>
           ))}
         </ul>
       )}
       {confirm.length > 0 ? (
-        <div className="mt-8">
-          <h3 className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("eventsConfirmTitle")}</h3>
-          <ul className="mt-3 divide-y divide-line border-y border-line">
-            {confirm.map((event) => (
-              <li key={event.slug} className="py-4">
-                <EventCard event={event} />
+        <div className="mt-14">
+          <h3 className="cs-kicker">{t("eventsConfirmTitle")}</h3>
+          <ul className="mt-4 border-t border-ink">
+            {confirm.map((event, index) => (
+              <li key={event.slug}>
+                <EventRow event={event} index={index} />
               </li>
             ))}
           </ul>
         </div>
       ) : null}
       {closed.length > 0 ? (
-        <div className="mt-8">
-          <h3 className="text-[11px] tracking-[0.18em] text-brass uppercase">{t("eventsClosedTitle")}</h3>
-          <ul className="mt-3 grid gap-3 lg:grid-cols-2">
-            {closed.map((event) => (
-              <li key={event.slug}>
-                <EventCard event={event} />
-              </li>
+        <div className="mt-14">
+          <h3 className="cs-kicker">{t("eventsClosedTitle")}</h3>
+          <ul className="mt-4 border-t border-ink">
+            {closed.map((event, index) => (
+              <motion.li
+                key={event.slug}
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: Math.min(index * 0.03, 0.18) }}
+              >
+                <EventRow event={event} index={index} />
+              </motion.li>
             ))}
           </ul>
         </div>

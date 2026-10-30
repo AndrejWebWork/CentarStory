@@ -44,14 +44,20 @@ export default async function RoutePage({
   });
 
   return (
-    <article className="mx-auto max-w-6xl px-5 py-10 lg:px-8">
-      <Link href="/" className="text-sm text-copper">
-        {common("back")}
-      </Link>
-      <h1 className="mt-6 font-display text-5xl leading-[0.95] sm:text-6xl">{pick(walk.name, locale)}</h1>
-      <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft">{pick(walk.story, locale)}</p>
-      <p className="mt-4 max-w-2xl text-sm leading-relaxed">{pick(walk.duration, locale)}</p>
-      <div className="mt-8">
+    <article>
+      <header className="border-b border-ink bg-ink text-foam">
+        <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8 lg:py-20">
+          <Link href="/" className="cs-btn cs-btn-ghost border-foam/40 text-foam">
+            {common("back")}
+          </Link>
+          <h1 className="mt-8 font-display text-6xl leading-[0.86] sm:text-8xl">{pick(walk.name, locale)}</h1>
+          <div className="mt-8 grid gap-6 border-t border-foam/25 pt-6 lg:grid-cols-12">
+            <p className="font-display text-2xl leading-snug text-foam/85 lg:col-span-7">{pick(walk.story, locale)}</p>
+            <p className="text-sm leading-relaxed text-brass lg:col-span-5">{pick(walk.duration, locale)}</p>
+          </div>
+        </div>
+      </header>
+      <div className="mx-auto max-w-[96rem] px-5 py-14 lg:px-8">
         <WalkPreview
           label={pick(walk.name, locale)}
           markers={stops.map((place) => ({
@@ -62,21 +68,27 @@ export default async function RoutePage({
             tone: "site" as const,
           }))}
         />
+        <h2 className="mt-14 font-display text-5xl">{detail("stops")}</h2>
+        <ol className="mt-6 divide-y divide-ink border-y border-ink">
+          {stops.map((place, index) => (
+            <li key={place.slug}>
+              <Link
+                href={sitePath(place)}
+                className="grid grid-cols-[4rem_1fr] items-baseline py-6 hover:text-cobalt"
+              >
+                <span className="font-display text-4xl text-copper">{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <span className="block font-display text-4xl leading-none">{pick(place.name, locale)}</span>
+                  <span className="mt-2 block text-xs text-ink-soft">{pick(place.address, locale)}</span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <Link href={`/?walk=${walk.slug}`} className="cs-btn cs-btn-cobalt mt-8">
+          {detail("openAtlas")}
+        </Link>
       </div>
-      <h2 className="mt-10 font-display text-3xl">{detail("stops")}</h2>
-      <ol className="mt-4 divide-y divide-line border-y border-line">
-        {stops.map((place, index) => (
-          <li key={place.slug}>
-            <Link href={sitePath(place)} className="grid grid-cols-[3rem_1fr] items-baseline py-4">
-              <span className="font-display text-xl text-brass">{String(index + 1).padStart(2, "0")}</span>
-              <span className="font-display text-3xl">{pick(place.name, locale)}</span>
-            </Link>
-          </li>
-        ))}
-      </ol>
-      <Link href={`/?walk=${walk.slug}`} className="mt-6 inline-flex h-11 items-center text-copper">
-        {detail("openAtlas")}
-      </Link>
     </article>
   );
 }
