@@ -7,8 +7,9 @@ export function L(
   sr: string,
   tr: string,
   uk: string,
+  sq: string,
 ): Copy {
-  return { en, mk, sr, tr, uk };
+  return { en, mk, sr, tr, uk, sq };
 }
 
 export function pick(copy: Copy, locale: string): string {

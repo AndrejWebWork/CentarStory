@@ -141,7 +141,6 @@ export function MovementMasthead() {
                   <span className="block tracking-[0.2em] text-brass uppercase">01 / Stone Bridge</span>
                   <span className="mt-1 block max-w-xs text-xs text-foam/80">{pick(bridgePhoto.caption, locale)}</span>
                 </div>
-                <span className="shrink-0 text-[10px] tracking-[0.16em] uppercase">{bridgePhoto.credit}</span>
               </figcaption>
             </figure>
           ) : null}

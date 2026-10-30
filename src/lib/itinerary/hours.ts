@@ -11,7 +11,7 @@ const PRINTED_CLOSED: Record<string, { weekdays: number[]; note: Copy }> = {
       "Fond štampa ponedeljak kao zatvoren. Potvrdite na vratima.",
       "Fon Pazartesi’yi kapalı basar. Kapıda doğrulayın.",
       "Фонд друкує понеділок як зачинений. Підтвердьте на дверях.",
-    ),
+     "Fondi e shtyp të hënën si të mbyllur. Konfirmoni te dera."),
   },
   "mother-teresa-house": {
     weekdays: [1],
@@ -21,7 +21,7 @@ const PRINTED_CLOSED: Record<string, { weekdays: number[]; note: Copy }> = {
       "Kuća objavljuje utorak–nedelja 10:00–18:00. Ponedeljak nije naveden kao otvoren.",
       "Ev Salı–Pazar 10:00–18:00 yayımlar. Pazartesi açık olarak listelenmez.",
       "Дім публікує вівторок–неділя 10:00–18:00. Понеділок не зазначено як відчинений.",
-    ),
+     "Shtëpia publikon e martë–e diel 10:00–18:00. E hëna nuk është e listuar si e hapur."),
   },
 };
 

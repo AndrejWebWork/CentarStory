@@ -11,7 +11,7 @@ function run() {
   assert.ok(report.counts.sites >= 50);
   assert.equal(report.counts.confirmedSites + report.counts.candidateSites, report.counts.sites);
   assert.equal(report.counts.candidateSites, 4);
-  assert.equal(report.counts.locales, 5);
+  assert.equal(report.counts.locales, 6);
   assert.equal(report.boundary.outsideMarkedCentar.length, 0);
   assert.ok(report.counts.venues >= 2);
   assert.equal(visionCatalogue().length, report.counts.sites);

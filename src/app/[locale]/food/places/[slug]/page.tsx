@@ -5,7 +5,6 @@ import { FoodCover } from "@/components/food/food-cover";
 import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getDish, getDistrict, getRestaurant, restaurants } from "@/content/food";
-import { getMedia } from "@/content/knowledge/media";
 import { MACEDONIA_SQUARE } from "@/content/knowledge/boundary";
 import { pedestrianNavigation } from "@/lib/mapping/walk";
 import { Link } from "@/i18n/navigation";
@@ -47,8 +46,6 @@ export default async function RestaurantPage({
   const nav = restaurant.coordinates
     ? pedestrianNavigation([MACEDONIA_SQUARE, restaurant.coordinates])
     : null;
-  const housePhoto = restaurant.imageId ? getMedia(restaurant.imageId) : undefined;
-
   return (
     <article>
       <header className="group relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-ink text-foam sm:mx-4">
@@ -64,13 +61,6 @@ export default async function RestaurantPage({
           ) : null}
           <h1 className="mt-3 font-display text-6xl leading-[0.86] sm:text-8xl">{restaurant.name}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foam/80">{pick(restaurant.summary, locale)}</p>
-          {housePhoto ? (
-            <p className="mt-4 text-xs tracking-[0.08em] text-foam/55 uppercase">
-              <a href={housePhoto.pageUrl} className="hover:text-foam" target="_blank" rel="noreferrer">
-                {housePhoto.credit}
-              </a>
-            </p>
-          ) : null}
         </div>
       </header>
       <div className="mx-auto grid max-w-[96rem] gap-12 px-5 py-16 lg:grid-cols-12 lg:px-8">

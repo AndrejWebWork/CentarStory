@@ -65,11 +65,6 @@ export default async function DishPage({
           <h1 className="mt-3 font-display text-6xl leading-[0.86] sm:text-8xl">{pick(dish.name, locale)}</h1>
           {record?.nameMk ? <p className="mt-3 font-display text-3xl text-brass">{record.nameMk}</p> : null}
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foam/80">{pick(dish.summary, locale)}</p>
-          {photo ? (
-            <p className="mt-6 text-[10px] tracking-[0.16em] text-brass uppercase">
-              {photo.credit} · {photo.license}
-            </p>
-          ) : null}
         </div>
       </header>
       <div className="mx-auto grid max-w-[96rem] gap-12 px-5 py-16 lg:grid-cols-12 lg:px-8">

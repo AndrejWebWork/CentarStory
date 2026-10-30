@@ -25,7 +25,7 @@ function run() {
   ];
   assert.ok(paths.includes("/"));
   assert.ok(institutions().length >= 9);
-  assert.equal(locales.length, 5);
+  assert.equal(locales.length, 6);
   const prefixed = locales.flatMap((locale) =>
     paths.map((path) => (locale === "en" ? path : `/${locale}${path === "/" ? "" : path}`)),
   );

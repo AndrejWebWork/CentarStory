@@ -154,11 +154,19 @@ export function AppShell({ children }: { children: ReactNode }) {
                 right: 0,
                 bottom: 0,
                 height: 58,
-                borderRadius: 999,
-                background: "#141820",
+                display: "flex",
                 pointerEvents: "none",
               }}
-            />
+            >
+              <span style={{ flex: 1, background: "#141820", borderRadius: "999px 0 0 999px" }} />
+              <svg width="128" height="58" viewBox="0 0 128 58" style={{ display: "block", flex: "none" }}>
+                <path
+                  fill="#141820"
+                  d="M0 0H37A35 35 0 1 1 91 0H128V58H0Z"
+                />
+              </svg>
+              <span style={{ flex: 1, background: "#141820", borderRadius: "0 999px 999px 0" }} />
+            </span>
             <ul
               className="cs-dock__pill"
               style={{
@@ -210,7 +218,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     title={name}
                     aria-label={name}
                     aria-current={active ? "page" : undefined}
-                    className={`flex h-full items-center justify-center ${active ? "text-foam" : "text-foam/45"}`}
+                    className={`cs-dock__link ${active ? "is-active" : ""}`}
                   >
                     <Icon className="size-5" aria-hidden="true" />
                   </Link>

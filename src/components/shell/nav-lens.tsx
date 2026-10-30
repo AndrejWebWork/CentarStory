@@ -1,7 +1,9 @@
 "use client";
 
 import { Camera } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import type { MouseEvent } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { armCamera } from "@/lib/scan/arm-camera";
 
 export function NavLens({
   href,
@@ -14,15 +16,24 @@ export function NavLens({
   active?: boolean;
   raised?: boolean;
 }) {
+  const router = useRouter();
+
+  function openCamera(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    void armCamera();
+    router.push(href);
+  }
+
   return (
     <span
       className={`cs-nav-lens ${raised ? "cs-nav-lens--raised" : ""} ${active ? "is-active" : ""}`}
       style={
         raised
           ? {
-              width: "clamp(2.9rem, 16vw, 4rem)",
-              height: "clamp(2.9rem, 16vw, 4rem)",
-              margin: "0 0 clamp(0.65rem, 2vw, 1.25rem)",
+              width: "clamp(2.8rem, 15.4vw, 3.85rem)",
+              height: "clamp(2.8rem, 15.4vw, 3.85rem)",
+              margin: "0 0 clamp(0.4rem, 1.2vw, 0.85rem)",
               minWidth: 0,
             }
           : undefined
@@ -34,6 +45,7 @@ export function NavLens({
         aria-label={label}
         aria-current={active ? "page" : undefined}
         className="cs-nav-lens__disc"
+        onClick={(event) => void openCamera(event)}
         style={
           raised
             ? {

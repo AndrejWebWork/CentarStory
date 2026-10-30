@@ -6,6 +6,7 @@ const tags: Record<Locale, string> = {
   sr: "sr-Latn-RS",
   mk: "mk-MK",
   uk: "uk-UA",
+  sq: "sq-AL",
 };
 
 export function intlTag(locale: string) {

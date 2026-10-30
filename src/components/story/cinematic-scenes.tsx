@@ -97,9 +97,6 @@ export function AnimatedTimelineScene({
                 className="aspect-[4/3] w-full object-cover"
               />
             </motion.div>
-            <p className="border-t border-foam/20 px-4 py-3 text-[11px] tracking-[0.16em] text-foam/80 uppercase">
-              {heroImage.credit} · {heroImage.license}
-            </p>
           </div>
         </div>
       ) : null}

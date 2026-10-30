@@ -89,7 +89,7 @@ export function planItinerary(input: ItineraryInput): ItineraryPlan {
           "Izabrani start nema potvrđene koordinate. Ruta počinje na trgu Makedonija.",
           "Seçilen başlangıcın doğrulanmış koordinatı yok. Güzergâh Makedonya Meydanı’nda başlar.",
           "Вибраний старт не має підтверджених координат. Маршрут починається на площі Македонія.",
-        ),
+         "Nisja e zgjedhur nuk ka koordinata të verifikuara. Rruga nis te Sheshi i Maqedonisë."),
       );
     }
   } else {
@@ -106,7 +106,7 @@ export function planItinerary(input: ItineraryInput): ItineraryPlan {
           "Vaš položaj je van kartografisane pešačke zone Centra. Ruta počinje na trgu Makedonija.",
           "Konumunuz Centar’ın haritalanmış yürüme alanının dışında. Güzergâh Makedonya Meydanı’nda başlar.",
           "Ваша позиція поза картографованою пішохідною зоною Центру. Маршрут починається на площі Македонія.",
-        ),
+         "Pozicioni juaj është jashtë zonës së hartuar të ecjes në Qendër. Rruga nis te Sheshi i Maqedonisë."),
       );
     }
   }
@@ -138,7 +138,7 @@ export function planItinerary(input: ItineraryInput): ItineraryPlan {
         "Bar bar jedno stajalište štampa danas kao zatvoreno. Potvrdite sate na vratima pre hodanja.",
         "En az bir durak bugünü kapalı basıyor. Yürümeden önce saatleri kapıda doğrulayın.",
         "Принаймні одна зупинка друкує сьогодні як зачинену. Перед ходою підтвердьте години на дверях.",
-      ),
+       "Të paktën një ndalesë e shtyp të sotmen si të mbyllur. Konfirmoni orarin te dera para se të ecni."),
     );
   }
 

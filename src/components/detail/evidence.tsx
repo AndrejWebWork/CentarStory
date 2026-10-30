@@ -49,14 +49,7 @@ export async function Evidence({ slug, locale }: { slug: string; locale: string 
               <li key={image.id} className="border border-line">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={image.url} alt={pick(image.caption, locale)} className="aspect-[16/9] w-full object-cover" />
-                <p className="px-4 pt-3 text-sm">{pick(image.caption, locale)}</p>
-                <p className="px-4 pb-4 text-xs text-ink-soft">
-                  {image.credit} · {image.license}
-                  {image.attributionRequired ? ` · ${t("attribution")}` : ""} ·{" "}
-                  <a href={image.pageUrl} target="_blank" rel="noreferrer" className="text-copper">
-                    {t("source")}
-                  </a>
-                </p>
+                <p className="px-4 py-3 text-sm">{pick(image.caption, locale)}</p>
               </li>
             ))}
           </ul>

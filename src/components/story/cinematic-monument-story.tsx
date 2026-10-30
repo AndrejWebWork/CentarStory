@@ -184,7 +184,6 @@ export async function CinematicMonumentStory({
       <StoryHero
         image={hero}
         imageAlt={hero ? pick(hero.caption, locale) : pick(place.name, locale)}
-        credit={hero ? `${story("heroCredit")}: ${hero.credit} · ${hero.license}` : undefined}
         index={index}
         motif={place.motif}
         palette={place.palette}
@@ -406,7 +405,6 @@ export async function CinematicMonumentStory({
               <StoryLook
                 image={hero}
                 alt={pick(hero.caption, locale)}
-                credit={`${hero.credit} · ${hero.license}`}
                 notes={lookNotes}
                 openLabel={story("lookCloser")}
                 hideLabel={story("lookCloserHide")}
@@ -416,9 +414,6 @@ export async function CinematicMonumentStory({
               <figure className="border border-foam/30">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={images[0].url} alt={pick(images[0].caption, locale)} className="aspect-[16/10] w-full object-cover" />
-                <figcaption className="px-4 py-3 text-xs text-foam/75">
-                  {images[0].credit} · {images[0].license}
-                </figcaption>
               </figure>
             ) : null}
           </div>
@@ -557,22 +552,6 @@ export async function CinematicMonumentStory({
           <p className="mt-8 border border-ink bg-paper-2 px-4 py-3 text-sm">{pick(place.nearbyNote, locale)}</p>
         ) : null}
         {place.boundaryNote ? <p className="mt-4 text-sm text-ink-soft">{pick(place.boundaryNote, locale)}</p> : null}
-        {images.length > 0 ? (
-          <div className="mt-10">
-            <h3 className="font-display text-3xl">{story("photographs")}</h3>
-            <ul className="mt-4 space-y-3 text-sm">
-              {images.map((image) => (
-                <li key={image.id}>
-                  {image.credit} · {image.license}
-                  {image.attributionRequired ? ` · ${evidence("attribution")}` : ""} ·{" "}
-                  <a href={image.pageUrl} target="_blank" rel="noreferrer" className="text-copper underline">
-                    {evidence("source")}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
         <ul className="mt-8 divide-y divide-ink border-y border-ink">
           {registry.map((source) => (
             <li key={source.id} className="py-4 text-sm">

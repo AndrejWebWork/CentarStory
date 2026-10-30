@@ -36,6 +36,25 @@ export const binbin = {
   lastChecked: "2026-10-29",
 } as const;
 
+export const localTaxis = [
+  { id: "riva", name: "Такси Рива", phones: ["15161"] },
+  { id: "vardar", name: "Такси Вардар", phones: ["15195", "072302222"] },
+  { id: "deluxe", name: "Такси Де Лукс", phones: ["15187", "071228822"] },
+  { id: "nase", name: "Наше Такси", phones: ["15152", "070415152"] },
+  { id: "global", name: "Такси Глобал", phones: ["15180", "070515180"] },
+  { id: "city", name: "Сити Такси", phones: ["15181", "072315181"] },
+  { id: "teniks", name: "Теникс Такси", phones: ["15194", "071209194"] },
+  { id: "classic", name: "Класик Такси", phones: ["15167", "070279167"] },
+  { id: "euro", name: "Радио-Такси Еуро", phones: ["15184", "071215184"] },
+  { id: "in", name: "Такси Ин", phones: ["15551"] },
+  { id: "vodno", name: "Старо Водно Такси", phones: ["15188", "070309188"] },
+] as const;
+
+export function taxiDial(digits: string) {
+  const local = digits.startsWith("07") ? `+389${digits.slice(1)}` : digits;
+  return { label: digits.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3"), href: `tel:${local}` };
+}
+
 export const wiziTariff = {
   startMkd: 60,
   perKmMkd: 35,

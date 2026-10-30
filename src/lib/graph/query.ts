@@ -14,7 +14,7 @@ const proximityCopy = L(
   "Ovo stajalište je uključeno jer je geografski blizu prethodnog. Blizina nije istorijski dokaz.",
   "Bu durak, önceki varış noktasına coğrafi olarak yakın olduğu için eklenmiştir. Yakınlık tarihî kanıt değildir.",
   "Цю зупинку включено, бо вона географічно близька до попередньої. Близькість не є історичним доказом.",
-);
+ "Kjo ndalesë përfshihet sepse është gjeografikisht afër destinacionit të mëparshëm. Afërsia nuk është provë historike.");
 
 export function otherEnd(edge: RelationshipRecord, slug: string) {
   if (edge.from === slug) return edge.to;
@@ -116,7 +116,7 @@ export function explainLeg(from: string, to: string): GraphLeg {
       "Ovo stajalište je poređano radi praktičnog redosleda hoda. Geografski red nije istorijska veza.",
       "Bu durak pratik bir yürüyüş sırası için dizildi. Coğrafi sıra tarihî bir ilişki değildir.",
       "Цю зупинку вишикувано для практичного порядку ходи. Географічний порядок не є історичним зв'язком.",
-    ),
+     "Kjo ndalesë është radhitur për një rend praktik ecjeje. Rendi gjeografik nuk është një lidhje historike."),
     sourceIds: [],
     verificationStatus: "confirmed",
     themeIds: [],

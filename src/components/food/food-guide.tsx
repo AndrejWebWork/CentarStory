@@ -394,11 +394,6 @@ function DishStory({
           {t("history")}
           <ArrowDownRight className="size-4" aria-hidden="true" />
         </Link>
-        {photo ? (
-          <p className="mt-4 text-[11px] tracking-[0.08em] text-brass uppercase">
-            {photo.credit} · {photo.license}
-          </p>
-        ) : null}
       </div>
     </article>
   );

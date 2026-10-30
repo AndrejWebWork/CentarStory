@@ -17,6 +17,7 @@ import type { ImageQualityIssue } from "@/lib/recognition/analyze";
 import { requestRemoteRecognition } from "@/lib/recognition/client";
 import { recognizeOnDevice } from "@/lib/recognition/on-device";
 import { canvasFromFile, canvasFromVideo, jpegFromCanvas, type PrepareError } from "@/lib/recognition/prepare";
+import { subscribeArmedCamera, takeArmedCamera } from "@/lib/scan/arm-camera";
 import { skeletonFromCanvas, type SkeletonMesh } from "@/lib/recognition/skeleton";
 import type { RecognitionResult } from "@/lib/recognition/types";
 
@@ -42,6 +43,7 @@ export function ScanStudio() {
   const [query, setQuery] = useState("");
   const [skeleton, setSkeleton] = useState<SkeletonMesh | null>(null);
   const [revealResult, setRevealResult] = useState(false);
+  const [liveStream, setLiveStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,21 +56,52 @@ export function ScanStudio() {
         if (!cancelled) setMode("demo");
       });
 
-    void openCamera();
+    const pendingCamera = takeArmedCamera();
+    if (pendingCamera) {
+      void pendingCamera.then((armed) => {
+        if (cancelled) {
+          if ("stream" in armed) armed.stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        if ("stream" in armed) {
+          streamRef.current = armed.stream;
+          setLiveStream(armed.stream);
+          setPhase("live");
+          return;
+        }
+        setError(armed.error);
+      });
+    } else {
+      void openCamera();
+    }
+
+    const unsubscribe = subscribeArmedCamera((next) => {
+      if ("error" in next) {
+        setError(next.error);
+        return;
+      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = next.stream;
+      setLiveStream(next.stream);
+      setError(null);
+      setPreview(null);
+      setPhase("live");
+    });
 
     return () => {
       cancelled = true;
+      unsubscribe();
       stopCamera();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (phase === "live" && videoRef.current && streamRef.current) {
-      videoRef.current.srcObject = streamRef.current;
-      void videoRef.current.play();
-    }
-  }, [phase]);
+    const video = videoRef.current;
+    if (phase !== "live" || !video || !liveStream) return;
+    video.srcObject = liveStream;
+    void video.play().catch(() => undefined);
+  }, [phase, liveStream]);
 
   useEffect(() => {
     if (phase !== "result") {
@@ -83,6 +116,7 @@ export function ScanStudio() {
   function stopCamera() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+    setLiveStream(null);
   }
 
   async function openCamera() {
@@ -104,6 +138,12 @@ export function ScanStudio() {
         audio: false,
       });
       streamRef.current = stream;
+      setLiveStream(stream);
+      const video = videoRef.current;
+      if (video) {
+        video.srcObject = stream;
+        await video.play().catch(() => undefined);
+      }
       setPhase("live");
     } catch (caught) {
       const name = caught instanceof DOMException ? caught.name : "";

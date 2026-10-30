@@ -31,7 +31,7 @@ export function aroundThemeRandom(): AroundThemeChoice {
       "Nova šetnja kroz dokumentovane spomenike. Svaki dodir vuče drugi niz. Godina rođenja, ako je unesete, jedino zaključava temu.",
       "Belgelenmiş anıtlar arasında taze bir yürüyüş. Her dokunuş başka bir sıra çeker. Girdiğiniz doğum yılı temayı kilitleyen tek şeydir.",
       "Свіжа прогулянка документованими пам'ятниками. Кожен дотик тягне іншу послідовність. Рік народження, якщо ввести, єдине, що фіксує тему.",
-    ),
+     "Një shëtitje e re nëpër monumente të dokumentuara. Çdo prekje nxjerr një radhë tjetër. Një vit lindjeje, nëse futni një, është e vetmja gjë që e kyç temën."),
   };
 }
 
@@ -54,7 +54,7 @@ export function aroundThemeDefault(): AroundThemeChoice {
       "Dokumentovana šetnja duž građanske ose od trga Makedonija: kapija, Kameni most, zatim muzejski niz.",
       "Makedonya Meydanı’ndan belgelenmiş kamusal eksen yürüyüşü: zafer takı, Taş Köprü, sonra müze sırası.",
       "Документована прогулянка громадською віссю від площі Македонія: арка, Кам'яний міст, потім музейний ряд.",
-    ),
+     "Një shëtitje e dokumentuar përgjatë boshtit qytetar nga Sheshi i Maqedonisë: harku, Ura e Gurit, pastaj rreshti i muzeve."),
   };
 }
 
@@ -70,7 +70,7 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
         "Godina rođenja je u ili pre 1963. Šetnja koristi dokumentovani niz sećanja na zemljotres u atlasu. To nije vaša biografija.",
         "Doğum yılınız 1963 veya öncesi. Yürüyüş atlasın belgelenmiş deprem-belleği dizisini kullanır. Bu sizin biyografiniz değildir.",
         "Рік народження — 1963 або раніше. Прогулянка бере документовану послідовність пам'яті землетрусу з атласу. Це не ваша біографія.",
-      ),
+       "Viti juaj i lindjes është 1963 ose më parë. Shëtitja përdor radhën e dokumentuar të kujtesës së tërmetit në atlas. Ajo nuk është një biografi juaja."),
     };
   }
   if (year <= 1990) {
@@ -83,7 +83,7 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
         "Te godine se ovde čitaju preko dokumentovanih kuća republike na građanskoj šetnji, ne preko izmišljenih događaja iz detinjstva.",
         "Bu yıllar burada, çocukluğunuza uydurulmuş olaylarla değil, belgelenmiş cumhuriyet evleriyle okunur.",
         "Ті роки читаються тут через документовані доми республіки на громадській прогулянці, не через вигадані події дитинства.",
-      ),
+       "Ato vite lexohen këtu përmes shtëpive të dokumentuara të republikës në shëtitjen qytetare, jo përmes ngjarjeve të trilluara nga fëmijëria juaj."),
     };
   }
   if (year <= 2009) {
@@ -96,7 +96,7 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
         "Šetnja prati dokumentovanu građansku osu trga, kapije i mosta. Godina samo bira ovu temu atlasa; ne izmišlja privatnu rutu.",
         "Yürüyüş belgelenmiş kamusal ekseni izler: meydan, tak, köprü. Yıl yalnızca bu atlas temasını seçer; özel bir güzergâh uydurmaz.",
         "Прогулянка йде документованою громадською віссю: площа, арка, міст. Рік лише обирає цю тему атласу; не вигадує приватний маршрут.",
-      ),
+       "Shëtitja ndjek boshtin qytetar të dokumentuar të sheshit, harkut dhe urës. Viti zgjedh vetëm këtë temë të atlasit; nuk trillon një itinerar privat."),
     };
   }
   if (year <= 2018) {
@@ -109,7 +109,7 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
         "Skoplje 2014 je dokumentovani program građanske arhitekture čija datirana dela padaju u ove godine. Šetnja koristi ta potvrđena stajališta.",
         "Skopje 2014, tarihli işleri bu yıllara düşen belgelenmiş kamusal mimari programıdır. Yürüyüş o doğrulanmış durakları kullanır.",
         "Скоп'є 2014 — документована програма громадської архітектури, датовані твори якої припадають на ці роки. Прогулянка бере ті підтверджені зупинки.",
-      ),
+       "Shkupi 2014 është programi i dokumentuar i arkitekturës qytetare, veprat e datuara të të cilit bien në këto vite. Shëtitja përdor ato ndalesa të verifikuara."),
     };
   }
   return {
@@ -121,6 +121,6 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
       "Novije godine se čitaju preko šetnje obeležjima Opštine Centar, štampane u programu kulture 2026.",
       "Yakın yıllar, 2026 kültür programında basılan Centar Belediyesi işaret yürüyüşü üzerinden okunur.",
       "Останні роки читаються через прогулянку орієнтирами Општини Центар, надруковану в програмі культури 2026.",
-    ),
+     "Vitet e fundit lexohen përmes shëtitjes së pikave dalluese të Komunës së Qendrës, të shtypur në programin kulturor të vitit 2026."),
   };
 }

@@ -12,6 +12,7 @@ const names: Record<Locale, string> = {
   sr: "SR · Srpski",
   mk: "МК · Македонски",
   uk: "УК · Українська",
+  sq: "SQ · Shqip",
 };
 
 const codes: Record<Locale, string> = {
@@ -20,6 +21,7 @@ const codes: Record<Locale, string> = {
   sr: "SR",
   mk: "МК",
   uk: "УК",
+  sq: "SQ",
 };
 
 export function LanguageSwitcher() {

@@ -7,7 +7,6 @@ import type { MediaAsset } from "@/content/knowledge/schema";
 export function StoryLook({
   image,
   alt,
-  credit,
   notes,
   openLabel,
   hideLabel,
@@ -15,7 +14,6 @@ export function StoryLook({
 }: {
   image: MediaAsset;
   alt: string;
-  credit: string;
   notes: string[];
   openLabel: string;
   hideLabel: string;
@@ -45,8 +43,7 @@ export function StoryLook({
           </div>
         ) : null}
       </div>
-      <figcaption className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <p className="text-xs text-ink-soft">{credit}</p>
+      <figcaption className="flex flex-wrap items-center justify-end gap-3 px-4 py-3">
         <button
           type="button"
           className="inline-flex h-11 items-center text-sm text-copper"

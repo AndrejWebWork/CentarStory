@@ -27,6 +27,7 @@ const weekdays: Record<Locale, string[]> = {
   sr: ["ned", "pon", "uto", "sre", "čet", "pet", "sub"],
   tr: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
   uk: ["нд", "пн", "вт", "ср", "чт", "пт", "сб"],
+  sq: ["die", "hën", "mar", "mër", "enj", "pre", "sht"],
 };
 
 function dayBits(iso: string, locale: string) {
@@ -184,11 +185,6 @@ function Featured({ event }: { event: CulturalEvent }) {
           </div>
         </div>
       </div>
-      {photo ? (
-        <p className="px-5 pb-4 text-[10px] tracking-[0.08em] text-foam/45 uppercase">
-          {photo.credit} · {photo.license}
-        </p>
-      ) : null}
     </article>
   );
 }

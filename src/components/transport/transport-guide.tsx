@@ -12,9 +12,10 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { BackLink } from "@/components/shell/back-link";
+import { Link } from "@/i18n/navigation";
 import { pick } from "@/content/copy";
 import { getMedia } from "@/content/knowledge/media";
-import { binbin, enjoyTariff, jspHow, wiziTariff } from "@/content/mobility";
+import { binbin, enjoyTariff, jspHow, localTaxis, taxiDial, wiziTariff } from "@/content/mobility";
 import { jspFares, transportLinks } from "@/content/transport";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
 import type { MediaAsset } from "@/content/knowledge/schema";
@@ -124,6 +125,7 @@ export function TransportGuide() {
     logo?: { src: string; wide?: boolean };
     image?: MediaAsset;
     wash: string;
+    href?: string;
   }> = [
     {
       id: "walk",
@@ -131,6 +133,7 @@ export function TransportGuide() {
       icon: Footprints,
       image: walkImage,
       wash: "from-ink/20 via-ink/45 to-ink",
+      href: "/around",
     },
     {
       id: "bus",
@@ -195,16 +198,10 @@ export function TransportGuide() {
               </div>
             </div>
             <div className="p-5 sm:p-8">
-              {open === "walk" ? <WalkDetail /> : null}
               {open === "bus" ? <BusDetail /> : null}
               {open === "enjoy" ? <EnjoyDetail /> : null}
               {open === "binbin" ? <BinbinDetail /> : null}
               {open === "taxi" ? <TaxiDetail /> : null}
-              {active.image ? (
-                <p className="mt-6 text-[11px] tracking-[0.08em] text-brass uppercase">
-                  {active.image.credit} · {active.image.license}
-                </p>
-              ) : null}
             </div>
           </article>
         </section>
@@ -216,50 +213,46 @@ export function TransportGuide() {
           </p>
           <ul className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
             {modes.map((mode) => {
+              const className = "group relative block aspect-[4/5] w-full overflow-hidden bg-ink text-left text-foam";
+              const tile = (
+                <>
+                  <TilePhoto
+                    image={mode.image}
+                    alt={mode.image ? pick(mode.image.caption, locale) : mode.title}
+                  />
+                  <div
+                    className={`absolute inset-0 ${
+                      mode.image
+                        ? `bg-gradient-to-t ${mode.wash}`
+                        : `bg-gradient-to-br ${mode.wash}`
+                    }`}
+                  />
+                  <span className="absolute top-3 left-3 grid h-10 place-items-center">
+                    <BrandMark mode={mode} />
+                  </span>
+                  <span className="absolute inset-x-0 bottom-0 p-3">
+                    <span className="block text-[10px] tracking-[0.2em] text-foam/70 uppercase">{t("open")}</span>
+                    <span className="mt-1 block font-display text-2xl leading-none sm:text-3xl">{mode.title}</span>
+                  </span>
+                </>
+              );
               return (
                 <li key={mode.id}>
-                  <button
-                    type="button"
-                    onClick={() => setOpen(mode.id)}
-                    className="group relative block aspect-[4/5] w-full overflow-hidden bg-ink text-left text-foam"
-                  >
-                    <TilePhoto
-                      image={mode.image}
-                      alt={mode.image ? pick(mode.image.caption, locale) : mode.title}
-                    />
-                    <div
-                      className={`absolute inset-0 ${
-                        mode.image
-                          ? `bg-gradient-to-t ${mode.wash}`
-                          : `bg-gradient-to-br ${mode.wash}`
-                      }`}
-                    />
-                    <span className="absolute top-3 left-3 grid h-10 place-items-center">
-                      <BrandMark mode={mode} />
-                    </span>
-                    <span className="absolute inset-x-0 bottom-0 p-3">
-                      <span className="block text-[10px] tracking-[0.2em] text-foam/70 uppercase">{t("open")}</span>
-                      <span className="mt-1 block font-display text-2xl leading-none sm:text-3xl">{mode.title}</span>
-                    </span>
-                  </button>
+                  {mode.href ? (
+                    <Link href={mode.href} className={className}>
+                      {tile}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => setOpen(mode.id)} className={className}>
+                      {tile}
+                    </button>
+                  )}
                 </li>
               );
             })}
           </ul>
         </section>
       )}
-    </div>
-  );
-}
-
-function WalkDetail() {
-  const around = useTranslations("around");
-  return (
-    <div className="space-y-4">
-      <p className="flex items-start gap-2 text-sm leading-relaxed text-ink-soft">
-        <Footprints className="mt-0.5 size-4 shrink-0 text-brass" aria-hidden="true" />
-        {around("walkBody")}
-      </p>
     </div>
   );
 }
@@ -390,6 +383,29 @@ function TaxiDetail() {
   return (
     <div>
       <p className="text-sm leading-relaxed text-ink-soft">{around("taxiBody")}</p>
+      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{around("taxiLocalLead")}</p>
+      <ul className="mt-4 divide-y divide-line border border-line bg-paper">
+        {localTaxis.map((taxi) => (
+          <li key={taxi.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-display text-2xl leading-none">{taxi.name}</p>
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
+              {taxi.phones.map((digits) => {
+                const dial = taxiDial(digits);
+                return (
+                  <a key={dial.href} href={dial.href} className="cs-btn cs-btn-ink w-full sm:w-auto">
+                    <Phone className="size-4" aria-hidden="true" />
+                    {around("taxiCall")}
+                    <span className="tabular-nums">{dial.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-xs leading-relaxed text-ink-soft">{around("taxiChecked")}</p>
+
+      <h3 className="mt-8 font-display text-2xl leading-none">{around("wiziTitle")}</h3>
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">{around("wiziBody")}</p>
       <ul className="mt-4 space-y-1 text-sm">
         <li>{around("wiziStart", { amount: wiziTariff.startMkd })}</li>
@@ -399,7 +415,8 @@ function TaxiDetail() {
       <div className="mt-5 flex flex-wrap gap-2">
         <a href={wiziTariff.tel} className="cs-btn cs-btn-ink">
           <Phone className="size-4" aria-hidden="true" />
-          {wiziTariff.phone}
+          {around("taxiCall")}
+          <span className="tabular-nums">{wiziTariff.phone}</span>
         </a>
         <a href={wiziTariff.url} className="cs-btn cs-btn-ghost" target="_blank" rel="noreferrer">
           <ExternalLink className="size-4" aria-hidden="true" />

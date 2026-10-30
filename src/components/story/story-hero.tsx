@@ -14,7 +14,6 @@ import type { Motif } from "@/content/types";
 export function StoryHero({
   image,
   imageAlt,
-  credit,
   index,
   motif,
   palette,
@@ -28,7 +27,6 @@ export function StoryHero({
 }: {
   image?: MediaAsset;
   imageAlt: string;
-  credit?: string;
   index: string;
   motif: Motif;
   palette: [string, string];
@@ -209,12 +207,14 @@ export function StoryHero({
                 {title}
               </h1>
             </div>
-            <p
-              data-hero-meta
-              className="mt-5 max-w-xl border-t border-foam/20 pt-3 text-[10px] tracking-[0.16em] text-foam/70 uppercase sm:text-[11px]"
-            >
-              {image && credit ? credit : noPhotograph}
-            </p>
+            {image ? null : (
+              <p
+                data-hero-meta
+                className="mt-5 max-w-xl border-t border-foam/20 pt-3 text-[10px] tracking-[0.16em] text-foam/70 uppercase sm:text-[11px]"
+              >
+                {noPhotograph}
+              </p>
+            )}
           </div>
 
           {visitorShot ? (
