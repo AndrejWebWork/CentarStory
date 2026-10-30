@@ -15,6 +15,7 @@ import type { Locale } from "@/i18n/locales";
 import { formatIsoDay } from "@/lib/format";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
 import { closedEvents, confirmDateEvents, liveEvents } from "@/lib/events/group";
+import { noticeLabelKey } from "@/lib/events/notice";
 
 function eventDay(event: CulturalEvent) {
   return event.startDate ?? event.nextDate;
@@ -178,7 +179,7 @@ function Featured({ event }: { event: CulturalEvent }) {
               target="_blank"
               rel="noreferrer"
             >
-              {explore("officialSource")}
+              {explore(noticeLabelKey(event.officialUrl))}
             </a>
           </div>
         </div>
@@ -239,7 +240,7 @@ function EventCard({ event }: { event: CulturalEvent }) {
             {explore("openStory")}
           </Link>
           <a href={event.officialUrl} className="text-[10px] tracking-[0.12em] text-copper uppercase" target="_blank" rel="noreferrer">
-            {explore("officialSource")}
+            {explore(noticeLabelKey(event.officialUrl))}
           </a>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { locales, type Locale } from "@/i18n/locales";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
@@ -13,18 +14,35 @@ const names: Record<Locale, string> = {
   uk: "УК · Українська",
 };
 
+const codes: Record<Locale, string> = {
+  en: "EN",
+  tr: "TR",
+  sr: "SR",
+  mk: "МК",
+  uk: "УК",
+};
+
 export function LanguageSwitcher() {
   const t = useTranslations("common");
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const search = useSearchParams();
+  const [compact, setCompact] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 430px)");
+    const apply = () => setCompact(query.matches);
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, []);
 
   return (
-    <label className="flex w-fit max-w-full items-center border border-white/12 bg-white/5 px-2.5 text-[11px] font-semibold tracking-[0.04em] sm:px-3">
+    <label className="cs-lang flex w-fit max-w-full min-w-0 items-center border border-white/12 bg-white/5 px-2 text-[11px] font-semibold tracking-[0.04em] sm:px-3">
       <span className="sr-only">{t("language")}</span>
       <select
-        className="h-9 max-w-[9.25rem] bg-transparent pr-1 text-xs tracking-[0.04em] text-foam sm:max-w-44"
+        className="h-11 max-w-full min-w-0 bg-transparent pr-1 text-base tracking-[0.04em] text-foam sm:h-9 sm:max-w-44 sm:text-xs"
         value={locale}
         aria-label={t("language")}
         title={t("scriptStrategy")}
@@ -37,7 +55,7 @@ export function LanguageSwitcher() {
       >
         {locales.map((code) => (
           <option key={code} value={code} className="bg-foam text-ink">
-            {names[code]}
+            {compact ? codes[code] : names[code]}
           </option>
         ))}
       </select>

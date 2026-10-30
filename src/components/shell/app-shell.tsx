@@ -48,9 +48,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         {t("common.skip")}
       </a>
       <header className="sticky top-0 z-50 isolate">
-        <div className="cs-mast flex h-24 items-center justify-between gap-3 px-4 sm:px-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-3 lg:px-8">
-          <Link href="/" className="flex shrink-0 items-center justify-self-start">
-            <span className="font-display text-[1.45rem] leading-none tracking-tight sm:text-3xl">CentarStory</span>
+        <div className="cs-mast flex items-center justify-between gap-2 px-3 sm:gap-3 sm:px-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-3 lg:px-8">
+          <Link href="/" className="flex min-w-0 items-center justify-self-start">
+            <span className="cs-brand font-display leading-none tracking-tight">CentarStory</span>
           </Link>
           <nav className="hidden items-center lg:flex" aria-label={t("nav.primary")}>
             {leftDesktop.map((item) => {
@@ -85,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
-          <div className="ml-auto flex shrink-0 items-center justify-self-end lg:ml-0">
+          <div className="ml-auto flex min-w-0 items-center justify-self-end lg:ml-0">
             <Suspense fallback={<span className="inline-block h-9 w-24" />}>
               <LanguageSwitcher />
             </Suspense>
@@ -139,58 +139,36 @@ export function AppShell({ children }: { children: ReactNode }) {
             className="cs-dock__stage mx-auto max-w-lg"
             style={{
               position: "relative",
-              height: 84,
+              width: "100%",
               overflow: "visible",
               color: "#141820",
               filter: "drop-shadow(0 16px 36px rgba(15, 23, 42, 0.28))",
             }}
           >
-            <div
+            <span
+              className="cs-dock__bar"
               aria-hidden="true"
               style={{
                 position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "flex-end",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 58,
+                borderRadius: 999,
+                background: "#141820",
                 pointerEvents: "none",
               }}
-            >
-              <span
-                style={{
-                  flex: "1 1 0",
-                  height: 58,
-                  background: "#141820",
-                  borderTopLeftRadius: 999,
-                  borderBottomLeftRadius: 999,
-                  marginRight: -2,
-                }}
-              />
-              <svg width="180" height="84" viewBox="0 0 180 84" style={{ display: "block", flex: "none" }}>
-                <path
-                  fill="#141820"
-                  d="M0 84L0 26L44.97 26L47.06 25.89L49.12 25.56L51.15 25.02L53.1 24.27L54.97 23.32L56.72 22.18L58.35 20.86L59.83 19.38L61.15 17.76L62.29 16L63.56 13.97L64.98 12.05L66.54 10.23L68.23 8.54L70.05 6.98L71.97 5.56L74 4.29L76.12 3.17L78.31 2.21L80.57 1.42L82.88 0.8L85.23 0.36L87.61 0.09L90 0L92.39 0.09L94.77 0.36L97.12 0.8L99.43 1.42L101.69 2.21L103.88 3.17L106 4.29L108.03 5.56L109.95 6.98L111.77 8.54L113.46 10.23L115.02 12.05L116.44 13.97L117.71 16L118.85 17.76L120.17 19.38L121.65 20.86L123.28 22.18L125.03 23.32L126.9 24.27L128.85 25.02L130.88 25.56L132.94 25.89L135.03 26L180 26L180 84Z"
-                />
-              </svg>
-              <span
-                style={{
-                  flex: "1 1 0",
-                  height: 58,
-                  background: "#141820",
-                  borderTopRightRadius: 999,
-                  borderBottomRightRadius: 999,
-                  marginLeft: -2,
-                }}
-              />
-            </div>
+            />
             <ul
               className="cs-dock__pill"
               style={{
                 position: "relative",
                 zIndex: 1,
                 display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
+                gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
                 alignItems: "stretch",
                 height: "100%",
+                minWidth: 0,
                 overflow: "visible",
                 background: "transparent",
               }}

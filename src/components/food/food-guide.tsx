@@ -95,7 +95,7 @@ export function FoodGuide() {
     <div className="bg-paper">
       <div className="mx-auto max-w-[96rem] px-4 py-5 sm:px-5 lg:px-8 lg:py-8">
         <div className="flex items-end justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <p className="font-display text-3xl leading-none sm:text-4xl">{t("title")}</p>
             <p className="mt-2 max-w-sm text-sm text-ink-soft">{t("todayLede")}</p>
           </div>
@@ -215,7 +215,7 @@ export function FoodGuide() {
           <button
             type="button"
             onClick={showMap}
-            className="absolute bottom-20 left-1/2 z-10 flex h-11 -translate-x-1/2 items-center rounded-full bg-ink px-5 text-xs tracking-[0.08em] text-foam uppercase shadow-[0_10px_24px_rgba(15,23,42,0.25)] lg:bottom-4"
+            className="absolute bottom-20 left-1/2 z-10 flex min-h-11 max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center rounded-full bg-ink px-4 py-2 text-center text-xs leading-tight tracking-[0.06em] text-foam uppercase shadow-[0_10px_24px_rgba(15,23,42,0.25)] lg:bottom-4"
           >
             {t("mapCta")}
           </button>
@@ -227,7 +227,7 @@ export function FoodGuide() {
               href={`/food/places/${featured.slug}`}
               className="cs-lift group relative block overflow-hidden text-foam"
             >
-              <FoodCover serves={featured.serves} locale={locale} alt={featured.name} />
+              <FoodCover serves={featured.serves} locale={locale} alt={featured.name} imageId={featured.imageId} />
               <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10 transition duration-500 group-hover:via-ink/20" />
               <span className="relative flex min-h-72 flex-col justify-end p-5">
                 <span className="text-[10px] tracking-[0.16em] text-foam/75 uppercase">
@@ -299,6 +299,7 @@ function HouseRow({
           locale={locale}
           alt={restaurant.name}
           shift={[...restaurant.slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)}
+          imageId={restaurant.imageId}
         />
         <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-ink/10" />
         <span className="relative text-[10px] tracking-[0.14em] text-foam/75 uppercase">
@@ -378,7 +379,7 @@ function DishStory({
                   href={`/food/places/${house.slug}`}
                   className="cs-lift group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
                 >
-                  <FoodCover serves={house.serves} locale={locale} alt={house.name} />
+                  <FoodCover serves={house.serves} locale={locale} alt={house.name} imageId={house.imageId} />
                   <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
                   <span className="relative font-display text-lg leading-none">{house.name}</span>
                   <span className="cs-food-link relative mt-3 w-fit">{t("openHouse")}</span>

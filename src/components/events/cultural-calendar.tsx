@@ -10,6 +10,7 @@ import { getPlace, sitePath } from "@/content/places";
 import type { CulturalEvent, EventHost } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { closedEvents, confirmDateEvents, liveEvents } from "@/lib/events/group";
+import { noticeLabelKey } from "@/lib/events/notice";
 
 function Status({ event }: { event: CulturalEvent }) {
   const t = useTranslations("explore");
@@ -52,7 +53,7 @@ function EventRow({ event, index }: { event: CulturalEvent; index: number }) {
         )}
         <p className="mt-3">
           <a href={event.officialUrl} className="text-[11px] tracking-[0.16em] text-copper uppercase underline" target="_blank" rel="noreferrer">
-            {t("officialSource")}
+            {t(noticeLabelKey(event.officialUrl))}
           </a>
         </p>
         <p className="mt-1 text-[11px] text-ink-soft">{t("lastVerified", { date: event.lastChecked })}</p>

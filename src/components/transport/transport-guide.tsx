@@ -186,10 +186,10 @@ export function TransportGuide() {
                 alt={active.image ? pick(active.image.caption, locale) : active.title}
               />
               <div className={`absolute inset-0 bg-gradient-to-t ${active.image ? "from-ink via-ink/25 to-transparent" : active.wash}`} />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 text-foam">
-                <div>
+              <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-4 text-foam sm:p-5">
+                <div className="min-w-0">
                   <p className="text-[10px] tracking-[0.22em] uppercase">{t("open")}</p>
-                  <h2 className="mt-1 font-display text-4xl leading-none">{active.title}</h2>
+                  <h2 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{active.title}</h2>
                 </div>
                 <BrandMark mode={active} large />
               </div>

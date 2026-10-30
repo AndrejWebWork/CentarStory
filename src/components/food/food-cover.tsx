@@ -23,13 +23,18 @@ export function FoodCover({
   locale,
   alt,
   shift = 0,
+  imageId,
 }: {
   serves: string[];
   locale: string;
   alt: string;
   shift?: number;
+  imageId?: string;
 }) {
-  const cover = coverForDishes(serves, shift);
+  const house = imageId ? getMedia(imageId) : undefined;
+  const cover = house
+    ? { media: house, palette: ["#1c1917", "#8a4b32"] as [string, string] }
+    : coverForDishes(serves, shift);
   return (
     <>
       <div

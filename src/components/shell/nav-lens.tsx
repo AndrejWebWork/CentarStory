@@ -1,5 +1,6 @@
 "use client";
 
+import { Camera } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 export function NavLens({
@@ -16,7 +17,16 @@ export function NavLens({
   return (
     <span
       className={`cs-nav-lens ${raised ? "cs-nav-lens--raised" : ""} ${active ? "is-active" : ""}`}
-      style={raised ? { width: 64, height: 64, margin: "0 0 20px" } : undefined}
+      style={
+        raised
+          ? {
+              width: "clamp(2.9rem, 16vw, 4rem)",
+              height: "clamp(2.9rem, 16vw, 4rem)",
+              margin: "0 0 clamp(0.65rem, 2vw, 1.25rem)",
+              minWidth: 0,
+            }
+          : undefined
+      }
     >
       <Link
         href={href}
@@ -26,35 +36,18 @@ export function NavLens({
         className="cs-nav-lens__disc"
         style={
           raised
-            ? { borderRadius: 999, background: "transparent", boxShadow: "none", color: "#ffffff" }
+            ? {
+                borderRadius: 999,
+                background: "#ff6b4a",
+                color: "#ffffff",
+                border: "3px solid #ffffff",
+                boxShadow: "0 10px 22px rgba(15, 23, 42, 0.28)",
+              }
             : undefined
         }
       >
-        <ScanLensIcon />
+        <Camera aria-hidden="true" strokeWidth={2} />
       </Link>
     </span>
-  );
-}
-
-function ScanLensIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width="28"
-      height="28"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        d="M6.2 17.2h8.4l2.2-4h10.4l2.2 4H34a3.2 3.2 0 0 1 3.2 3.2v9.2A3.2 3.2 0 0 1 34 32.8H6.2A3.2 3.2 0 0 1 3 29.6v-9.2a3.2 3.2 0 0 1 3.2-3.2Z"
-        stroke="currentColor"
-        strokeWidth="2.6"
-        strokeLinejoin="round"
-      />
-      <circle cx="26.2" cy="28.4" r="7.1" stroke="currentColor" strokeWidth="2.7" />
-      <path d="M31.4 33.6 41.6 43.8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
   );
 }

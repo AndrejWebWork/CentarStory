@@ -87,6 +87,7 @@ export type Restaurant = {
   address?: Copy;
   website?: string;
   phone?: string;
+  imageId?: string;
   lastChecked: string;
 };
 

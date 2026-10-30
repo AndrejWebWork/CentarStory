@@ -184,6 +184,7 @@ export type VenueRecord = {
   website?: string;
   phone?: string;
   sourceIds: string[];
+  imageId?: string;
   verificationStatus: VerificationStatus;
   lastChecked: string;
   nearbyNote?: Copy;

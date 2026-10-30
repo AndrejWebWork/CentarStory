@@ -91,6 +91,7 @@ export const restaurants: Restaurant[] = venues.map((venue) => ({
   address: venue.address,
   website: venue.website,
   phone: venue.phone,
+  imageId: venue.imageId,
   lastChecked: venue.lastChecked,
 }));
 

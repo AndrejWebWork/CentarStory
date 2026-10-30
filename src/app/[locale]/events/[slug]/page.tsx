@@ -7,6 +7,7 @@ import { getEvent, listEvents } from "@/content/journeys";
 import { getPlace, sitePath } from "@/content/places";
 import { Link } from "@/i18n/navigation";
 import { locales } from "@/i18n/locales";
+import { noticeLabelKey } from "@/lib/events/notice";
 import { formatIsoDay } from "@/lib/format";
 import { resolveLocale } from "@/lib/resolve-locale";
 
@@ -48,9 +49,11 @@ export default async function EventPage({
   return (
     <article>
       <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(160deg,#0f172a_0%,#1e3a8a_58%,#3b6dff_140%)] text-foam sm:mx-4">
-        <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
+        <div className="absolute top-2 left-2 z-10">
           <BackLink href={event.host === "municipality" ? "/events" : "/"}>{common("back")}</BackLink>
-          <p className="cs-kicker mt-8 text-brass">
+        </div>
+        <div className="mx-auto max-w-[96rem] px-5 pt-28 pb-12 sm:px-8 sm:pt-32 sm:pb-16 lg:px-10 lg:pt-36 lg:pb-20">
+          <p className="cs-kicker text-brass">
             {detail("season")} · {pick(event.season, locale)}
           </p>
           <p className="mt-2 text-xs tracking-[0.18em] text-foam/75 uppercase">
@@ -76,7 +79,7 @@ export default async function EventPage({
           <p className="text-ink-soft">{explore("eventsNote")}</p>
           <p className="mt-4">
             <a href={event.officialUrl} className="cs-btn cs-btn-cobalt" target="_blank" rel="noreferrer">
-              {explore("officialSource")}
+              {explore(noticeLabelKey(event.officialUrl))}
             </a>
           </p>
           <p className="mt-4 text-xs tracking-[0.16em] text-brass uppercase">

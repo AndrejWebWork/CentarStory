@@ -94,7 +94,7 @@ export default async function DishPage({
                       href={`/food/places/${house.slug}`}
                       className="group relative flex aspect-square flex-col justify-end overflow-hidden p-3 text-foam"
                     >
-                      <FoodCover serves={house.serves} locale={locale} alt={house.name} />
+                      <FoodCover serves={house.serves} locale={locale} alt={house.name} imageId={house.imageId} />
                       <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
                       <span className="relative text-[10px] tracking-[0.14em] text-foam/75 uppercase">
                         {district ? pick(district.name, locale) : ""}
