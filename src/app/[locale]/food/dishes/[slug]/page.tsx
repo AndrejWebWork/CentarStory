@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { FoodCover } from "@/components/food/food-cover";
+import { StoryListen } from "@/components/story/story-listen";
 import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { dishes, getDish, getDistrict, restaurantsForDish } from "@/content/food";
@@ -41,6 +42,7 @@ export default async function DishPage({
   if (!dish) notFound();
   const t = await getTranslations("food");
   const common = await getTranslations("common");
+  const story = await getTranslations("story");
   const houses = restaurantsForDish(dish.slug);
   const record = dishRecords.find((item) => item.slug === dish.slug);
   const photo = dish.imageId ? getMedia(dish.imageId) : undefined;
@@ -63,6 +65,25 @@ export default async function DishPage({
           <BackLink href="/food">{common("back")}</BackLink>
           <p className="cs-kicker mt-8 text-brass">{pick(dish.eyebrow, locale)}</p>
           <h1 className="mt-3 font-display text-6xl leading-[0.86] sm:text-8xl">{pick(dish.name, locale)}</h1>
+          <div className="mt-6">
+            <StoryListen
+              title={pick(dish.name, locale)}
+              paragraphs={[
+                pick(dish.eyebrow, locale),
+                record?.nameMk && record.nameMk !== pick(dish.name, locale) ? record.nameMk : "",
+                pick(dish.summary, locale),
+                pick(dish.story[0], locale),
+                pick(dish.story[1], locale),
+                t("recipeNote"),
+                pick(dish.eat, locale),
+              ]}
+              locale={locale}
+              listenLabel={story("listen")}
+              stopLabel={story("listenStop")}
+              statusLabel={story("listenStatus")}
+              missingLabel={story("listenMissing")}
+            />
+          </div>
           {record?.nameMk ? <p className="mt-3 font-display text-3xl text-brass">{record.nameMk}</p> : null}
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foam/80">{pick(dish.summary, locale)}</p>
         </div>
@@ -74,7 +95,7 @@ export default async function DishPage({
           <p className="mt-6 text-lg leading-relaxed">{pick(dish.story[1], locale)}</p>
           <p className="mt-8 border-t border-line pt-6 text-sm leading-relaxed text-ink-soft">{t("recipeNote")}</p>
         </div>
-        <div className="rounded-[1.5rem] border border-line bg-foam p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
+        <div className="rounded-xl border border-line bg-foam p-6 shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
           <h2 className="font-display text-3xl">{t("served")}</h2>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">{pick(dish.eat, locale)}</p>
           {houses.length === 0 ? (

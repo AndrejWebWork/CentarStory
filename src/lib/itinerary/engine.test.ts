@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { getSite } from "@/content/knowledge/catalog";
 import { venues } from "@/content/knowledge/culinary";
-import { aroundThemeDefault, aroundThemeForYear } from "@/lib/itinerary/around-theme";
+import { aroundThemeDefault, aroundThemeForYear, documentedAtlasYears } from "@/lib/itinerary/around-theme";
 import { planItinerary } from "@/lib/itinerary/engine";
 
 function run() {
@@ -66,9 +66,15 @@ function run() {
   for (const stop of shuffled.stops) {
     assert.ok(getSite(stop.slug)?.coordinates);
   }
-  assert.equal(aroundThemeForYear(1958)?.themeId, "1963-memory");
+  const years = documentedAtlasYears();
+  assert.ok(years.includes(2014));
+  assert.ok(years.includes(2026));
+  assert.equal(years.includes(1994), false);
+  const early = years.find((year) => year <= 1963);
+  assert.equal(aroundThemeForYear(early!)?.themeId, "1963-memory");
   assert.equal(aroundThemeForYear(2014)?.themeId, "skopje-2014");
   assert.equal(aroundThemeForYear(1899), null);
+  assert.equal(aroundThemeForYear(1958), null);
   const fromYear = planItinerary({
     start: { kind: "site", slug: "macedonia-square" },
     themeId: aroundThemeForYear(2012)!.themeId,

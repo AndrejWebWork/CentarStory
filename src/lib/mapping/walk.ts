@@ -63,6 +63,14 @@ export async function loadWalkingPath(points: Coordinates[]): Promise<WalkPath> 
   }
 }
 
+export function walkingDirections(lat: number, lng: number) {
+  const google = new URL("https://www.google.com/maps/dir/");
+  google.searchParams.set("api", "1");
+  google.searchParams.set("destination", `${lat},${lng}`);
+  google.searchParams.set("travelmode", "walking");
+  return google.toString();
+}
+
 export function pedestrianNavigation(points: Coordinates[]) {
   if (points.length === 0) return { osm: null, google: null };
   const osmRoute = points.map((point) => `${point.lat},${point.lng}`).join(";");

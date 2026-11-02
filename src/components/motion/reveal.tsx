@@ -22,9 +22,8 @@ export function Reveal({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         el,
-        { autoAlpha: 0, y: 22 },
+        { y: 22 },
         {
-          autoAlpha: 1,
           y: 0,
           duration: 0.72,
           delay,

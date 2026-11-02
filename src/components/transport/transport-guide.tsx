@@ -167,15 +167,25 @@ export function TransportGuide() {
 
   return (
     <div>
-      <header className="bg-ink px-4 py-5 text-foam sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-[96rem] items-end justify-between gap-4">
+      <header className="cs-transport-hero relative overflow-hidden px-4 py-8 text-foam sm:px-6 sm:py-10 lg:px-8">
+        <svg className="cs-transport-hero__route" viewBox="0 0 640 180" aria-hidden="true">
+          <path d="M-20 150C80 150 90 40 190 40s90 110 180 110 100-90 190-70 90 40 140 20" />
+          <circle cx="190" cy="40" r="4" />
+          <circle cx="370" cy="150" r="4" />
+          <circle cx="560" cy="80" r="4" />
+        </svg>
+        <div className="relative mx-auto flex max-w-[96rem] items-end justify-between gap-4">
           <div>
             <p className="cs-kicker m-0 text-foam/55">01 — {t("kicker")}</p>
-            <h1 className="mt-2 font-display text-[clamp(2.2rem,6vw,3.6rem)] leading-none">{t("title")}</h1>
+            <h1 className="mt-3 font-display text-[clamp(2.2rem,6vw,3.6rem)] leading-none">{t("title")}</h1>
           </div>
-          <p className="hidden max-w-xs text-right text-sm text-foam/65 sm:block">{t("pickHint")}</p>
         </div>
       </header>
+      {!active ? (
+        <p className="border-b border-copper/30 bg-paper px-4 py-5 font-display text-[clamp(1.35rem,4.4vw,2.15rem)] leading-[1.2] text-ink sm:px-6 lg:px-8">
+          <span className="mx-auto block max-w-[96rem]">{t("pickHint")}</span>
+        </p>
+      ) : null}
 
       {active ? (
         <section className="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8">
@@ -207,11 +217,7 @@ export function TransportGuide() {
         </section>
       ) : (
         <section className="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8">
-          <p className="cs-kicker sm:hidden">
-            <Footprints className="size-3.5" aria-hidden="true" />
-            {t("pickHint")}
-          </p>
-          <ul className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
             {modes.map((mode) => {
               const className = "group relative block aspect-[4/5] w-full overflow-hidden bg-ink text-left text-foam";
               const tile = (
@@ -232,7 +238,7 @@ export function TransportGuide() {
                   </span>
                   <span className="absolute inset-x-0 bottom-0 p-3">
                     <span className="block text-[10px] tracking-[0.2em] text-foam/70 uppercase">{t("open")}</span>
-                    <span className="mt-1 block font-display text-2xl leading-none sm:text-3xl">{mode.title}</span>
+                    <span className="mt-1 block font-display text-xl leading-none break-words sm:text-3xl">{mode.title}</span>
                   </span>
                 </>
               );

@@ -10,6 +10,7 @@ const indexes: Record<LegalSlug, string> = {
   privacy: "L2",
   terms: "L3",
   cookies: "L4",
+  impressum: "L5",
 };
 
 export async function LegalDocumentPage({

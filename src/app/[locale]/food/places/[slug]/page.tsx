@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { FoodCover } from "@/components/food/food-cover";
+import { StoryListen } from "@/components/story/story-listen";
 import { BackLink } from "@/components/shell/back-link";
 import { pick } from "@/content/copy";
 import { getDish, getDistrict, getRestaurant, restaurants } from "@/content/food";
@@ -43,12 +44,13 @@ export default async function RestaurantPage({
   const district = getDistrict(restaurant.district);
   const t = await getTranslations("food");
   const common = await getTranslations("common");
+  const story = await getTranslations("story");
   const nav = restaurant.coordinates
     ? pedestrianNavigation([MACEDONIA_SQUARE, restaurant.coordinates])
     : null;
   return (
     <article>
-      <header className="group relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-ink text-foam sm:mx-4">
+      <header className="group relative mx-3 mt-3 overflow-hidden rounded-xl bg-ink text-foam sm:mx-4">
         <FoodCover serves={restaurant.serves} locale={locale} alt={restaurant.name} imageId={restaurant.imageId} />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
         <div className="relative mx-auto max-w-[96rem] px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
@@ -60,6 +62,27 @@ export default async function RestaurantPage({
             <p className="mt-2 text-xs tracking-[0.18em] text-copper uppercase">{t("nearby")}</p>
           ) : null}
           <h1 className="mt-3 font-display text-6xl leading-[0.86] sm:text-8xl">{restaurant.name}</h1>
+          <div className="mt-6">
+            <StoryListen
+              title={restaurant.name}
+              paragraphs={[
+                district ? pick(district.name, locale) : "",
+                restaurant.municipality === "nearby" ? t("nearby") : "",
+                pick(restaurant.summary, locale),
+                pick(restaurant.practical, locale),
+                t("priceBody"),
+                restaurant.nearbyNote ? pick(restaurant.nearbyNote, locale) : "",
+                restaurant.address ? pick(restaurant.address, locale) : "",
+                !restaurant.coordinates ? t("unmapped") : "",
+                district ? pick(district.approach, locale) : "",
+              ]}
+              locale={locale}
+              listenLabel={story("listen")}
+              stopLabel={story("listenStop")}
+              statusLabel={story("listenStatus")}
+              missingLabel={story("listenMissing")}
+            />
+          </div>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foam/80">{pick(restaurant.summary, locale)}</p>
         </div>
       </header>
@@ -89,7 +112,7 @@ export default async function RestaurantPage({
           <p className="mt-3 leading-relaxed">{pick(restaurant.practical, locale)}</p>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t("priceBody")}</p>
         </div>
-        <div className="rounded-[1.5rem] border border-line bg-foam p-6 text-sm shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
+        <div className="rounded-xl border border-line bg-foam p-6 text-sm shadow-[0_12px_30px_rgba(15,23,42,0.05)] lg:col-span-5">
           {restaurant.nearbyNote ? <p className="text-ink-soft">{pick(restaurant.nearbyNote, locale)}</p> : null}
           {restaurant.address ? <p className="mt-4">{pick(restaurant.address, locale)}</p> : null}
           {restaurant.phone ? (

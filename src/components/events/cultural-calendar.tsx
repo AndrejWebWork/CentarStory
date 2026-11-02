@@ -52,7 +52,7 @@ function EventRow({ event, index }: { event: CulturalEvent; index: number }) {
           <p className="text-ink-soft">{t("unmappedVenue")}</p>
         )}
         <p className="mt-3">
-          <a href={event.officialUrl} className="text-[11px] tracking-[0.16em] text-copper uppercase underline" target="_blank" rel="noreferrer">
+          <a href={event.officialUrl} className="text-[11px] font-semibold tracking-[0.08em] text-cobalt uppercase underline underline-offset-4" target="_blank" rel="noreferrer">
             {t(noticeLabelKey(event.officialUrl))}
           </a>
         </p>

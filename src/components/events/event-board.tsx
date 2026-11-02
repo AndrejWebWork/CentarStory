@@ -4,8 +4,6 @@ import { MapPinned } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { pick } from "@/content/copy";
-import { sites } from "@/content/knowledge/catalog";
-import { getMedia } from "@/content/knowledge/media";
 import { calendarLinks } from "@/content/mobility";
 import { getPlace, sitePath } from "@/content/places";
 import { listEvents } from "@/content/journeys";
@@ -16,6 +14,7 @@ import { formatIsoDay } from "@/lib/format";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
 import { closedEvents, confirmDateEvents, liveEvents } from "@/lib/events/group";
 import { noticeLabelKey } from "@/lib/events/notice";
+import { eventImage, eventImageFocus } from "@/lib/events/photo";
 
 function eventDay(event: CulturalEvent) {
   return event.startDate ?? event.nextDate;
@@ -44,12 +43,6 @@ function covers(event: CulturalEvent, iso: string) {
   return iso >= start && iso <= end;
 }
 
-function placePhoto(slug?: string) {
-  if (!slug) return undefined;
-  const id = sites.find((site) => site.slug === slug)?.images[0];
-  return id ? getMedia(id) : undefined;
-}
-
 export function EventBoard() {
   const t = useTranslations("events");
   const explore = useTranslations("explore");
@@ -76,9 +69,16 @@ export function EventBoard() {
   const official = calendarLinks.filter((link) => link.id === "centar");
 
   return (
-    <div className="mx-auto max-w-[96rem] px-4 py-5 sm:px-5 lg:px-8 lg:py-8">
-      <p className="font-display text-3xl leading-none sm:text-4xl">{t("title")}</p>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">{t("lede")}</p>
+    <div className="cs-events-stage">
+      <header className="cs-events-hero relative overflow-hidden px-4 py-9 text-foam sm:px-6 sm:py-12 lg:px-8">
+        <EventsPoster />
+        <div className="relative mx-auto max-w-[96rem]">
+          <p className="cs-kicker m-0 text-foam/60">{t("kicker")}</p>
+          <h1 className="mt-3 max-w-3xl font-display text-[clamp(2.4rem,7vw,4.2rem)] leading-[0.92]">{t("title")}</h1>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-foam/75">{t("lede")}</p>
+        </div>
+      </header>
+      <div className="mx-auto max-w-[96rem] px-4 py-5 sm:px-5 lg:px-8 lg:py-8">
 
       {days.length > 0 ? (
         <ul
@@ -94,7 +94,7 @@ export function EventBoard() {
                   type="button"
                   aria-pressed={on}
                   onClick={() => setSelected(on ? null : iso)}
-                  className={`grid h-[4.25rem] w-[3.4rem] place-items-center rounded-2xl ${
+                  className={`grid h-[4.25rem] w-[3.4rem] place-items-center rounded-md ${
                     on ? "bg-ink text-foam" : "bg-foam text-ink"
                   }`}
                 >
@@ -112,7 +112,7 @@ export function EventBoard() {
       {featured ? (
         <Featured event={featured} />
       ) : (
-        <div className="mt-5 rounded-[1.6rem] bg-ink p-6 text-foam">
+        <div className="mt-5 rounded-xl bg-ink p-6 text-foam">
           <p className="font-display text-3xl leading-none">{explore("eventsEmpty")}</p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-foam/70">{explore("eventsEmptyBody")}</p>
           <ul className="mt-5 flex flex-wrap gap-2">
@@ -138,7 +138,28 @@ export function EventBoard() {
       ) : null}
 
       <p className="mt-6 max-w-2xl text-xs leading-relaxed text-ink-soft">{t("inventoryNote")}</p>
+      </div>
     </div>
+  );
+}
+
+function EventsPoster() {
+  return (
+    <svg className="cs-events-hero__poster" viewBox="0 0 760 320" aria-hidden="true">
+      <path d="M86 292V78c0-36 30-58 68-58h210c38 0 68 22 68 58v214" />
+      <path d="M104 292V96c18-28 52-44 100-44s82 16 100 44v196" />
+      <path d="M118 292c8-34 28-52 52-52s44 18 52 52" />
+      <path d="M168 292c6-22 16-34 28-34s22 12 28 34" />
+      <path d="M470 78h196M470 108h196M470 138h196M470 168h196M470 198h196" />
+      <circle className="is-note" cx="512" cy="123" r="5" />
+      <circle className="is-note" cx="548" cy="153" r="5" />
+      <circle className="is-note" cx="602" cy="93" r="5" />
+      <path d="M512 123v-28M548 153v-22M602 93v-26" />
+      <path d="M668 36h46v248h-46" />
+      <path d="M676 52h8M690 52h8M704 52h8M676 72h8M690 72h8M704 72h8M676 252h8M690 252h8M704 252h8M676 272h8M690 272h8M704 272h8" />
+      <circle cx="628" cy="248" r="22" />
+      <path d="M628 214v-12M628 294v12M594 248h-12M674 248h12M604 224l-8-8M652 272l8 8M652 224l8-8M604 272l-8 8" />
+    </svg>
   );
 }
 
@@ -146,9 +167,9 @@ function Featured({ event }: { event: CulturalEvent }) {
   const locale = useLocale();
   const explore = useTranslations("explore");
   const venue = event.venues[0] ? getPlace(event.venues[0]) : undefined;
-  const photo = placePhoto(venue?.slug);
+  const photo = eventImage(event);
   return (
-    <article className="relative mt-5 overflow-hidden rounded-[1.7rem] bg-ink text-foam">
+    <article className="relative mt-5 overflow-hidden rounded-xl bg-ink text-foam">
       <div className="relative min-h-[18rem] sm:min-h-[22rem]">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -158,6 +179,7 @@ function Featured({ event }: { event: CulturalEvent }) {
             sizes="(min-width: 1024px) 90rem, 100vw"
             alt={pick(photo.caption, locale)}
             className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: eventImageFocus(event.slug) }}
           />
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
@@ -166,17 +188,17 @@ function Featured({ event }: { event: CulturalEvent }) {
           <h2 className="mt-2 max-w-3xl font-display text-4xl leading-[0.92] sm:text-6xl">
             <Link href={`/events/${event.slug}`}>{pick(event.name, locale)}</Link>
           </h2>
-          <p className="mt-3 flex items-center gap-1.5 text-sm text-foam/80">
+          <p className="mt-3 flex min-w-0 items-center gap-1.5 text-sm text-foam/80">
             <MapPinned className="size-3.5 shrink-0" aria-hidden="true" />
-            {venue ? pick(venue.name, locale) : explore("unmappedVenue")}
+            <span className="min-w-0">{venue ? pick(venue.name, locale) : explore("unmappedVenue")}</span>
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <Link href={`/events/${event.slug}`} className="cs-btn h-11 rounded-full bg-foam text-ink">
+            <Link href={`/events/${event.slug}`} className="cs-btn h-auto min-h-11 bg-foam py-2 text-ink">
               {explore("openStory")}
             </Link>
             <a
               href={event.officialUrl}
-              className="cs-btn h-11 rounded-full border border-foam/25 bg-transparent text-foam"
+              className="cs-btn h-auto min-h-11 border border-foam/25 bg-transparent py-2 text-foam"
               target="_blank"
               rel="noreferrer"
             >
@@ -193,13 +215,13 @@ function EventCard({ event }: { event: CulturalEvent }) {
   const locale = useLocale();
   const explore = useTranslations("explore");
   const venue = event.venues[0] ? getPlace(event.venues[0]) : undefined;
-  const photo = placePhoto(venue?.slug);
+  const photo = eventImage(event);
   const when = event.nextDate ? formatIsoDay(event.nextDate, locale) : pick(event.season, locale);
   return (
-    <article className="flex gap-3 rounded-[1.4rem] bg-foam p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
+    <article className="flex min-w-0 gap-3 overflow-hidden rounded-xl bg-foam p-2.5 shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
       <Link
         href={`/events/${event.slug}`}
-        className="relative size-[5.4rem] shrink-0 overflow-hidden rounded-2xl bg-ink sm:size-24"
+        className="relative min-h-[8.5rem] w-[42%] max-w-44 shrink-0 overflow-hidden rounded-md bg-ink"
       >
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -207,6 +229,7 @@ function EventCard({ event }: { event: CulturalEvent }) {
             src={mediaSrc(photo, 400)}
             alt={pick(photo.caption, locale)}
             className="h-full w-full object-cover"
+            style={{ objectPosition: eventImageFocus(event.slug) }}
           />
         ) : (
           <span className="grid h-full place-items-center font-display text-2xl text-foam/80">
@@ -219,11 +242,11 @@ function EventCard({ event }: { event: CulturalEvent }) {
           <Link href={`/events/${event.slug}`}>{pick(event.name, locale)}</Link>
         </h3>
         <p className="mt-1 text-xs text-ink-soft">{when}</p>
-        <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-soft">
+        <p className="mt-0.5 flex min-w-0 items-center gap-1 text-xs text-ink-soft">
           <MapPinned className="size-3 shrink-0" aria-hidden="true" />
-          <span className="truncate">
+          <span className="min-w-0 truncate">
             {venue ? (
-              <Link href={sitePath(venue)} className="hover:text-cobalt">
+              <Link href={sitePath(venue)} className="block truncate hover:text-cobalt">
                 {pick(venue.name, locale)}
               </Link>
             ) : (
@@ -232,10 +255,10 @@ function EventCard({ event }: { event: CulturalEvent }) {
           </span>
         </p>
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-          <Link href={`/events/${event.slug}`} className="rounded-full bg-ink px-3 py-1.5 text-[10px] tracking-[0.12em] text-foam uppercase">
+          <Link href={`/events/${event.slug}`} className="rounded-md bg-ink px-3 py-1.5 text-[10px] tracking-[0.12em] text-foam uppercase">
             {explore("openStory")}
           </Link>
-          <a href={event.officialUrl} className="text-[10px] tracking-[0.12em] text-copper uppercase" target="_blank" rel="noreferrer">
+          <a href={event.officialUrl} className="text-[11px] font-semibold tracking-[0.08em] text-cobalt uppercase underline underline-offset-4" target="_blank" rel="noreferrer">
             {explore(noticeLabelKey(event.officialUrl))}
           </a>
         </div>

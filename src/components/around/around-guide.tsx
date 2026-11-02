@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import { Navigation, RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { AtlasMarker } from "@/components/map/explore-map";
+import { haversineMeters } from "@/content/knowledge/boundary";
 import { pick } from "@/content/copy";
 import { getSite } from "@/content/knowledge/catalog";
 import { getPlace, sitePath } from "@/content/places";
@@ -13,16 +14,14 @@ import { MovementMasthead } from "@/components/around/movement-masthead";
 import { Link } from "@/i18n/navigation";
 import { coordinatesOf } from "@/lib/graph/query";
 import {
-  AROUND_YEAR_MAX,
-  AROUND_YEAR_MIN,
   aroundMonumentStarts,
+  documentedAtlasYears,
   aroundThemeForYear,
   aroundThemeRandom,
   type AroundThemeChoice,
 } from "@/lib/itinerary/around-theme";
 import { planItinerary, type ItineraryPlan } from "@/lib/itinerary";
 import { useWalkingPath } from "@/lib/mapping/use-walking-path";
-import { pedestrianNavigation } from "@/lib/mapping/walk";
 
 const Atlas = dynamic(
   () => import("@/components/map/explore-map").then((mod) => mod.ExploreMap),
@@ -30,6 +29,15 @@ const Atlas = dynamic(
 );
 
 const BUILD_STEPS = ["gather", "order", "hours", "path", "lock"] as const;
+const ARRIVE_METERS = 40;
+
+function snapOrigin(lat: number, lng: number) {
+  const step = 0.00055;
+  return {
+    lat: Math.round(lat / step) * step,
+    lng: Math.round(lng / step) * step,
+  };
+}
 
 function themeKey(id: string) {
   return `theme_${id.replace(/[:.-]/g, "_")}`;
@@ -47,6 +55,11 @@ export function AroundGuide() {
   const [choice, setChoice] = useState<AroundThemeChoice | null>(null);
   const [plan, setPlan] = useState<ItineraryPlan | null>(null);
   const [selectedStop, setSelectedStop] = useState<string | null>(null);
+  const [guiding, setGuiding] = useState(false);
+  const [user, setUser] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoError, setGeoError] = useState(false);
+  const [nextIndex, setNextIndex] = useState(0);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   const points = useMemo(() => {
     if (!plan) return null;
@@ -56,7 +69,22 @@ export function AroundGuide() {
     return mapped.length > 1 ? mapped : null;
   }, [plan]);
   const { status: pathStatus, path } = useWalkingPath(points);
-  const nav = points ? pedestrianNavigation(points) : { osm: null, google: null };
+  const guidePoints = useMemo(() => {
+    if (!guiding || !user || !plan) return null;
+    const rest = plan.stops.slice(nextIndex).flatMap((stop) => {
+      const point = coordinatesOf(stop.slug);
+      return point ? [point] : [];
+    });
+    if (rest.length === 0) return null;
+    return [snapOrigin(user.lat, user.lng), ...rest];
+  }, [guiding, nextIndex, plan, user]);
+  const { path: guidePath } = useWalkingPath(guidePoints);
+  const nextStop = guiding ? plan?.stops[nextIndex] : undefined;
+  const nextSite = nextStop ? getSite(nextStop.slug) : undefined;
+  const nextPoint = nextStop ? coordinatesOf(nextStop.slug) : null;
+  const metersToNext = user && nextPoint ? Math.round(haversineMeters(user, nextPoint)) : null;
+  const atStop = metersToNext !== null && metersToNext <= ARRIVE_METERS;
+  const lastStop = Boolean(plan && nextIndex >= plan.stops.length - 1);
 
   const routeMarkers: AtlasMarker[] = useMemo(() => {
     if (!plan) return [];
@@ -90,6 +118,28 @@ export function AroundGuide() {
     return () => window.clearInterval(tick);
   }, [phase, reduce]);
 
+  useEffect(() => {
+    if (!guiding) return;
+    if (!navigator.geolocation) {
+      setGeoError(true);
+      return;
+    }
+    const watch = navigator.geolocation.watchPosition(
+      (position) => {
+        setUser({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setGeoError(false);
+      },
+      () => setGeoError(true),
+      { enableHighAccuracy: true, maximumAge: 4000, timeout: 12000 },
+    );
+    return () => navigator.geolocation.clearWatch(watch);
+  }, [guiding]);
+
+  useEffect(() => {
+    if (!guiding || !atStop || lastStop) return;
+    setNextIndex((index) => index + 1);
+  }, [atStop, guiding, lastStop]);
+
   function build(next: AroundThemeChoice, options?: { shuffle?: boolean; startSlug?: string }) {
     const starts = aroundMonumentStarts();
     const randomStart = starts[Math.floor(Math.random() * starts.length)];
@@ -102,6 +152,10 @@ export function AroundGuide() {
     setChoice(next);
     setPlan(planned);
     setSelectedStop(planned.stops[0]?.slug ?? null);
+    setGuiding(false);
+    setUser(null);
+    setGeoError(false);
+    setNextIndex(0);
     setStep(0);
     setYearError(false);
     setPhase(reduce ? "ready" : "building");
@@ -126,6 +180,10 @@ export function AroundGuide() {
     setPlan(null);
     setChoice(null);
     setSelectedStop(null);
+    setGuiding(false);
+    setUser(null);
+    setGeoError(false);
+    setNextIndex(0);
     setStep(0);
     setYearError(false);
   }
@@ -146,11 +204,7 @@ export function AroundGuide() {
             >
               <div className="flex flex-col justify-between border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
                 <p className="cs-kicker">01 — 41.9957°N · 21.4312°E</p>
-                <button
-                  type="button"
-                  className="mt-6 h-16 w-full bg-cobalt px-5 font-display text-3xl text-foam hover:bg-ink sm:mt-10 sm:h-20 sm:text-4xl"
-                  onClick={makeDefault}
-                >
+                <button type="button" className="cs-route-btn mt-6 sm:mt-10" onClick={makeDefault}>
                   {t("makeRoute")}
                 </button>
               </div>
@@ -163,25 +217,27 @@ export function AroundGuide() {
               >
                 <label className="block">
                   <span className="cs-kicker">02 — {t("yearLabel")}</span>
-                  <input
-                    className="mt-3 h-16 w-full border-b border-ink bg-transparent px-0 font-display text-5xl tracking-tight focus:outline-none sm:h-20 sm:text-6xl"
-                    inputMode="numeric"
-                    type="number"
-                    min={AROUND_YEAR_MIN}
-                    max={AROUND_YEAR_MAX}
-                    placeholder={t("yearPlaceholder")}
+                  <select
+                    className="mt-3 h-16 w-full border-b border-ink bg-transparent font-display text-4xl tracking-tight focus:outline-none sm:h-20 sm:text-5xl"
                     value={yearText}
                     onChange={(event) => {
                       setYearText(event.target.value);
                       setYearError(false);
                     }}
                     aria-invalid={yearError}
-                  />
+                  >
+                    <option value="">{t("yearPlaceholder")}</option>
+                    {documentedAtlasYears().map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
                 </label>
-                <p className="mt-3 text-xs text-ink-soft">{t("yearHint", { min: AROUND_YEAR_MIN, max: AROUND_YEAR_MAX })}</p>
+                <p className="mt-3 text-xs text-ink-soft">{t("yearHint")}</p>
                 {yearError ? (
                   <p className="mt-2 text-sm text-copper" role="alert">
-                    {t("yearInvalid", { min: AROUND_YEAR_MIN, max: AROUND_YEAR_MAX })}
+                    {t("yearInvalid")}
                   </p>
                 ) : null}
                 <button type="submit" className="cs-btn cs-btn-cobalt mt-5 h-12 w-full">
@@ -253,17 +309,34 @@ export function AroundGuide() {
                 </div>
               </div>
 
-              <div className="cs-map-frame h-72 sm:h-96">
+              <div ref={mapRef} className="cs-map-frame h-72 sm:h-96">
                 <Atlas
                   markers={routeMarkers}
-                  selectedId={selectedStop}
+                  selectedId={guiding ? (nextStop?.slug ?? selectedStop) : selectedStop}
                   onSelect={setSelectedStop}
-                  line={path?.positions ?? null}
-                  user={null}
+                  line={(guiding ? guidePath?.positions : null) ?? path?.positions ?? null}
+                  user={guiding ? user : null}
                   label={t("yourRoute")}
                   numberedStops={plan.stops.map((stop) => stop.slug)}
                 />
               </div>
+              {guiding ? (
+                <p className="border border-line bg-foam px-4 py-3 text-sm" aria-live="polite">
+                  {geoError
+                    ? t("guideDenied")
+                    : !user
+                      ? t("guideWaiting")
+                      : atStop && lastStop
+                        ? t("guideDone")
+                        : atStop && nextSite
+                          ? t("guideHere", { name: pick(nextSite.officialName, locale) })
+                          : nextSite
+                            ? `${t("guideStop", { name: pick(nextSite.officialName, locale) })}${
+                                metersToNext !== null ? ` · ${t("guideMeters", { meters: metersToNext })}` : ""
+                              }`
+                            : t("guideWaiting")}
+                </p>
+              ) : null}
 
               {plan.warnings.map((warning, index) => (
                 <p key={index} className="text-sm text-copper">
@@ -306,17 +379,19 @@ export function AroundGuide() {
                 })}
               </ol>
               <div className="flex flex-wrap gap-3">
-                {nav.osm ? (
-                  <a href={nav.osm} className="cs-btn cs-btn-cobalt flex-1 sm:flex-none" target="_blank" rel="noreferrer">
-                    <Navigation className="size-4" aria-hidden="true" />
-                    {t("osmWalk")}
-                  </a>
-                ) : null}
-                {nav.google ? (
-                  <a href={nav.google} className="cs-btn cs-btn-ghost flex-1 sm:flex-none" target="_blank" rel="noreferrer">
-                    {t("googleWalk")}
-                  </a>
-                ) : null}
+                <button
+                  type="button"
+                  className="cs-btn cs-btn-cobalt flex-1 sm:flex-none"
+                  onClick={() => {
+                    setGuiding((on) => !on);
+                    setGeoError(false);
+                    setNextIndex(0);
+                    mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }}
+                >
+                  <Navigation className="size-4" aria-hidden="true" />
+                  {guiding ? t("guideOff") : t("guide")}
+                </button>
                 <button type="button" className="cs-btn cs-btn-ink w-full sm:w-auto" onClick={reset}>
                   <RotateCcw className="size-4" aria-hidden="true" />
                   {t("again")}

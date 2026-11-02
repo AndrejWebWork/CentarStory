@@ -122,6 +122,7 @@ export type CulturalEvent = {
   venues: string[];
   host: EventHost;
   officialUrl: string;
+  imageId?: string;
   status: EventStatus;
   startDate?: string;
   endDate?: string;

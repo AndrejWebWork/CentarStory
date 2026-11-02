@@ -1,9 +1,9 @@
 import { L } from "@/content/copy";
 import type { Copy } from "@/content/types";
 
-export const LEGAL_UPDATED = "2026-10-30";
+export const LEGAL_UPDATED = "2026-11-03";
 
-export type LegalSlug = "legal" | "privacy" | "terms" | "cookies";
+export type LegalSlug = "legal" | "privacy" | "terms" | "cookies" | "impressum";
 
 export type LegalSection = {
   heading: Copy;
@@ -97,12 +97,12 @@ export const legalDocuments: LegalDocument[] = [
         heading: L("What we do not collect", "Што не собираме", "Šta ne prikupljamo", "Neyi toplamayız", "Чого не збираємо", "Çfarë nuk mbledhim"),
         body: [
           L(
-            "There is no user account, no newsletter signup, and no advertising tracker on this site. The codebase does not set analytics cookies. Location is not read on the public pages now in the app. Do not upload photographs of other people if you do not have a reason to do so.",
-            "Нема корисничка сметка, пријава на билтен или рекламен следач. Кодот не поставува аналитички колачиња. Локацијата не се чита на јавните страници што сега се во апликацијата. Не прикачувајте фотографии од други луѓе без причина.",
-            "Nema korisničkog naloga, prijave na bilten ni reklamnog pratioca. Kod ne postavlja analitičke kolačiće. Lokacija se ne čita na javnim stranicama koje su sada u aplikaciji. Ne otpremajte fotografije drugih ljudi bez razloga.",
-            "Hesap, bülten kaydı veya reklam izleyicisi yoktur. Kod analitik çerezi koymaz. Konum, uygulamadaki mevcut genel sayfalarda okunmaz. Gerekçeniz yoksa başka insanların fotoğrafını yüklemeyin.",
-            "Нема облікового запису, підписки на розсилку чи рекламного трекера. Код не ставить аналітичних файлів cookie. Геолокацію на поточних публічних сторінках застосунку не читають. Не завантажуйте світлини інших людей без підстави.",
-           "Nuk ka llogari përdoruesi, as regjistrim në buletin, as gjurmues reklame në këtë sajt. Baza e kodit nuk vendos kuki analitike. Vendndodhja nuk lexohet në faqet publike që janë tani në aplikacion. Mos ngarkoni fotografi të personave të tjerë nëse nuk keni një arsye për ta bërë këtë."),
+            "There is no user account, no newsletter signup, and no advertising tracker. The site does not set analytics cookies. Scan may ask the browser for your location once, only to improve a match, and only if you allow it. That reading is not stored. The walk guide can also read location while it is leading you, and it does not store it. A kitchen pin can open Google Maps walking directions, which is a separate site. Do not upload photographs of other people if you do not have a reason to do so.",
+            "Нема корисничка сметка, пријава на билтен или рекламен следач. Страницата не поставува аналитички колачиња. Скен може еднаш да ја побара локацијата од прелистувачот, само за подобар споредбен резултат и само ако дозволите. Тоа читање не се чува. Водењето по рутата исто може да ја чита локацијата додека те води, и не ја чува. Пин на кујна може да отвори пешачка насока во Google Maps, што е друга страница. Не прикачувајте фотографии од други луѓе без причина.",
+            "Nema korisničkog naloga, prijave na bilten ni reklamnog pratioca. Stranica ne postavlja analitičke kolačiće. Sken može jednom da zatraži lokaciju od pregledača, samo radi boljeg poređenja i samo ako dozvolite. To čitanje se ne čuva. Vođenje po ruti takođe može da čita lokaciju dok te vodi, i ne čuva je. Pin kuhinje može da otvori pešački pravac u Google Maps, što je drugi sajt. Ne otpremajte fotografije drugih ljudi bez razloga.",
+            "Hesap, bülten kaydı veya reklam izleyicisi yoktur. Site analitik çerez koymaz. Tarama, yalnızca eşleşmeyi iyileştirmek için ve yalnızca izin verirseniz tarayıcıdan bir kez konum isteyebilir. Bu okuma saklanmaz. Rota yönlendirmesi seni götürürken konumu da okuyabilir ve saklamaz. Bir mutfak iğnesi, ayrı bir site olan Google Maps’te yürüyüş tarifi açabilir. Gerekçeniz yoksa başka insanların fotoğrafını yüklemeyin.",
+            "Нема облікового запису, підписки на розсилку чи рекламного трекера. Сайт не ставить аналітичних файлів cookie. Скен може один раз запитати місцезнаходження в браузера, лише щоб поліпшити збіг і лише якщо ви дозволите. Це читання не зберігається. Ведення маршрутом також може читати місцезнаходження, поки веде, і не зберігає його. Позначка кухні може відкрити піший маршрут у Google Maps, а це інший сайт. Не завантажуйте світлини інших людей без підстави.",
+           "Nuk ka llogari përdoruesi, as regjistrim në buletin, as gjurmues reklame. Sajti nuk vendos kuki analitike. Scan mund ta kërkojë një herë vendndodhjen nga shfletuesi, vetëm për ta përmirësuar përputhjen dhe vetëm nëse e lejoni. Ky lexim nuk ruhet. Udhëheqja e rrugës mund ta lexojë vendndodhjen gjatë kohës që të udhëheq, dhe nuk e ruan. Një pin kuzhine mund të hapë drejtim në këmbë te Google Maps, që është një sajt tjetër. Mos ngarkoni fotografi të personave të tjerë nëse nuk keni një arsye."),
         ],
       },
       {
@@ -159,12 +159,24 @@ export const legalDocuments: LegalDocument[] = [
         heading: L("Your conduct", "Ваше однесување", "Vaše ponašanje", "Sizin davranışınız", "Ваша поведінка", "Sjellja juaj"),
         body: [
           L(
-            "Do not use Scan to photograph people without a lawful reason. Do not treat the atlas as a live bus feed or as a complete register of every plaque in Centar. Reuse of text and photographs must respect the credits and licences printed on the source.",
-            "Не користете Скен за фотографирање луѓе без законска причина. Не третирајте го атласот како жив автобуски канал или како целосен регистар на секоја плоча во Центар. Повторната употреба на текст и фотографии мора да ги почитува кредитите и лиценците на изворот.",
-            "Ne koristite Sken za fotografisanje ljudi bez zakonskog razloga. Ne tretirajte atlas kao živi autobuski kanal ili kao potpun registar svake ploče u Centru. Ponovna upotreba teksta i fotografija mora poštovati kredite i licence izvora.",
-            "Yasal bir nedeniniz yoksa Tarama’yı insan fotoğraflamak için kullanmayın. Atlası canlı otobüs yayını veya Centar’daki her plakanın tam sicili gibi görmeyin. Metin ve fotoğrafların yeniden kullanımı kaynaktaki kredi ve lisanslara uymalıdır.",
-            "Не використовуйте Скен для фотографування людей без законної підстави. Не трактуйте атлас як живий автобусний канал або як повний реєстр кожної таблички в Центрі. Повторне використання тексту й світлин має поважати кредити й ліцензії джерела.",
-           "Mos e përdorni Scan për të fotografuar njerëz pa një arsye të ligjshme. Mos e trajtoni atlasin si një rrjedhë të drejtpërdrejtë autobusësh ose si një regjistër të plotë të çdo pllake në Qendër. Ripërdorimi i tekstit dhe i fotografive duhet të respektojë kreditet dhe licencat e shtypura në burim."),
+            "Do not use Scan to photograph people without a lawful reason. Do not treat the atlas as a live bus feed or as a complete register of every plaque or kitchen in Centar. Reuse of text and photographs must respect the credits and licences printed on the source.",
+            "Не користете Скен за фотографирање луѓе без законска причина. Не третирајте го атласот како жив автобуски канал или како целосен регистар на секоја плоча или кујна во Центар. Повторната употреба на текст и фотографии мора да ги почитува кредитите и лиценците на изворот.",
+            "Ne koristite Sken za fotografisanje ljudi bez zakonskog razloga. Ne tretirajte atlas kao živi autobuski kanal ili kao potpun registar svake ploče ili kuhinje u Centru. Ponovna upotreba teksta i fotografija mora poštovati kredite i licence izvora.",
+            "Yasal bir nedeniniz yoksa Tarama’yı insan fotoğraflamak için kullanmayın. Atlası canlı otobüs yayını veya Centar’daki her plakanın ya da mutfağın tam sicili gibi görmeyin. Metin ve fotoğrafların yeniden kullanımı kaynaktaki kredi ve lisanslara uymalıdır.",
+            "Не використовуйте Скен для фотографування людей без законної підстави. Не трактуйте атлас як живий автобусний канал або як повний реєстр кожної таблички чи кухні в Центрі. Повторне використання тексту й світлин має поважати кредити й ліцензії джерела.",
+           "Mos e përdorni Scan për të fotografuar njerëz pa një arsye të ligjshme. Mos e trajtoni atlasin si një rrjedhë të drejtpërdrejtë autobusësh ose si një regjistër të plotë të çdo pllake ose kuzhine në Qendër. Ripërdorimi i tekstit dhe i fotografive duhet të respektojë kreditet dhe licencat e shtypura në burim."),
+        ],
+      },
+      {
+        heading: L("Cookies", "Колачиња", "Kolačići", "Çerezler", "Файли cookie", "Kuki"),
+        body: [
+          L(
+            "A cookie notice is required. It stays on screen until you accept it. Accepting stores the centarstory_consent cookie and confirms that you have read these terms and the cookie policy. NEXT_LOCALE may already be set so the language you chose is kept. There are no advertising cookies.",
+            "Напомената за колачиња е задолжителна. Останува на екранот додека не ја прифатите. Прифаќањето го чува колачето centarstory_consent и потврдува дека ги прочитавте овие услови и политиката за колачиња. NEXT_LOCALE може веќе да е поставено за да се задржи јазикот што го избравте. Нема рекламни колачиња.",
+            "Obaveštenje o kolačićima je obavezno. Ostaje na ekranu dok ga ne prihvatite. Prihvatanje čuva kolačić centarstory_consent i potvrđuje da ste pročitali ove uslove i politiku kolačića. NEXT_LOCALE može već da bude postavljen da se zadrži jezik koji ste izabrali. Nema reklamnih kolačića.",
+            "Çerez uyarısı zorunludur. Kabul edene kadar ekranda kalır. Kabul, centarstory_consent çerezini saklar ve bu koşulları ile çerez politikasını okuduğunuzu doğrular. Seçtiğiniz dil kalsın diye NEXT_LOCALE önceden konmuş olabilir. Reklam çerezi yoktur.",
+            "Повідомлення про cookie є обов'язковим. Воно лишається на екрані, доки ви його не приймете. Прийняття зберігає cookie centarstory_consent і підтверджує, що ви прочитали ці умови та політику cookie. NEXT_LOCALE може вже бути встановлено, щоб зберегти обрану мову. Рекламних cookie немає.",
+           "Njoftimi i kukive është i detyrueshëm. Qëndron në ekran derisa ta pranoni. Pranimi ruan kukinë centarstory_consent dhe konfirmon se i keni lexuar këto kushte dhe politikën e kukive. NEXT_LOCALE mund të jetë vendosur tashmë që të mbahet gjuha që zgjodhët. Nuk ka kuki reklamash."),
         ],
       },
     ],
@@ -174,23 +186,35 @@ export const legalDocuments: LegalDocument[] = [
     title: L("Cookie policy", "Политика за колачиња", "Politika kolačića", "Çerez politikası", "Політика файлів cookie", "Politika e kukive"),
     kicker: L("Cookies", "Колачиња", "Kolačići", "Çerezler", "Файли cookie", "Kuki"),
     lede: L(
-      "CentarStory sets one first-party cookie to remember language. It does not set advertising cookies.",
-      "CentarStory поставува едно сопствено колаче за да го запомни јазикот. Не поставува рекламни колачиња.",
-      "CentarStory postavlja jedan sopstveni kolačić da zapamti jezik. Ne postavlja reklamne kolačiće.",
-      "CentarStory dili hatırlamak için tek bir birinci taraf çerezi koyar. Reklam çerezi koymaz.",
-      "CentarStory ставить один власний файл cookie, щоб запам'ятати мову. Рекламних cookie немає.",
-     "CentarStory vendos një kuki të palës së parë për të mbajtur mend gjuhën. Nuk vendos kuki reklamash."),
+      "CentarStory requires a cookie notice. Accepting it stores two first-party cookies: one for language and one to remember that you accepted. There are no advertising cookies.",
+      "CentarStory бара напомена за колачиња. Прифаќањето чува две сопствени колачиња: едно за јазик и едно за да се запомни дека сте прифатиле. Нема рекламни колачиња.",
+      "CentarStory traži obaveštenje o kolačićima. Prihvatanje čuva dva sopstvena kolačića: jedan za jezik i jedan da se zapamti da ste prihvatili. Nema reklamnih kolačića.",
+      "CentarStory bir çerez uyarısı ister. Kabul, iki birinci taraf çerezi saklar: biri dil için, biri kabul ettiğinizi hatırlamak için. Reklam çerezi yoktur.",
+      "CentarStory вимагає повідомлення про cookie. Прийняття зберігає два власні файли cookie: один для мови і один, щоб запам'ятати, що ви прийняли. Рекламних cookie немає.",
+     "CentarStory kërkon një njoftim kukish. Pranimi ruan dy kuki të palës së parë: një për gjuhën dhe një për të mbajtur mend se keni pranuar. Nuk ka kuki reklamash."),
     sections: [
       {
         heading: L("NEXT_LOCALE", "NEXT_LOCALE", "NEXT_LOCALE", "NEXT_LOCALE", "NEXT_LOCALE", "NEXT_LOCALE"),
         body: [
           L(
-            "Name: NEXT_LOCALE. Purpose: keep the interface in English, Macedonian, Serbian, Turkish, or Ukrainian after you switch language. Duration: up to one year. SameSite: Lax. The cookie is set by this site, not by an advertiser.",
-            "Име: NEXT_LOCALE. Цел: интерфејсот да остане на англиски, македонски, српски, турски или украински откако ќе смените јазик. Траење: до една година. SameSite: Lax. Колачето го поставува оваа страница, не рекламер.",
-            "Ime: NEXT_LOCALE. Svrha: da interfejs ostane na engleskom, makedonskom, srpskom, turskom ili ukrajinskom pošto promenite jezik. Trajanje: do jedne godine. SameSite: Lax. Kolačić postavlja ovaj sajt, ne oglašivač.",
-            "Ad: NEXT_LOCALE. Amaç: dil değiştirdikten sonra arayüzün İngilizce, Makedonca, Sırpça, Türkçe veya Ukraynaca kalması. Süre: bir yıla kadar. SameSite: Lax. Çerezi bu site koyar, bir reklamveren değil.",
-            "Назва: NEXT_LOCALE. Мета: щоб інтерфейс лишався англійською, македонською, сербською, турецькою або українською після зміни мови. Тривалість: до одного року. SameSite: Lax. Файл ставить цей сайт, не рекламодавець.",
-           "Emri: NEXT_LOCALE. Qëllimi: ta mbajë ndërfaqen në anglisht, maqedonisht, serbisht, turqisht ose ukrainisht pasi të ndërroni gjuhën. Kohëzgjatja: deri në një vit. SameSite: Lax. Kukia vendoset nga ky sajt, jo nga një reklamues."),
+            "Name: NEXT_LOCALE. Purpose: keep the interface in English, Macedonian, Serbian, Turkish, Ukrainian, or Albanian after you switch language. Duration: up to one year. SameSite: Lax. The cookie is set by this site, not by an advertiser. It is necessary for the language you chose.",
+            "Име: NEXT_LOCALE. Цел: интерфејсот да остане на англиски, македонски, српски, турски, украински или албански откако ќе смените јазик. Траење: до една година. SameSite: Lax. Колачето го поставува оваа страница, не рекламер. Потребно е за јазикот што го избравте.",
+            "Ime: NEXT_LOCALE. Svrha: da interfejs ostane na engleskom, makedonskom, srpskom, turskom, ukrajinskom ili albanskom pošto promenite jezik. Trajanje: do jedne godine. SameSite: Lax. Kolačić postavlja ovaj sajt, ne oglašivač. Potreban je za jezik koji ste izabrali.",
+            "Ad: NEXT_LOCALE. Amaç: dil değiştirdikten sonra arayüzün İngilizce, Makedonca, Sırpça, Türkçe, Ukraynaca veya Arnavutça kalması. Süre: bir yıla kadar. SameSite: Lax. Çerezi bu site koyar, bir reklamveren değil. Seçtiğiniz dil için gereklidir.",
+            "Назва: NEXT_LOCALE. Мета: щоб інтерфейс лишався англійською, македонською, сербською, турецькою, українською або албанською після зміни мови. Тривалість: до одного року. SameSite: Lax. Файл ставить цей сайт, не рекламодавець. Він потрібен для мови, яку ви обрали.",
+           "Emri: NEXT_LOCALE. Qëllimi: ta mbajë ndërfaqen në anglisht, maqedonisht, serbisht, turqisht, ukrainisht ose shqip pasi të ndërroni gjuhën. Kohëzgjatja: deri në një vit. SameSite: Lax. Kukia vendoset nga ky sajt, jo nga një reklamues. Është e nevojshme për gjuhën që zgjodhët."),
+        ],
+      },
+      {
+        heading: L("centarstory_consent", "centarstory_consent", "centarstory_consent", "centarstory_consent", "centarstory_consent", "centarstory_consent"),
+        body: [
+          L(
+            "Name: centarstory_consent. Purpose: remember that you accepted the cookie notice and these terms. Duration: one year. SameSite: Lax. Value: 1. It is set only when you press Accept. It is a first-party cookie, not an advertising cookie. The notice stays until this cookie exists.",
+            "Име: centarstory_consent. Цел: да се запомни дека ја прифативте напомената за колачиња и овие услови. Траење: една година. SameSite: Lax. Вредност: 1. Се поставува само кога ќе притиснете Прифати. Тоа е сопствено колаче, не рекламно. Напомената останува додека го нема ова колаче.",
+            "Ime: centarstory_consent. Svrha: da se zapamti da ste prihvatili obaveštenje o kolačićima i ove uslove. Trajanje: jedna godina. SameSite: Lax. Vrednost: 1. Postavlja se samo kad pritisnete Prihvati. To je sopstveni kolačić, ne reklamni. Obaveštenje ostaje dok ovog kolačića nema.",
+            "Ad: centarstory_consent. Amaç: çerez uyarısını ve bu koşulları kabul ettiğinizi hatırlamak. Süre: bir yıl. SameSite: Lax. Değer: 1. Yalnızca Kabul et’e basınca konur. Birinci taraf çerezidir, reklam çerezi değildir. Bu çerez yokken uyarı durur.",
+            "Назва: centarstory_consent. Мета: запам'ятати, що ви прийняли повідомлення про cookie і ці умови. Тривалість: один рік. SameSite: Lax. Значення: 1. Ставиться лише коли ви натискаєте Прийняти. Це власний файл cookie, не рекламний. Повідомлення лишається, доки цього cookie немає.",
+           "Emri: centarstory_consent. Qëllimi: të mbahet mend se e keni pranuar njoftimin e kukive dhe këto kushte. Kohëzgjatja: një vit. SameSite: Lax. Vlera: 1. Vendoset vetëm kur shtypni Prano. Është kuki e palës së parë, jo kuki reklame. Njoftimi qëndron derisa të ekzistojë kjo kuki."),
         ],
       },
       {
@@ -206,15 +230,65 @@ export const legalDocuments: LegalDocument[] = [
         ],
       },
       {
-        heading: L("How to refuse", "Како да одбиете", "Kako da odbijete", "Nasıl reddedilir", "Як відмовитися", "Si të refuzoni"),
+        heading: L("Required notice", "Задолжителна напомена", "Obavezno obaveštenje", "Zorunlu uyarı", "Обов'язкове повідомлення", "Njoftim i detyrueshëm"),
         body: [
           L(
-            "Block cookies for this site in the browser if you do not want the locale remembered. The site will still open; it may fall back to English until you choose a language again. There is no separate cookie banner because no advertising cookie is set.",
-            "Блокирајте ги колачињата за оваа страница ако не сакате јазикот да се памти. Страницата пак ќе се отвори; може да падне на англиски додека повторно не изберете јазик. Нема посебен банер за колачиња затоа што нема рекламно колаче.",
-            "Blokirajte kolačiće za ovaj sajt ako ne želite da se jezik pamti. Stranica će se i dalje otvoriti; može pasti na engleski dok ponovo ne izaberete jezik. Nema posebnog banera za kolačiće jer nema reklamnog kolačića.",
-            "Dilin hatırlanmasını istemiyorsanız bu site için tarayıcıda çerezleri engelleyin. Site yine açılır; yeniden dil seçene kadar İngilizceye düşebilir. Reklam çerezi olmadığı için ayrı bir çerez bandı yoktur.",
-            "Заблокуйте cookie для цього сайту, якщо не хочете, щоб мова запам'ятовувалась. Сайт усе одно відкриється; може повернутися до англійської, доки знову не оберете мову. Окремого банера cookie немає, бо немає рекламного cookie.",
-           "Bllokoni kukitë për këtë sajt në shfletues nëse nuk doni që lokaliteti të mbahet mend. Sajti do të hapet përsëri; mund të kthehet te anglishtja derisa të zgjidhni sërish një gjuhë. Nuk ka banderolë të veçantë kukish sepse nuk vendoset kuki reklame."),
+            "The notice at the bottom of the site is required. It leaves only after you accept. Accept writes centarstory_consent. If the browser blocks cookies, the notice returns and the language may fall back to English. Map tiles still load from OpenFreeMap and OpenStreetMap, and a kitchen pin can open Google Maps. Those services are not this site's cookies.",
+            "Напомената на дното на страницата е задолжителна. Се трга само откако ќе прифатите. Прифати го запишува centarstory_consent. Ако прелистувачот ги блокира колачињата, напомената се враќа и јазикот може да падне на англиски. Плочките на картата и понатаму се влечат од OpenFreeMap и OpenStreetMap, а пин на кујна може да отвори Google Maps. Тие услуги не се колачиња на оваа страница.",
+            "Obaveštenje na dnu stranice je obavezno. Sklanja se tek pošto prihvatite. Prihvati upisuje centarstory_consent. Ako pregledač blokira kolačiće, obaveštenje se vraća i jezik može da padne na engleski. Pločice mape i dalje dolaze sa OpenFreeMap i OpenStreetMap, a pin kuhinje može da otvori Google Maps. Te usluge nisu kolačići ovog sajta.",
+            "Sitenin altındaki uyarı zorunludur. Yalnızca kabul edince kalkar. Kabul et, centarstory_consent yazar. Tarayıcı çerezleri engellerse uyarı geri gelir ve dil İngilizceye düşebilir. Harita karoları yine OpenFreeMap ve OpenStreetMap’ten gelir; bir mutfak iğnesi Google Maps açabilir. Bu hizmetler bu sitenin çerezleri değildir.",
+            "Повідомлення внизу сайту є обов'язковим. Воно зникає лише після прийняття. Прийняти записує centarstory_consent. Якщо браузер блокує cookie, повідомлення повертається, а мова може повернутися до англійської. Плитки мапи й далі йдуть з OpenFreeMap і OpenStreetMap, а позначка кухні може відкрити Google Maps. Ці сервіси не є cookie цього сайту.",
+           "Njoftimi në fund të sajtit është i detyrueshëm. Hiqet vetëm pasi të pranoni. Prano shkruan centarstory_consent. Nëse shfletuesi i bllokon kukitë, njoftimi kthehet dhe gjuha mund të bjerë te anglishtja. Pllakat e hartës vazhdojnë të vijnë nga OpenFreeMap dhe OpenStreetMap, dhe një pin kuzhine mund të hapë Google Maps. Ato shërbime nuk janë kukitë e këtij sajti."),
+        ],
+      },
+    ],
+  },
+  {
+    slug: "impressum",
+    title: L("Impressum", "Импресум", "Impresum", "Künye", "Імпресум", "Impresum"),
+    kicker: L("Origin", "Потекло", "Poreklo", "Köken", "Походження", "Origjina"),
+    lede: L(
+      "The idea for CentarStory came from ЛАПСИ, a youth programme of the Ohrid Institute. This atlas is not the municipality’s website.",
+      "Идејата за CentarStory дојде од ЛАПСИ, младинска програма на Институт Охрид. Овој атлас не е страница на општината.",
+      "Ideja za CentarStory došla je iz LAPSI, omladinskog programa Instituta Ohrid. Ovaj atlas nije stranica opštine.",
+      "CentarStory fikri, Ohrid Enstitüsü’nün gençlik programı LAPSI’den geldi. Bu atlas belediyenin sitesi değildir.",
+      "Ідея CentarStory прийшла з ЛАПСИ, молодіжної програми Інституту Охрид. Цей атлас не є сайтом громади.",
+     "Ideja për CentarStory erdhi nga LAPSI, një program rinor i Institutit të Ohrit. Ky atlas nuk është faqja e komunës."),
+    sections: [
+      {
+        heading: L("Where the idea came from", "Од каде дојде идејата", "Odakle je došla ideja", "Fikir nereden geldi", "Звідки прийшла ідея", "Nga erdhi ideja"),
+        body: [
+          L(
+            "The idea came from ЛАПСИ — Local Active Platforms for Social Innovations (Локални активни платформи за социјални иновации). Municipal calls describe it as a project carried out by the Institute for Economic Strategies and International Relations Ohrid (Институт Охрид, oi.org.mk). It sits inside the regional programme BOOST, coordinated by ALDA — European Association for Local Democracy, with financial support from the French Development Agency (Agence Française de Développement). Teams in that programme research a local problem and pitch an idea for their own community. This page records that origin. It does not claim a prize, and it does not say the municipality publishes CentarStory.",
+            "Идејата дојде од ЛАПСИ — Локални активни платформи за социјални иновации. Општинските повици го опишуваат како проект што го спроведува Институтот за економски стратегии и меѓународни односи Охрид (Институт Охрид, oi.org.mk). Стои во регионалната програма BOOST, координирана од ALDA — European Association for Local Democracy, со финансиска поддршка од Француската агенција за развој (Agence Française de Développement). Тимовите во таа програма истражуваат локален проблем и ја претставуваат идејата за својата заедница. Оваа страница го бележи тоа потекло. Не тврди награда и не вели дека општината го издава CentarStory.",
+            "Ideja je došla iz LAPSI — Lokalne aktivne platforme za socijalne inovacije (Локални активни платформи за социјални иновации). Opštinski pozivi ga opisuju kao projekat koji sprovodi Institut za ekonomske strategije i međunarodne odnose Ohrid (Institut Ohrid, oi.org.mk). Stoji u regionalnom programu BOOST, koji koordinira ALDA — European Association for Local Democracy, uz finansijsku podršku Francuske agencije za razvoj (Agence Française de Développement). Timovi u tom programu istražuju lokalni problem i predstavljaju ideju za svoju zajednicu. Ova stranica beleži to poreklo. Ne tvrdi nagradu i ne kaže da opština izdaje CentarStory.",
+            "Fikir, LAPSI — Yerel Aktif Sosyal İnovasyon Platformları’ndan (Локални активни платформи за социјални иновации) geldi. Belediye çağrıları bunu, Ekonomik Stratejiler ve Uluslararası İlişkiler Ohrid Enstitüsü’nün (Институт Охрид, oi.org.mk) yürüttüğü bir proje olarak anlatır. ALDA — European Association for Local Democracy’nin koordine ettiği, Fransız Kalkınma Ajansı’nın (Agence Française de Développement) mali destek verdiği bölgesel BOOST programının içindedir. Ekipler yerel bir sorunu araştırır ve kendi toplulukları için bir fikir sunar. Bu sayfa o kökeni kaydeder. Bir ödül iddia etmez ve belediyenin CentarStory’yi yayımladığını söylemez.",
+            "Ідея прийшла з ЛАПСИ — Локальних активних платформ соціальних інновацій (Локални активни платформи за социјални иновации). Муніципальні оголошення описують її як проєкт, який проводить Інститут економічних стратегій і міжнародних відносин Охрид (Інститут Охрид, oi.org.mk). Він входить до регіональної програми BOOST, яку координує ALDA — European Association for Local Democracy, за фінансової підтримки Французького агентства розвитку (Agence Française de Développement). Команди в тій програмі досліджують місцеву проблему і представляють ідею для своєї громади. Ця сторінка фіксує те походження. Вона не заявляє нагороди і не каже, що громада видає CentarStory.",
+           "Ideja erdhi nga LAPSI — Platformat Lokale Aktive për Inovacione Sociale (Локални активни платформи за социјални иновации). Thirrjet komunale e përshkruajnë si projekt që e zbaton Instituti për Strategji Ekonomike dhe Marrëdhënie Ndërkombëtare Ohër (Институт Охрид, oi.org.mk). Qëndron brenda programit rajonal BOOST, të koordinuar nga ALDA — European Association for Local Democracy, me mbështetje financiare nga Agjencia Franceze për Zhvillim (Agence Française de Développement). Ekipet në atë program hulumtojnë një problem lokal dhe e paraqesin idenë për bashkësinë e tyre. Kjo faqe e regjistron atë origjinë. Nuk pretendon një çmim dhe nuk thotë se komuna e boton CentarStory."),
+        ],
+      },
+      {
+        heading: L("This site", "Оваа страница", "Ova stranica", "Bu site", "Цей сайт", "Ky sajt"),
+        body: [
+          L(
+            "CentarStory is an independent cultural atlas of the Municipality of Centar in Skopje. The public source repository is github.com/AndrejWebWork/CentarStory. The institute’s own site is oi.org.mk. The BOOST programme is described at alda-europe.eu/boost.",
+            "CentarStory е независен културен атлас на Општина Центар во Скопје. Јавниот изворен репозиториум е github.com/AndrejWebWork/CentarStory. Страницата на институтот е oi.org.mk. Програмата BOOST е опишана на alda-europe.eu/boost.",
+            "CentarStory je nezavisni kulturni atlas Opštine Centar u Skoplju. Javni izvorni repozitorijum je github.com/AndrejWebWork/CentarStory. Stranica instituta je oi.org.mk. Program BOOST opisan je na alda-europe.eu/boost.",
+            "CentarStory, Üsküp’teki Centar Belediyesi’nin bağımsız kültür atlasıdır. Kamuya açık kaynak deposu github.com/AndrejWebWork/CentarStory adresindedir. Enstitünün sitesi oi.org.mk adresindedir. BOOST programı alda-europe.eu/boost adresinde anlatılır.",
+            "CentarStory — незалежний культурний атлас громади Центар у Скоп'є. Публічний репозиторій: github.com/AndrejWebWork/CentarStory. Сайт інституту: oi.org.mk. Програму BOOST описано на alda-europe.eu/boost.",
+           "CentarStory është një atlas kulturor i pavarur i Komunës së Qendrës në Shkup. Depoja publike e burimit është github.com/AndrejWebWork/CentarStory. Faqja e institutit është oi.org.mk. Programi BOOST përshkruhet te alda-europe.eu/boost."),
+        ],
+      },
+      {
+        heading: L("Municipal contact", "Општински контакт", "Opštinski kontakt", "Belediye iletişimi", "Контакт громади", "Kontakti komunal"),
+        body: [
+          L(
+            "The contact in the footer is the one the Municipality of Centar publishes at centar.gov.mk/kontakt: Mihail Cokov 1, Skopje; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. A message to that address reaches the municipality, not the publisher of this atlas.",
+            "Контактот во подножјето е оној што Општина Центар го објавува на centar.gov.mk/kontakt: ул. Михаил Цоков бр. 1, Скопје; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. Порака на таа адреса стигнува до општината, не до издавачот на овој атлас.",
+            "Kontakt u podnožju je onaj koji Opština Centar objavljuje na centar.gov.mk/kontakt: ul. Mihail Cokov br. 1, Skoplje; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. Poruka na tu adresu stiže do opštine, ne do izdavača ovog atlasa.",
+            "Sayfa altındaki iletişim, Centar Belediyesi’nin centar.gov.mk/kontakt adresinde yayımladığı kayıttır: Mihail Cokov No. 1, Üsküp; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. O adrese giden ileti belediyeye ulaşır, bu atlasın yayımcısına değil.",
+            "Контакт у підвалі — той, який громада Центар публікує на centar.gov.mk/kontakt: вул. Михаїл Цоков 1, Скоп'є; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. Повідомлення на цю адресу доходить до громади, не до видавця цього атласу.",
+           "Kontakti në fund është ai që Komuna e Qendrës e publikon te centar.gov.mk/kontakt: rr. Mihail Cokov nr. 1, Shkup; +389 2 3203 693; +389 2 3203 600; kontakt@centar.gov.mk. Një mesazh në atë adresë i arrin komunës, jo botuesit të këtij atlasi."),
         ],
       },
     ],

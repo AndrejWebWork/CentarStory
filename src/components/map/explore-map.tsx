@@ -45,6 +45,41 @@ const boundaryData = {
   },
 };
 
+function signedArea(ring: readonly [number, number][]) {
+  let sum = 0;
+  for (let index = 0; index < ring.length - 1; index += 1) {
+    const [x1, y1] = ring[index];
+    const [x2, y2] = ring[index + 1];
+    sum += x1 * y2 - x2 * y1;
+  }
+  return sum / 2;
+}
+
+const centarHole = signedArea(CENTAR_POLYGON) > 0 ? [...CENTAR_POLYGON].reverse() : [...CENTAR_POLYGON];
+
+/** Dims the city outside the municipality so Centar reads as the subject. */
+const outsideMask = {
+  type: "Feature" as const,
+  properties: {},
+  geometry: {
+    type: "Polygon" as const,
+    coordinates: [
+      [
+        [20.6, 41.3],
+        [22.4, 41.3],
+        [22.4, 42.5],
+        [20.6, 42.5],
+        [20.6, 41.3],
+      ],
+      centarHole,
+    ],
+  },
+};
+
+function folioCamera(reduce: boolean) {
+  return reduce ? { pitch: 0, bearing: 0 } : { pitch: 50, bearing: -18 };
+}
+
 function sameBounds(a: MapBounds, b: MapBounds) {
   return (
     Math.abs(a.west - b.west) < 1e-6 &&
@@ -70,42 +105,91 @@ function pinClass(active: boolean, tone: AtlasMarker["tone"]) {
   return `cs-pin${active ? " is-active" : ""}${extra}`;
 }
 
-function applyCentarCartography(map: MapLibreMap) {
+function paint(map: MapLibreMap, id: string, property: string, value: unknown) {
   try {
-    const layers = map.getStyle()?.layers ?? [];
-    for (const layer of layers) {
-      const id = layer.id.toLowerCase();
-      if (layer.type === "background") {
-        map.setPaintProperty(layer.id, "background-color", "#f1ebe0");
-      } else if (layer.type === "fill") {
-        if (id.includes("water")) {
-          map.setPaintProperty(layer.id, "fill-color", "#b8cad8");
-        } else if (id.includes("park") || id.includes("grass") || id.includes("wood") || id.includes("green")) {
-          map.setPaintProperty(layer.id, "fill-color", "#d5ddcf");
-        } else if (id.includes("building")) {
-          map.setPaintProperty(layer.id, "fill-color", "#ded4c3");
+    map.setPaintProperty(id, property, value);
+  } catch {
+    /* This style has no such layer or property. */
+  }
+}
+
+function applyCentarCartography(map: MapLibreMap) {
+  const layers = map.getStyle()?.layers ?? [];
+  for (const layer of layers) {
+    const id = layer.id;
+    if (layer.type === "background") {
+      paint(map, id, "background-color", "#efe4d2");
+    } else if (id === "natural_earth") {
+      try {
+        map.setLayoutProperty(id, "visibility", "none");
+      } catch {
+        /* Raster hillshade is optional. */
+      }
+    } else if (layer.type === "fill") {
+      if (id === "water") paint(map, id, "fill-color", "#1c6478");
+      else if (id === "park" || id === "landcover_grass") {
+        paint(map, id, "fill-color", "#b7c9a4");
+        paint(map, id, "fill-opacity", 0.9);
+      } else if (id === "landcover_wood") {
+        paint(map, id, "fill-color", "#7f9874");
+        paint(map, id, "fill-opacity", 0.82);
+      } else if (id === "landuse_residential") {
+        paint(map, id, "fill-color", "#e7d7c2");
+        paint(map, id, "fill-opacity", 0.72);
+      } else if (id === "landuse_hospital" || id === "landuse_school") {
+        paint(map, id, "fill-color", "#ead8c4");
+      } else if (id === "building") {
+        paint(map, id, "fill-color", "#f0e2cc");
+        paint(map, id, "fill-outline-color", "#b89a78");
+      } else if (id.startsWith("landuse_") || id.startsWith("landcover_")) {
+        paint(map, id, "fill-color", "#ddd0bc");
+      }
+    } else if (id === "building-3d") {
+      paint(map, id, "fill-extrusion-color", "#d9c3a4");
+      paint(map, id, "fill-extrusion-opacity", 0.96);
+      try {
+        map.setLayerZoomRange(id, 13.2, 24);
+      } catch {
+        /* Keep the style's own zoom range. */
+      }
+    } else if (layer.type === "line") {
+      if (id.startsWith("waterway")) {
+        paint(map, id, "line-color", "#154e60");
+      } else if (id.startsWith("boundary")) {
+        paint(map, id, "line-opacity", 0.2);
+      } else if (id.includes("rail")) {
+        paint(map, id, "line-color", "#8d7b68");
+      } else if (id.includes("path") || id.includes("pedestrian") || id.includes("service_track")) {
+        paint(map, id, "line-color", id.includes("casing") ? "#cfc3b0" : "#f7f1e6");
+      } else if (id.includes("casing")) {
+        const boulevard = /motorway|trunk|primary|secondary/.test(id);
+        paint(map, id, "line-color", boulevard ? "#c47a45" : "#d9cbb8");
+      } else if (id.startsWith("road_") || id.startsWith("bridge_") || id.startsWith("tunnel_")) {
+        const boulevard = /motorway|trunk|primary/.test(id);
+        paint(map, id, "line-color", boulevard ? "#f8e2c4" : "#fffaf3");
+      }
+    } else if (layer.type === "symbol") {
+      const clutter =
+        id.startsWith("poi_") ||
+        id.startsWith("highway-shield") ||
+        id.startsWith("road_shield") ||
+        id.startsWith("label_city") ||
+        id.startsWith("label_state") ||
+        id.startsWith("label_country") ||
+        id === "airport";
+      if (clutter) {
+        try {
+          map.setLayoutProperty(id, "visibility", "none");
+        } catch {
+          /* Symbol layer cannot be hidden. */
         }
-      } else if (layer.type === "fill-extrusion" && id.includes("building")) {
-        map.setPaintProperty(layer.id, "fill-extrusion-color", "#d8cebc");
-        map.setPaintProperty(layer.id, "fill-extrusion-opacity", 0.55);
-      } else if (layer.type === "line" && (id.includes("road") || id.includes("street") || id.includes("highway") || id.includes("bridge"))) {
-        if (id.includes("casing")) {
-          map.setPaintProperty(layer.id, "line-color", "#cfc4b1");
-        } else {
-          map.setPaintProperty(layer.id, "line-color", "#faf6ef");
-        }
-      } else if (layer.type === "symbol") {
-        if (id.includes("poi")) {
-          map.setLayoutProperty(layer.id, "visibility", "none");
-        } else {
-          map.setPaintProperty(layer.id, "text-color", "#2b251e");
-          map.setPaintProperty(layer.id, "text-halo-color", "#f1ebe0");
-          map.setPaintProperty(layer.id, "text-halo-width", 1.4);
-        }
+      } else {
+        paint(map, id, "text-color", "#2a2118");
+        paint(map, id, "text-halo-color", "#f6efe4");
+        paint(map, id, "text-halo-width", 1.35);
+        paint(map, id, "icon-opacity", 0);
       }
     }
-  } catch {
-    /* Vector layer names vary across styles; ignore unsupported property overrides. */
   }
 }
 
@@ -122,6 +206,7 @@ export function ExploreMap({
   showBoundary = false,
   onBoundsChange,
   resetNonce,
+  fitAll = false,
 }: {
   markers: AtlasMarker[];
   selectedId: string | null;
@@ -135,6 +220,7 @@ export function ExploreMap({
   showBoundary?: boolean;
   onBoundsChange?: (bounds: MapBounds) => void;
   resetNonce?: number;
+  fitAll?: boolean;
 }) {
   const mapRef = useRef<MapRef>(null);
   const [styleFailed, setStyleFailed] = useState(false);
@@ -216,7 +302,7 @@ export function ExploreMap({
           [Math.min(...lngs), Math.min(...lats)],
           [Math.max(...lngs), Math.max(...lats)],
         ],
-        { padding: 52, maxZoom: 16.4, duration: reduce ? 0 : 700 },
+        { padding: 52, maxZoom: 16.4, duration: reduce ? 0 : 700, ...folioCamera(reduce) },
       );
       return;
     }
@@ -231,7 +317,7 @@ export function ExploreMap({
     map.flyTo({
       center: [selected.lng, selected.lat],
       zoom: Math.max(map.getZoom(), 16.1),
-      pitch: reduce ? 0 : 28,
+      ...folioCamera(reduce),
       duration: reduce ? 0 : 600,
     });
   }, [mapReady, routeKey, selectedId]);
@@ -245,9 +331,25 @@ export function ExploreMap({
         [CENTAR_BBOX.west, CENTAR_BBOX.south],
         [CENTAR_BBOX.east, CENTAR_BBOX.north],
       ],
-      { padding: 32, pitch: 0, bearing: 0, duration: reduceRef.current ? 0 : 600 },
+      { padding: 32, duration: reduceRef.current ? 0 : 600, ...folioCamera(reduceRef.current) },
     );
   }, [resetNonce]);
+
+  useEffect(() => {
+    if (!fitAll || !mapReady) return;
+    const map = mapRef.current;
+    const current = markersRef.current;
+    if (!map || current.length === 0) return;
+    const lngs = current.map((marker) => marker.lng);
+    const lats = current.map((marker) => marker.lat);
+    map.fitBounds(
+      [
+        [Math.min(...lngs), Math.min(...lats)],
+        [Math.max(...lngs), Math.max(...lats)],
+      ],
+      { padding: 46, maxZoom: 15.2, duration: reduceRef.current ? 0 : 700, ...folioCamera(reduceRef.current) },
+    );
+  }, [fitAll, mapReady, markers]);
 
   const stopIndex = useMemo(() => {
     const map = new Map<string, number>();
@@ -259,7 +361,7 @@ export function ExploreMap({
     <div className="cs-map h-full w-full" role="region" aria-label={label}>
       <MapGL
         ref={mapRef}
-        initialViewState={CENTAR_VIEW}
+        initialViewState={{ ...CENTAR_VIEW, pitch: 50, bearing: -18 }}
         minZoom={12}
         maxZoom={19}
         mapStyle={style}
@@ -275,6 +377,9 @@ export function ExploreMap({
             event.target.addImage(missing.id, data);
           });
           applyCentarCartography(event.target);
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            event.target.jumpTo({ pitch: 0, bearing: 0 });
+          }
           event.target.resize();
           setMapReady(true);
           emitBounds();
@@ -306,25 +411,30 @@ export function ExploreMap({
       >
         <NavigationControl position="top-right" showCompass />
         <AttributionControl compact position="bottom-right" customAttribution={attribution} />
-        {showBoundary ? (
-          <Source id="centar-boundary" type="geojson" data={boundaryData}>
-            <Layer
-              id="centar-fill"
-              type="fill"
-              paint={{ "fill-color": "#1736b5", "fill-opacity": 0.035 }}
-            />
-            <Layer
-              id="centar-outline"
-              type="line"
-              paint={{
-                "line-color": "#12100d",
-                "line-width": 1.6,
-                "line-dasharray": [2.2, 1.4],
-                "line-opacity": 0.78,
-              }}
-            />
-          </Source>
-        ) : null}
+        <Source id="centar-mask" type="geojson" data={outsideMask}>
+          <Layer
+            id="centar-mask-fill"
+            type="fill"
+            paint={{ "fill-color": "#1a140f", "fill-opacity": 0.28 }}
+          />
+        </Source>
+        <Source id="centar-boundary" type="geojson" data={boundaryData}>
+          <Layer
+            id="centar-fill"
+            type="fill"
+            paint={{ "fill-color": "#ff6b4a", "fill-opacity": showBoundary ? 0.05 : 0 }}
+          />
+          <Layer
+            id="centar-outline-glow"
+            type="line"
+            paint={{ "line-color": "#f6efe4", "line-width": 5, "line-opacity": 0.7 }}
+          />
+          <Layer
+            id="centar-outline"
+            type="line"
+            paint={{ "line-color": "#c45a32", "line-width": 2.2, "line-opacity": 0.95 }}
+          />
+        </Source>
         {route ? (
           <Source id="cs-route" type="geojson" data={route}>
             <Layer
@@ -370,7 +480,7 @@ export function ExploreMap({
               key={marker.id}
               longitude={marker.lng}
               latitude={marker.lat}
-              anchor="center"
+              anchor={number ? "center" : "bottom"}
               onClick={(event) => {
                 event.originalEvent.stopPropagation();
                 onSelect(marker.id);
@@ -378,11 +488,18 @@ export function ExploreMap({
             >
               <button
                 type="button"
-                className={`${pinClass(marker.id === selectedId, marker.tone)}${number ? " is-stop" : ""}`}
+                className={`${pinClass(marker.id === selectedId, marker.tone)}${number ? " is-stop" : " is-mark"}`}
                 aria-label={marker.label}
                 aria-pressed={marker.id === selectedId}
               >
-                <span>{number ?? ""}</span>
+                {number ? (
+                  <span>{number}</span>
+                ) : (
+                  <svg viewBox="0 0 28 36" className="cs-pin-mark" aria-hidden="true">
+                    <path d="M14 34.2C14 34.2 3 22.4 3 13.2A11 11 0 0 1 25 13.2C25 22.4 14 34.2 14 34.2Z" />
+                    <circle cx="14" cy="13" r="4.2" />
+                  </svg>
+                )}
               </button>
             </Marker>
           );
@@ -393,6 +510,7 @@ export function ExploreMap({
           </Marker>
         ) : null}
       </MapGL>
+      <span className="cs-map-vignette" aria-hidden="true" />
     </div>
   );
 }

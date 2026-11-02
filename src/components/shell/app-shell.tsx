@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Suspense, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Link, usePathname } from "@/i18n/navigation";
+import { CookieNotice } from "@/components/shell/cookie-notice";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { NavLens } from "@/components/shell/nav-lens";
 import {
@@ -26,6 +27,7 @@ const legalLinks = [
   { href: "/privacy", key: "privacy" },
   { href: "/terms", key: "terms" },
   { href: "/cookies", key: "cookies" },
+  { href: "/impressum", key: "impressum" },
 ] as const;
 
 function labelFor(t: ReturnType<typeof useTranslations>, id: DestinationId) {
@@ -103,21 +105,46 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <div className="flex-1">{children}</div>
         {isScan ? null : (
-          <footer className="mt-16 bg-ink text-foam max-lg:pb-36">
-            <div className="mx-auto max-w-[96rem] px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
-              <p className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">
-                OSM Relation 2439777 · Europe/Skopje
-              </p>
-              <p className="mt-3 font-display text-5xl leading-[0.9] tracking-tight sm:text-7xl">CentarStory</p>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-foam/65">{t("common.disclaimer")}</p>
-              <nav className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/10 pt-8 sm:grid-cols-5" aria-label={t("nav.primary")}>
+          <footer className="mt-6 bg-ink text-foam max-lg:pb-[5.65rem]">
+            <div className="mx-auto max-w-[96rem] px-5 pt-8 pb-4 sm:px-8 lg:px-10 lg:pt-10 lg:pb-5">
+              <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(16rem,0.65fr)] lg:items-end">
+                <div>
+                  <p className="font-display text-4xl leading-[0.95] tracking-tight sm:text-5xl">CentarStory</p>
+                  <p className="mt-4 max-w-xl text-sm leading-relaxed text-foam/78">{t("common.disclaimer")}</p>
+                </div>
+                <address className="text-sm leading-relaxed text-foam/80 not-italic">
+                  <p className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t("common.contactTitle")}</p>
+                  <p className="mt-3">{t("common.contactAddress")}</p>
+                  <p className="mt-2">
+                    <a className="cs-foot-link" href="tel:+38923203693">
+                      +389 2 3203 693
+                    </a>
+                    <span className="text-foam/40"> · </span>
+                    <a className="cs-foot-link" href="tel:+38923203600">
+                      +389 2 3203 600
+                    </a>
+                  </p>
+                  <p className="mt-1">
+                    <a className="cs-foot-link" href="mailto:kontakt@centar.gov.mk">
+                      kontakt@centar.gov.mk
+                    </a>
+                  </p>
+                  <p className="mt-2">
+                    <a className="cs-foot-link" href="https://www.centar.gov.mk/kontakt" target="_blank" rel="noreferrer">
+                      {t("common.contactPage")}
+                    </a>
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-foam/50">{t("common.contactNote")}</p>
+                </address>
+              </div>
+              <nav className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-white/10 pt-3" aria-label={t("nav.primary")}>
                 {destinations.map((item) => (
                   <Link key={item.id} href={item.href} className="cs-foot-link">
                     {labelFor(t, item.id)}
                   </Link>
                 ))}
               </nav>
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-6">
+              <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/10 pt-3">
                 {legalLinks.map((item) => (
                   <li key={item.href}>
                     <Link href={item.href} className="cs-foot-link text-foam/55">
@@ -227,6 +254,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </ul>
           </div>
         </nav>
+      <CookieNotice />
     </div>
   );
 }

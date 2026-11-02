@@ -16,7 +16,11 @@
     "address": "Adres",
     "walk": "Makedonya Meydanı’ndan yaya yaklaşık {minutes} dakika.",
     "atSquare": "Makedonya Meydanı’ndasınız; diğer yürüyüşler buradan ölçülür.",
-    "disclaimer": "CentarStory, Üsküp’teki Centar Belediyesi için bir kültür rehberidir. Yürüme süreleri yaklaşıktır. Menüleri, biletleri ve açılış saatlerini yerinde doğrulayın. Otobüs ücretleri JSP Üsküp fiyat listesinden aktarılmıştır.",
+    "disclaimer": "Centar’da kültürel bir yürüyüş: anıtlar, mutfaklar ve belediye içindeki yol. Süreler bir ölçüttür. Menü, bilet ve saatleri yerinde, otobüs ücretlerini JSP Üsküp’te doğrulayın.",
+    "contactTitle": "Centar Belediyesi",
+    "contactAddress": "Mihail Cokov No. 1, Üsküp",
+    "contactPage": "Belediye iletişim sayfası",
+    "contactNote": "Bu, belediyenin yayımladığı iletişimdir. CentarStory o daire değildir.",
     "tryAgain": "Yeniden dene",
     "errorTitle": "Bu görünüm açılmadı",
     "errorBody": "Sayfa yüklenemedi. Yeniden deneyebilirsiniz.",
@@ -39,10 +43,15 @@
     "privacy": "Gizlilik",
     "terms": "Koşullar",
     "cookies": "Çerezler",
+    "impressum": "Künye",
     "legalLede": "Bağımsız kültür rehberi. Resmi belediye sitesi değildir.",
-    "privacyLede": "CentarStory’nin sakladığı: dil çerezi ve isteğe bağlı Tarama fotoğrafı.",
+    "privacyLede": "CentarStory’nin sakladığı: dil çerezi, uyarı kabulü ve isteğe bağlı Tarama fotoğrafı.",
     "termsLede": "Atlas bir rehberdir, bilet veya canlı sefer çizelgesi değildir.",
-    "cookiesLede": "Tek birinci taraf dil çerezi. Reklam çerezi yoktur."
+    "cookiesLede": "İki zorunlu çerez: dil ve bu uyarının kabulü. Reklam çerezi yoktur.",
+    "impressumLede": "Fikir, Ohrid Enstitüsü’nün gençlik programı LAPSI’den geldi.",
+    "banner": "CentarStory iki zorunlu çerez kullanır: diliniz için NEXT_LOCALE ve bu uyarıyı kabul ettiğinizi hatırlamak için centarstory_consent. Reklam çerezi yoktur.",
+    "acceptCookies": "Çerezleri kabul et",
+    "readCookies": "Çerez politikası"
   },
   "nav": {
     "primary": "Ana",
@@ -61,7 +70,7 @@
     "jspTitle": "JSP Üsküp",
     "googlePlay": "Google Play",
     "appStore": "App Store",
-    "pickHint": "Nasıl gideceğinizi seçin",
+    "pickHint": "Yolu seçin: yürüyerek, otobüsle, scooter ile ya da taksiyle.",
     "back": "Seçeneklere dön",
     "open": "Aç"
   },
@@ -258,7 +267,8 @@
     "title": "Etkinlikler",
     "kicker": "Centar Belediyesi",
     "lede": "Centar Belediyesi’nin düzenlediği kamusal kültür etkinlikleri: sokak programları, park buluşmaları, açık hava sineması, konserler, yürüyüşler. Geçmiş kayıtlar gerçekleşmiş olay olarak kalır. Buradaki hiçbir şey bilet değildir.",
-    "inventoryNote": "Yalnızca Centar Belediyesi’nin tarihli duyuruları. Müze sergileri ve kent genelindeki tatiller bu listede yoktur."
+    "inventoryNote": "Yalnızca Centar Belediyesi’nin tarihli duyuruları. Müze sergileri ve kent genelindeki tatiller bu listede yoktur.",
+    "noticeRecord": "Duyurunun yazdığı"
   },
   "museums": {
     "title": "Bellek evleri",
@@ -306,7 +316,7 @@
     "search": "Yemek ve mutfak ara",
     "searchHint": "Tavče gravče, Palas Jr, kebap…",
     "empty": "Bu doğrulanmış kümede eşleşme yok.",
-    "mapNote": "İlk iğne Çarşı’daki Palas Jr’dır, evin Wolt plus kodundan. Pelister meydan koordinatını paylaşır. Destan’ın tek düğümü yoktur ve iğne değildir.",
+    "mapNote": "Mutfakları haritada göster, Centar ve Eski Çarşı’daki OpenStreetMap kafana, gostilnica ve ızgara evlerini iğneler. Yürüyüş tarifi için bir iğneye dokunun. Birkaç kapı Destan adını taşır, bu yüzden o evin hâlâ tek iğnesi yoktur.",
     "firstKitchen": "İlk mutfak · Eski Çarşı",
     "inCentar": "Centar içinde",
     "unmapped": "Tek doğrulanmış koordinat yok",
@@ -327,7 +337,7 @@
     }
   },
   "around": {
-    "title": "Kent içinde yürüyüş",
+    "title": "Belediye içinde yürüyüş",
     "kicker": "Ulaşım",
     "lede": "Her dokunuş anıtlar arasında yeni bir yürüyüş çizer. Yıl yalnızca temayı kilitlemek istiyorsanız yazın. Duraklar doğrulanmış atlastandır.",
     "modes": "Gidiş yolları",
@@ -414,13 +424,21 @@
     "compareAssumptions": "Yürüme dakikaları meydandan atlas tahminidir. Scooter dakikaları bunun %40’ıdır. Taksi km’si kuş uçuşu × 1,35.",
     "osmWalk": "OpenStreetMap yürüme tarifi",
     "googleWalk": "Google yürüme tarifi",
+    "guide": "Beni götür",
+    "guideOff": "Yönlendirmeyi durdur",
+    "guideStop": "Sıradaki: {name}",
+    "guideMeters": "Durağa {meters} m",
+    "guideHere": "Buradasın: {name}",
+    "guideDone": "Bu son durak",
+    "guideDenied": "Konum kapalı. Rotanın seni götürmesi için izin ver.",
+    "guideWaiting": "Konumun aranıyor",
     "museumsOnFoot": "Müze atlasında {count} doğrulanmış kurum var.",
     "makeRoute": "Bana bir rota yap",
     "orYear": "veya yılınızı yazın",
-    "yearLabel": "Doğum yılı",
-    "yearPlaceholder": "1994",
-    "yearHint": "{min} ile {max} arasında tam bir yıl. Yalnızca belgelenmiş bir yürüyüş teması seçilir.",
-    "yearInvalid": "{min} ile {max} arasında bir yıl girin.",
+    "yearLabel": "Yıl",
+    "yearPlaceholder": "Seç",
+    "yearHint": "Yalnızca atlasta tarihli bir anıtı veya etkinliği olan yıllar.",
+    "yearInvalid": "Atlasta anıtı veya etkinliği olan bir yıl seçin.",
     "yearSubmit": "Bu yıldan kur",
     "buildingTitle": "Rota kuruluyor",
     "building_gather": "Doğrulanmış duraklar toplanıyor",
@@ -500,6 +518,10 @@
     "companyRole": "Bağlı kayıt",
     "houseRole": "Belgelenmiş ev",
     "yearLabel": "Yıl",
-    "architectureLabel": "Mimari"
+    "architectureLabel": "Mimari",
+    "listen": "Hikâyeyi dinle",
+    "listenStop": "Hikâyeyi durdur",
+    "listenStatus": "Hikâye sesli okunuyor.",
+    "listenMissing": "Bu tarayıcı hikâyeyi sesli okuyamıyor."
   }
 }

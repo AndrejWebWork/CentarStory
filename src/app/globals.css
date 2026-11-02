@@ -238,7 +238,7 @@ figcaption {
   shrink: 0;
   align-items: center;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 0.4rem;
   background: var(--foam);
   padding: 0 1rem;
   font-size: 0.75rem;
@@ -264,7 +264,7 @@ figcaption {
   height: 3rem;
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 1rem;
+  border-radius: 0.4rem;
   background: var(--foam);
   padding: 0 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -277,8 +277,11 @@ figcaption {
   justify-content: center;
   gap: 0.5rem;
   padding: 0 1.25rem;
-  border-radius: 999px;
+  max-width: 100%;
+  border-radius: 0.4rem;
   font-size: 0.8rem;
+  text-align: center;
+  text-wrap: balance;
   font-weight: 650;
   letter-spacing: 0.02em;
 }
@@ -297,6 +300,36 @@ figcaption {
   background: var(--cobalt);
   color: var(--foam);
   box-shadow: 0 10px 24px rgba(59, 109, 255, 0.28);
+}
+
+.cs-route-btn {
+  display: flex;
+  width: 100%;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.35rem;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  background: linear-gradient(118deg, #2f5bff 0%, #6a5cff 52%, #ff6b4a 128%);
+  color: var(--foam);
+  font-family: var(--font-unbounded), "Segoe UI", sans-serif;
+  font-size: clamp(1rem, 2.6vw, 1.35rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-wrap: balance;
+  box-shadow: 0 16px 34px rgba(59, 109, 255, 0.32);
+  transition:
+    transform 0.25s var(--ease-editorial),
+    box-shadow 0.25s var(--ease-editorial);
+}
+
+.cs-route-btn:hover,
+.cs-route-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(59, 109, 255, 0.4);
 }
 
 .cs-btn-patina {
@@ -485,7 +518,7 @@ figcaption {
   align-items: center;
   gap: 0.4rem;
   padding: 0.55rem 0.7rem;
-  border-radius: 999px;
+  border-radius: 0.35rem;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -733,13 +766,126 @@ figcaption {
   }
 }
 
+.cs-transport-hero {
+  background:
+    radial-gradient(ellipse 70% 140% at 100% -10%, rgba(255, 107, 74, 0.2), transparent 52%),
+    radial-gradient(ellipse 55% 120% at -10% 110%, rgba(59, 109, 255, 0.16), transparent 48%),
+    linear-gradient(165deg, #161d2b 0%, #121820 58%, #1a140f 100%);
+}
+
+.cs-transport-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(250, 246, 239, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 246, 239, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(100deg, transparent 0%, #000 28%, #000 70%, transparent 100%);
+}
+
+.cs-transport-hero__route {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(68%, 42rem);
+  height: 100%;
+  pointer-events: none;
+}
+
+.cs-transport-hero__route path {
+  fill: none;
+  stroke: rgba(255, 107, 74, 0.38);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 5 7;
+}
+
+.cs-transport-hero__route circle {
+  fill: rgba(250, 246, 239, 0.7);
+}
+
+.cs-events-stage {
+  background:
+    radial-gradient(ellipse 70% 32rem at 0% 18rem, rgba(255, 107, 74, 0.09), transparent 62%),
+    radial-gradient(ellipse 55% 28rem at 100% 26rem, rgba(59, 109, 255, 0.07), transparent 58%),
+    linear-gradient(180deg, #f3ecdf 0%, var(--paper) 34rem);
+}
+
+.cs-events-hero {
+  background:
+    radial-gradient(ellipse 55% 140% at 88% 10%, rgba(255, 107, 74, 0.28), transparent 54%),
+    radial-gradient(ellipse 40% 120% at 8% 110%, rgba(59, 109, 255, 0.16), transparent 50%),
+    linear-gradient(155deg, #1c1814 0%, #141820 62%, #24180f 100%);
+}
+
+.cs-events-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(250, 246, 239, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 246, 239, 0.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 88%);
+}
+
+.cs-events-hero__poster {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(78%, 46rem);
+  height: 100%;
+  pointer-events: none;
+  mask-image: linear-gradient(100deg, transparent 0%, #000 46%);
+}
+
+@media (max-width: 639px) {
+  .cs-events-hero__poster {
+    width: 100%;
+    opacity: 0.5;
+    mask-image: linear-gradient(90deg, transparent 0%, #000 68%);
+  }
+}
+
+.cs-events-hero__poster path,
+.cs-events-hero__poster circle {
+  fill: none;
+  stroke: rgba(250, 246, 239, 0.28);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cs-events-hero__poster circle.is-note {
+  fill: rgba(255, 107, 74, 0.9);
+  stroke: none;
+}
+
 .cs-map-frame {
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid #2a2118;
+  background: #efe4d2;
+  box-shadow: 0 16px 40px rgba(36, 28, 22, 0.12);
+}
+
+.cs-map {
+  position: relative;
+  background: #efe4d2;
+}
+
+.cs-map-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 70px rgba(26, 20, 15, 0.16);
 }
 
 .cs-map .maplibregl-canvas {
-  filter: saturate(1.02) contrast(1.02);
+  filter: none;
 }
 
 .cs-map .leaflet-tile {
@@ -749,10 +895,10 @@ figcaption {
 .cs-map .leaflet-bar,
 .cs-map .maplibregl-ctrl-group {
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
-  background: var(--foam);
+  border: 1px solid #2a2118;
+  border-radius: 0.35rem;
+  box-shadow: 0 10px 28px rgba(36, 28, 22, 0.16);
+  background: #faf6ef;
 }
 
 .cs-map .leaflet-control-zoom a,
@@ -792,36 +938,66 @@ figcaption {
 .cs-pin span {
   display: grid;
   place-items: center;
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--foam);
+  width: 22px;
+  height: 22px;
+  border: 2px solid #faf6ef;
   border-radius: 999px;
   background: var(--ink);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.28);
-  color: var(--foam);
-  font-size: 9px;
+  box-shadow: 0 8px 16px rgba(36, 28, 22, 0.32);
+  color: #faf6ef;
+  font-size: 10px;
   font-weight: 700;
   line-height: 1;
   transition: transform 0.2s var(--ease-editorial);
 }
 
+.cs-pin-mark {
+  display: block;
+  width: 28px;
+  height: 36px;
+  margin-bottom: 2px;
+  overflow: visible;
+  filter: drop-shadow(0 8px 10px rgba(36, 28, 22, 0.35));
+}
+
+.cs-pin-mark path {
+  fill: currentColor;
+  stroke: #faf6ef;
+  stroke-width: 1.6;
+}
+
+.cs-pin-mark circle {
+  fill: #faf6ef;
+}
+
+.cs-pin.is-mark {
+  color: var(--ink);
+  align-items: end;
+  justify-items: center;
+}
+
 .cs-pin.is-active span {
-  transform: scale(1.22);
+  transform: scale(1.12);
   background: var(--cobalt);
-  border-color: var(--foam);
+  border-color: #faf6ef;
   box-shadow: 0 0 0 5px rgba(59, 109, 255, 0.28);
 }
 
-.cs-pin.is-kitchen span {
-  background: var(--copper);
+.cs-pin.is-mark.is-active {
+  color: var(--cobalt);
 }
 
-.cs-pin.is-kitchen.is-active span {
-  background: var(--cobalt);
+.cs-pin.is-kitchen.is-mark {
+  color: var(--copper);
 }
 
-.cs-pin.is-nearby span {
-  background: var(--brass);
+.cs-pin.is-kitchen.is-mark.is-active,
+.cs-pin.is-nearby.is-mark.is-active {
+  color: var(--cobalt);
+}
+
+.cs-pin.is-nearby.is-mark {
+  color: var(--brass);
 }
 
 .cs-pin.is-stop span {

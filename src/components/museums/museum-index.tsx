@@ -70,7 +70,7 @@ function MuseumRow({
 
   return (
     <article
-      className={`overflow-hidden rounded-[1.5rem] border border-line shadow-[0_12px_30px_rgba(15,23,42,0.05)] ${selected ? "bg-paper-2" : "bg-foam"}`}
+      className={`overflow-hidden rounded-xl border border-line shadow-[0_12px_30px_rgba(15,23,42,0.05)] ${selected ? "bg-paper-2" : "bg-foam"}`}
       style={{ borderTop: `5px solid ${place.palette[0]}` }}
     >
       <div className="grid lg:grid-cols-12">
@@ -96,7 +96,7 @@ function MuseumRow({
               eyebrow={t("noPhotograph")}
             />
           )}
-          <span className="absolute top-3 left-3 rounded-full bg-patina px-2.5 py-1 text-[10px] tracking-[0.2em] text-foam uppercase">
+          <span className="absolute top-3 left-3 max-w-[calc(100%-1.5rem)] rounded-md bg-patina px-2.5 py-1 text-[10px] tracking-[0.2em] text-foam uppercase">
             {folio} · {t(place.institution ?? "collection")}
           </span>
         </Link>
@@ -112,7 +112,7 @@ function MuseumRow({
               <button
                 type="button"
                 onClick={onSelect}
-                className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-paper text-ink hover:bg-patina hover:text-foam"
+                className="grid size-11 shrink-0 place-items-center rounded-md border border-line bg-paper text-ink hover:bg-patina hover:text-foam"
                 aria-label={common("onMap")}
                 title={common("onMap")}
               >
@@ -178,7 +178,7 @@ export function MuseumIndex() {
 
   return (
     <div>
-      <header className="relative mx-3 mt-3 overflow-hidden rounded-[1.75rem] bg-[linear-gradient(155deg,#0f9f8a_0%,#0b7d6c_52%,#0f172a_140%)] text-foam sm:mx-4">
+      <header className="relative mx-3 mt-3 overflow-hidden rounded-xl bg-[linear-gradient(155deg,#0f9f8a_0%,#0b7d6c_52%,#0f172a_140%)] text-foam sm:mx-4">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute -top-4 right-3 select-none font-display text-[7.5rem] leading-none text-foam/[0.08] sm:text-[15rem]"
@@ -207,7 +207,7 @@ export function MuseumIndex() {
 
       <div className="mx-auto max-w-[96rem]">
         {/* STICKY PHONE FILTER BAR + INTERACTIVE QUAY MAP */}
-        <div className="mx-3 mt-4 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+        <div className="mx-3 mt-4 grid overflow-hidden rounded-xl border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
           <div className="border-b border-line p-4 sm:p-6 lg:col-span-6 lg:border-r lg:border-b-0">
             <label className="block">
               <span className="cs-kicker">{t("search")}</span>
@@ -266,7 +266,7 @@ export function MuseumIndex() {
           </ol>
         )}
 
-        <section className="mx-3 mt-4 mb-2 grid overflow-hidden rounded-[1.5rem] border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
+        <section className="mx-3 mt-4 mb-2 grid overflow-hidden rounded-xl border border-line bg-foam shadow-[0_12px_30px_rgba(15,23,42,0.05)] sm:mx-4 lg:grid-cols-12">
           <div className="border-b border-line p-5 sm:p-8 lg:col-span-5 lg:border-r lg:border-b-0">
             <h2 className="font-display text-3xl sm:text-4xl">{t("nearbyTitle")}</h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t("nearbyBody")}</p>

@@ -19,7 +19,7 @@ import { recognizeOnDevice } from "@/lib/recognition/on-device";
 import { canvasFromFile, canvasFromVideo, jpegFromCanvas, type PrepareError } from "@/lib/recognition/prepare";
 import { subscribeArmedCamera, takeArmedCamera } from "@/lib/scan/arm-camera";
 import { skeletonFromCanvas, type SkeletonMesh } from "@/lib/recognition/skeleton";
-import type { RecognitionResult } from "@/lib/recognition/types";
+import type { LocationHint, RecognitionResult } from "@/lib/recognition/types";
 
 type Phase = "live" | "reading" | "result";
 type ScanError = "camera" | "permission" | "unsupported" | PrepareError | "network" | "timeout";
@@ -113,7 +113,25 @@ export function ScanStudio() {
     return () => window.clearTimeout(timer);
   }, [phase, skeleton]);
 
-  function stopCamera() {
+  function readLocation(): Promise<LocationHint | null> {
+    if (!navigator.geolocation) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const timer = window.setTimeout(() => resolve(null), 1400);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          window.clearTimeout(timer);
+          resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
+        },
+        () => {
+          window.clearTimeout(timer);
+          resolve(null);
+        },
+        { enableHighAccuracy: true, maximumAge: 20_000, timeout: 1200 },
+      );
+    });
+  }
+
+function stopCamera() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     setLiveStream(null);
@@ -192,13 +210,15 @@ export function ScanStudio() {
       return;
     }
     setSkeleton(skeletonFromCanvas(jpeg.canvas));
-    const local = await recognizeOnDevice(jpeg.canvas);
+    const location = await readLocation();
+    const local = await recognizeOnDevice(jpeg.canvas, location);
     setQualityIssue(local.qualityIssue);
 
     if (mode === "remote") {
       try {
         const remote = await requestRemoteRecognition({
           dataUrl: jpeg.dataUrl,
+          location,
           structure: local.structure,
         });
         setResult(remote);

@@ -16,7 +16,11 @@
     "address": "Address",
     "walk": "About {minutes} minutes on foot from Macedonia Square.",
     "atSquare": "You are on Macedonia Square, the point the other walks are measured from.",
-    "disclaimer": "CentarStory is a cultural guide to the Municipality of Centar in Skopje. Walking times are approximate. Menus, tickets, and opening hours should be confirmed with the place itself. Bus fares are cited from the JSP Skopje price list.",
+    "disclaimer": "A cultural walk through Centar: the monuments, the kitchens, and the way across the municipality. Times are a guide. Confirm menus, tickets, and hours at the place, and bus fares with JSP Skopje.",
+    "contactTitle": "Municipality of Centar",
+    "contactAddress": "Mihail Cokov 1, Skopje",
+    "contactPage": "Municipal contact page",
+    "contactNote": "This is the contact the municipality publishes. CentarStory is not that office.",
     "tryAgain": "Try again",
     "errorTitle": "This view did not open",
     "errorBody": "The page failed to load. You can try again.",
@@ -39,10 +43,15 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies",
+    "impressum": "Impressum",
     "legalLede": "Independent cultural guide. Not the official municipal website.",
-    "privacyLede": "What CentarStory stores: language cookie, optional Scan photograph.",
+    "privacyLede": "What CentarStory stores: language cookie, cookie-notice acceptance, optional Scan photograph.",
     "termsLede": "The atlas is a guide, not a ticket or a live timetable.",
-    "cookiesLede": "One first-party locale cookie. No advertising cookies."
+    "cookiesLede": "Two necessary cookies: language and acceptance of this notice. No advertising cookies.",
+    "impressumLede": "The idea came from ЛАПСИ, a youth programme of the Ohrid Institute.",
+    "banner": "CentarStory uses two necessary cookies: NEXT_LOCALE for your language and centarstory_consent to remember that you accepted this notice. There are no advertising cookies.",
+    "acceptCookies": "Accept cookies",
+    "readCookies": "Cookie policy"
   },
   "nav": {
     "primary": "Primary",
@@ -61,7 +70,7 @@
     "jspTitle": "JSP Skopje",
     "googlePlay": "Google Play",
     "appStore": "App Store",
-    "pickHint": "Choose how you want to move",
+    "pickHint": "Choose the path: on foot, by bus, scooter, or taxi.",
     "back": "Back to options",
     "open": "Open"
   },
@@ -258,7 +267,8 @@
     "title": "Events",
     "kicker": "Municipality of Centar",
     "lede": "Public cultural events organised by the Municipality of Centar: street programmes, park gatherings, open-air cinema, concerts, walks. Past listings stay as the event that happened. Nothing here is a ticket.",
-    "inventoryNote": "Only dated notices from the Municipality of Centar. Museum exhibitions and city-wide holidays are not on this list."
+    "inventoryNote": "Only dated notices from the Municipality of Centar. Museum exhibitions and city-wide holidays are not on this list.",
+    "noticeRecord": "What the notice records"
   },
   "museums": {
     "title": "Houses of memory",
@@ -306,7 +316,7 @@
     "search": "Search dishes and kitchens",
     "searchHint": "Tavče gravče, Palas Jr, kebab…",
     "empty": "Nothing in this verified set matches that search.",
-    "mapNote": "The first pin is Palas Jr in the Čaršija, from the house Wolt plus code. Pelister shares the square coordinate. Destan has no unique map node and is not a pin.",
+    "mapNote": "The map button pins OpenStreetMap kafanas, gostilnicas, and grill houses in Centar and the Old Bazaar. Tap a pin for walking directions. Several doors are named Destan, so that house still has no single pin.",
     "firstKitchen": "First kitchen · Old Bazaar",
     "inCentar": "Inside Centar",
     "unmapped": "No unique verified coordinate",
@@ -327,7 +337,7 @@
     }
   },
   "around": {
-    "title": "A walking route",
+    "title": "A walk through the municipality",
     "kicker": "Get Around",
     "lede": "Tap for a new monument walk each time. Type a birth year only if you want that year to lock the theme. Stops come from the verified atlas.",
     "modes": "Ways to move",
@@ -414,13 +424,21 @@
     "compareAssumptions": "Walking times are atlas estimates from Macedonia Square. Scooter minutes assume 40% of that figure. Taxi kilometres assume straight-line distance × 1.35. Confirm in the operator app or at the stop.",
     "osmWalk": "OpenStreetMap walking directions",
     "googleWalk": "Google walking directions",
+    "guide": "Guide me",
+    "guideOff": "Stop guiding",
+    "guideStop": "Next: {name}",
+    "guideMeters": "{meters} m to the stop",
+    "guideHere": "You are at {name}",
+    "guideDone": "This was the last stop",
+    "guideDenied": "Location is off. Allow it so the route can lead you.",
+    "guideWaiting": "Looking for your location",
     "museumsOnFoot": "{count} verified institutions are in the museum atlas.",
     "makeRoute": "Make me a route",
     "orYear": "or write your year",
-    "yearLabel": "Year of birth",
-    "yearPlaceholder": "1994",
-    "yearHint": "A whole year between {min} and {max}. It only chooses a documented walking theme.",
-    "yearInvalid": "Enter a year between {min} and {max}.",
+    "yearLabel": "Year",
+    "yearPlaceholder": "Choose",
+    "yearHint": "Only years with a dated monument or event in the atlas.",
+    "yearInvalid": "Choose a year that has a monument or event in the atlas.",
     "yearSubmit": "Build from this year",
     "buildingTitle": "Building the route",
     "building_gather": "Gathering verified stops",
@@ -500,6 +518,10 @@
     "companyRole": "Connected record",
     "houseRole": "Documented house",
     "yearLabel": "Year",
-    "architectureLabel": "Architecture"
+    "architectureLabel": "Architecture",
+    "listen": "Listen to the story",
+    "listenStop": "Stop the story",
+    "listenStatus": "The story is being read aloud.",
+    "listenMissing": "This browser cannot read the story aloud."
   }
 }

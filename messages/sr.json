@@ -16,7 +16,11 @@
     "address": "Adresa",
     "walk": "Oko {minutes} minuta peške od trga Makedonija.",
     "atSquare": "Na trgu ste Makedonija, tački od koje se mere ostale šetnje.",
-    "disclaimer": "CentarStory je kulturni vodič za opštinu Centar u Skoplju. Vremena hoda su približna. Menije, karte i radno vreme potvrdite na licu mesta. Autobuske cene navedene su iz cenovnika JSP Skoplje.",
+    "disclaimer": "Kulturna šetnja kroz Centar: spomenici, kuhinje i put kroz opštinu. Vremena su orijentacija. Menije, karte i sate potvrdite na mestu, a autobuske cene kod JSP Skoplje.",
+    "contactTitle": "Opština Centar",
+    "contactAddress": "ul. Mihail Cokov br. 1, Skoplje",
+    "contactPage": "Kontakt opštine",
+    "contactNote": "Ovo je kontakt koji objavljuje opština. CentarStory nije ta služba.",
     "tryAgain": "Pokušaj ponovo",
     "errorTitle": "Ovaj prikaz se nije otvorio",
     "errorBody": "Stranica se nije učitala. Možete pokušati ponovo.",
@@ -39,10 +43,15 @@
     "privacy": "Privatnost",
     "terms": "Uslovi",
     "cookies": "Kolačići",
+    "impressum": "Impresum",
     "legalLede": "Nezavisni kulturni vodič. Nije zvanična opštinska stranica.",
-    "privacyLede": "Šta CentarStory čuva: jezički kolačić i, po izboru, fotografiju sa Skena.",
+    "privacyLede": "Šta CentarStory čuva: jezički kolačić, prihvatanje obaveštenja i, po izboru, fotografiju sa Skena.",
     "termsLede": "Atlas je vodič, ne karta i ne živi red vožnje.",
-    "cookiesLede": "Jedan sopstveni kolačić za jezik. Nema reklamnih kolačića."
+    "cookiesLede": "Dva neophodna kolačića: jezik i prihvatanje ovog obaveštenja. Nema reklamnih kolačića.",
+    "impressumLede": "Ideja je došla iz LAPSI, omladinskog programa Instituta Ohrid.",
+    "banner": "CentarStory koristi dva neophodna kolačića: NEXT_LOCALE za jezik i centarstory_consent da zapamti da ste prihvatili ovo obaveštenje. Nema reklamnih kolačića.",
+    "acceptCookies": "Prihvati kolačiće",
+    "readCookies": "Politika kolačića"
   },
   "nav": {
     "primary": "Glavno",
@@ -61,7 +70,7 @@
     "jspTitle": "JSP Skoplje",
     "googlePlay": "Google Play",
     "appStore": "App Store",
-    "pickHint": "Izaberite kako ćete se kretati",
+    "pickHint": "Odaberite put: peške, autobusom, trotinetom ili taksijem.",
     "back": "Nazad na opcije",
     "open": "Otvori"
   },
@@ -258,7 +267,8 @@
     "title": "Događaji",
     "kicker": "Opština Centar",
     "lede": "Javni kulturni događaji koje organizuje Opština Centar: ulični programi, okupljanja u parku, bioskop na otvorenom, koncerti, šetnje. Prošli unosi ostaju kao događaj koji se desio. Ništa ovde nije karta.",
-    "inventoryNote": "Samo datirana saopštenja Opštine Centar. Muzejske izložbe i gradski praznici nisu na ovom spisku."
+    "inventoryNote": "Samo datirana saopštenja Opštine Centar. Muzejske izložbe i gradski praznici nisu na ovom spisku.",
+    "noticeRecord": "Šta saopštenje beleži"
   },
   "museums": {
     "title": "Kuće sećanja",
@@ -306,7 +316,7 @@
     "search": "Pretražite jela i kuhinje",
     "searchHint": "Tavče gravče, Palas Jr, kebap…",
     "empty": "Ništa u ovom potvrđenom skupu ne odgovara.",
-    "mapNote": "Prvi pin je Palas Jr u čaršiji, sa plus-koda Wolt-liste kuće. Pelister deli koordinatu trga. Destan nema jedinstven čvor i nije pin.",
+    "mapNote": "Pokaži kuhinje na mapi kači kafane, gostionice i skare iz OpenStreetMap-a u Centru i Staroj čaršiji. Dodirnite pin za pešački pravac. Nekoliko vrata se zove Destan, pa ta kuća i dalje nema jedan pin.",
     "firstKitchen": "Prva kuhinja · Stara čaršija",
     "inCentar": "U Centru",
     "unmapped": "Nema jedinstvene potvrđene koordinate",
@@ -327,7 +337,7 @@
     }
   },
   "around": {
-    "title": "Šetnja kroz grad",
+    "title": "Šetnja kroz opštinu",
     "kicker": "Kroz grad",
     "lede": "Svaki dodir pravi novu šetnju kroz spomenike. Godinu unesite samo ako želite da ona zaključa temu. Stajališta su iz potvrđenog atlasa.",
     "modes": "Načini kretanja",
@@ -414,13 +424,21 @@
     "compareAssumptions": "Pešački minuti su procene od trga. Minuti trotineta su 40% toga. Kilometri taksija su prava linija × 1,35.",
     "osmWalk": "Pešačka uputstva OpenStreetMap",
     "googleWalk": "Pešačka uputstva Google",
+    "guide": "Vodi me",
+    "guideOff": "Zaustavi vođenje",
+    "guideStop": "Ka {name}",
+    "guideMeters": "{meters} m do stanice",
+    "guideHere": "Ovde si: {name}",
+    "guideDone": "Ovo je poslednja stanica",
+    "guideDenied": "Lokacija je isključena. Dozvoli je da te ruta vodi.",
+    "guideWaiting": "Traži se tvoja lokacija",
     "museumsOnFoot": "{count} potvrđenih institucija je u muzejskom atlasu.",
     "makeRoute": "Napravi mi rutu",
     "orYear": "ili unesi godinu",
-    "yearLabel": "Godina rođenja",
-    "yearPlaceholder": "1994",
-    "yearHint": "Cela godina između {min} i {max}. Biraju se samo dokumentovane teme šetnje.",
-    "yearInvalid": "Unesite godinu između {min} i {max}.",
+    "yearLabel": "Godina",
+    "yearPlaceholder": "Izaberi",
+    "yearHint": "Samo godine sa datiranim spomenikom ili događajem u atlasu.",
+    "yearInvalid": "Izaberite godinu koja ima spomenik ili događaj u atlasu.",
     "yearSubmit": "Napravi od ove godine",
     "buildingTitle": "Ruta se gradi",
     "building_gather": "Skupljamo potvrđena stajališta",
@@ -500,6 +518,10 @@
     "companyRole": "Povezani zapis",
     "houseRole": "Dokumentovana kuća",
     "yearLabel": "Godina",
-    "architectureLabel": "Arhitektura"
+    "architectureLabel": "Arhitektura",
+    "listen": "Slušaj priču",
+    "listenStop": "Zaustavi priču",
+    "listenStatus": "Priča se čita naglas.",
+    "listenMissing": "Ovaj pregledač ne može da pročita priču naglas."
   }
 }

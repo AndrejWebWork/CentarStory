@@ -17,6 +17,7 @@ function run() {
     "/privacy",
     "/terms",
     "/cookies",
+    "/impressum",
     ...places.map((place) => (place.institution ? `/museums/${place.slug}` : `/places/${place.slug}`)),
     ...walks.map((walk) => `/routes/${walk.slug}`),
     ...events.map((event) => `/events/${event.slug}`),

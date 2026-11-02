@@ -3,6 +3,7 @@ import { pointInCentar, haversineMeters } from "@/content/knowledge/boundary";
 import { sites, getSite } from "@/content/knowledge/catalog";
 import { dishes, districts, venues } from "@/content/knowledge/culinary";
 import { media, getMedia } from "@/content/knowledge/media";
+import { eventDetails } from "@/content/knowledge/event-details";
 import { programmes, routes } from "@/content/knowledge/programmes";
 import { visitOps } from "@/content/knowledge/visit-ops";
 import { relations } from "@/content/knowledge/relations";
@@ -210,9 +211,20 @@ export function validateKnowledge(): Issue[] {
     if (!event.officialUrl?.startsWith("http")) {
       issues.push({ level: "error", code: "event-missing-url", subject: event.slug, detail: "officialUrl required" });
     }
+    if (event.imageId && !getMedia(event.imageId)) {
+      issues.push({ level: "error", code: "unknown-image", subject: event.slug, detail: event.imageId });
+    }
     if (event.calendar.kind === "annual-fixed-date" && (!event.calendar.month || !event.calendar.day)) {
       issues.push({ level: "error", code: "event-incomplete-calendar", subject: event.slug, detail: "month and day required" });
     }
+  }
+  for (const [slug, copy] of Object.entries(eventDetails)) {
+    copyComplete(copy, `event-detail:${slug}`, issues);
+    if (!programmes.some((event) => event.slug === slug)) {
+      issues.push({ level: "error", code: "unknown-event-detail", subject: slug, detail: "detail without an event" });
+    }
+  }
+  for (const event of programmes) {
     if (event.calendar.kind === "dated-run" && (!event.calendar.startDate || !event.calendar.endDate)) {
       issues.push({
         level: "error",

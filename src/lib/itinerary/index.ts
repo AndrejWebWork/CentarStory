@@ -3,6 +3,7 @@ export {
   AROUND_YEAR_MAX,
   AROUND_YEAR_MIN,
   aroundMonumentStarts,
+  documentedAtlasYears,
   aroundThemeDefault,
   aroundThemeForYear,
   aroundThemeRandom,

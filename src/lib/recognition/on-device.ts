@@ -73,6 +73,36 @@ export function embeddingSimilarity(
   return scaledCos * 0.45 + hashSim * 0.55;
 }
 
+function cropCanvas(source: HTMLCanvasElement, xRatio: number, yRatio: number, wRatio: number, hRatio: number) {
+  const width = Math.max(32, Math.round(source.width * wRatio));
+  const height = Math.max(32, Math.round(source.height * hRatio));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  if (!context) return source;
+  context.drawImage(
+    source,
+    source.width * xRatio,
+    source.height * yRatio,
+    source.width * wRatio,
+    source.height * hRatio,
+    0,
+    0,
+    width,
+    height,
+  );
+  return canvas;
+}
+
+function centerCrop(source: HTMLCanvasElement) {
+  return cropCanvas(source, 0.15, 0.12, 0.7, 0.76);
+}
+
+function upperCrop(source: HTMLCanvasElement) {
+  return cropCanvas(source, 0.08, 0, 0.84, 0.62);
+}
+
 function extractDescriptorFromCanvas(source: CanvasImageSource, width: number, height: number): {
   embedding: number[];
   dhash: string;
@@ -211,10 +241,11 @@ export async function recognizeOnDevice(
   result: RecognitionResult;
 }> {
   const evidence = analyzeSource(canvas, canvas.width, canvas.height);
-  const descriptor = extractDescriptorFromCanvas(canvas, canvas.width, canvas.height);
+  const views = [canvas, centerCrop(canvas), upperCrop(canvas)];
+  const descriptors = views.map((view) => extractDescriptorFromCanvas(view, view.width, view.height));
   const precomputedScores: StructureMatch[] = PRECOMPUTED_REFERENCE_EMBEDDINGS.map((ref) => ({
     slug: ref.slug,
-    score: embeddingSimilarity(descriptor, ref),
+    score: Math.max(...descriptors.map((descriptor) => embeddingSimilarity(descriptor, ref))),
   }));
   const evaluated = evaluateLocalSamples({
     evidence,

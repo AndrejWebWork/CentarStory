@@ -5,8 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { pick } from "@/content/copy";
 import { getMedia } from "@/content/knowledge/media";
-import { CENTAR_BBOX, CENTAR_OSM_RELATION, CENTAR_POLYGON } from "@/content/knowledge/polygon";
-import { VERIFIED_ON } from "@/content/knowledge/sources";
+import { CENTAR_BBOX, CENTAR_POLYGON } from "@/content/knowledge/polygon";
 import { getPlace } from "@/content/places";
 import { Link } from "@/i18n/navigation";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
@@ -67,8 +66,7 @@ export function MovementMasthead() {
             data-mast-fade
             className="flex flex-wrap items-center justify-between gap-3 border-b border-foam/15 pb-3 text-[10px] tracking-[0.26em] text-foam/55 uppercase"
           >
-            <span>01 — {t("kicker")}</span>
-            <span>OSM {CENTAR_OSM_RELATION} · {VERIFIED_ON}</span>
+            <span>04 — {t("kicker")}</span>
           </div>
 
           <div className="relative my-6 sm:my-10 lg:my-0">

@@ -16,7 +16,11 @@
     "address": "Adresa",
     "walk": "Rreth {minutes} minuta në këmbë nga Sheshi i Maqedonisë.",
     "atSquare": "Je në Sheshin e Maqedonisë, pika nga e cila maten ecjet e tjera.",
-    "disclaimer": "CentarStory është një udhërrëfyes kulturor për Komunën e Qendrës në Shkup. Kohët e ecjes janë të përafërta. Menyja, biletat dhe orari i hapjes duhen konfirmuar te vetë vendi. Çmimet e autobusit citohen nga lista e çmimeve të JSP Shkup.",
+    "disclaimer": "Një shëtitje kulturore nëpër Qendër: monumentet, kuzhinat dhe rruga nëpër komunë. Kohët janë orientuese. Menyja, biletat dhe orarin konfirmojini te vendi, çmimet e autobusit te JSP Shkup.",
+    "contactTitle": "Komuna e Qendrës",
+    "contactAddress": "rr. Mihail Cokov nr. 1, Shkup",
+    "contactPage": "Faqja e kontaktit të komunës",
+    "contactNote": "Ky është kontakti që e publikon komuna. CentarStory nuk është ajo zyrë.",
     "tryAgain": "Provo përsëri",
     "errorTitle": "Kjo pamje nuk u hap",
     "errorBody": "Faqja nuk u ngarkua. Mund të provosh përsëri.",
@@ -39,10 +43,15 @@
     "privacy": "Privatësia",
     "terms": "Kushtet",
     "cookies": "Cookies",
+    "impressum": "Impresum",
     "legalLede": "Udhërrëfyes kulturor i pavarur. Nuk është faqja zyrtare e komunës.",
-    "privacyLede": "Çfarë ruan CentarStory: cookie e gjuhës, fotografi opsionale e Skanimit.",
+    "privacyLede": "Çfarë ruan CentarStory: cookie e gjuhës, pranimi i njoftimit dhe fotografi opsionale e Skanimit.",
     "termsLede": "Atlasi është udhërrëfyes, jo biletë dhe jo orar i drejtpërdrejtë.",
-    "cookiesLede": "Një cookie e gjuhës nga vetë faqja. Pa cookies reklamash."
+    "cookiesLede": "Dy kuki të nevojshme: gjuha dhe pranimi i këtij njoftimi. Pa kuki reklamash.",
+    "impressumLede": "Ideja erdhi nga LAPSI, një program rinor i Institutit të Ohrit.",
+    "banner": "CentarStory përdor dy kuki të nevojshme: NEXT_LOCALE për gjuhën dhe centarstory_consent për të mbajtur mend se e keni pranuar këtë njoftim. Nuk ka kuki reklamash.",
+    "acceptCookies": "Prano kukitë",
+    "readCookies": "Politika e kukive"
   },
   "nav": {
     "primary": "Kryesore",
@@ -61,7 +70,7 @@
     "jspTitle": "JSP Shkup",
     "googlePlay": "Google Play",
     "appStore": "App Store",
-    "pickHint": "Zgjidh si do të lëvizësh",
+    "pickHint": "Zgjidhni rrugën: në këmbë, me autobus, skuter ose taksi.",
     "back": "Prapa te opsionet",
     "open": "Hape"
   },
@@ -258,7 +267,8 @@
     "title": "Ngjarjet",
     "kicker": "Komuna e Qendrës",
     "lede": "Ngjarje kulturore publike të organizuara nga Komuna e Qendrës: programe rruge, tubime në park, kinema në qiell të hapur, koncerte, ecje. Listimet e kaluara mbeten si ngjarja që ndodhi. Asgjë këtu nuk është biletë.",
-    "inventoryNote": "Vetëm njoftime me datë nga Komuna e Qendrës. Ekspozitat e muzeve dhe festat e gjithë qytetit nuk janë në këtë listë."
+    "inventoryNote": "Vetëm njoftime me datë nga Komuna e Qendrës. Ekspozitat e muzeve dhe festat e gjithë qytetit nuk janë në këtë listë.",
+    "noticeRecord": "Çfarë shënon njoftimi"
   },
   "museums": {
     "title": "Shtëpitë e kujtesës",
@@ -306,7 +316,7 @@
     "search": "Kërko pjata dhe kuzhina",
     "searchHint": "Tavče gravče, Palas Jr, kebab…",
     "empty": "Asgjë në këtë grup të verifikuar nuk përputhet me atë kërkim.",
-    "mapNote": "Pini i parë është Palas Jr në Çarshi, nga shtëpia plus kodi Wolt. Pelister ndan koordinatën e sheshit. Destan nuk ka nyje unike në hartë dhe nuk është pin.",
+    "mapNote": "Trego kuzhinat në hartë vendos kafanetë, gostilnicat dhe skarat nga OpenStreetMap në Qendër dhe në Çarshinë e Vjetër. Prekni një pin për drejtim në këmbë. Disa dyer quhen Destan, ndaj ajo shtëpi s’ka ende një pin të vetëm.",
     "firstKitchen": "Kuzhina e parë · Çarshia e Vjetër",
     "inCentar": "Brenda Qendrës",
     "unmapped": "Nuk ka koordinatë unike të verifikuar",
@@ -327,7 +337,7 @@
     }
   },
   "around": {
-    "title": "Një rrugë ecjeje",
+    "title": "Një shëtitje nëpër komunë",
     "kicker": "Lëviz përreth",
     "lede": "Prek për një ecje të re monumentesh çdo herë. Shkruaj një vit lindjeje vetëm nëse do që ai vit të kyçë temën. Ndalësat vijnë nga atlasi i verifikuar.",
     "modes": "Mënyra për të lëvizur",
@@ -414,13 +424,21 @@
     "compareAssumptions": "Kohët e ecjes janë vlerësime të atlasit nga Sheshi i Maqedonisë. Minutat e trotinetit supozojnë 40% të asaj shifre. Kilometrat e taksisë supozojnë distancën në vijë të drejtë × 1.35. Konfirmo në aplikacionin e operatorit ose te stacioni.",
     "osmWalk": "Drejtime ecjeje në OpenStreetMap",
     "googleWalk": "Drejtime ecjeje në Google",
+    "guide": "Më udhëhiq",
+    "guideOff": "Ndalo udhëheqjen",
+    "guideStop": "Tjetra: {name}",
+    "guideMeters": "{meters} m deri te ndalesa",
+    "guideHere": "Je këtu: {name}",
+    "guideDone": "Kjo është ndalesa e fundit",
+    "guideDenied": "Vendndodhja është e fikur. Lejoje që rruga të të udhëheqë.",
+    "guideWaiting": "Po kërkohet vendndodhja jote",
     "museumsOnFoot": "{count} institucione të verifikuara janë në atlasin e muzeve.",
     "makeRoute": "Më bëj një rrugë",
     "orYear": "ose shkruaj vitin tënd",
-    "yearLabel": "Viti i lindjes",
-    "yearPlaceholder": "1994",
-    "yearHint": "Një vit i plotë mes {min} dhe {max}. Zgjedh vetëm një temë ecjeje të dokumentuar.",
-    "yearInvalid": "Shkruaj një vit mes {min} dhe {max}.",
+    "yearLabel": "Viti",
+    "yearPlaceholder": "Zgjidh",
+    "yearHint": "Vetëm vitet me një monument ose ngjarje të datuar në atlas.",
+    "yearInvalid": "Zgjidh një vit që ka monument ose ngjarje në atlas.",
     "yearSubmit": "Ndërto nga ky vit",
     "buildingTitle": "Po ndërtohet rruga",
     "building_gather": "Po mblidhen ndalesat e verifikuara",
@@ -500,6 +518,10 @@
     "companyRole": "Regjistrim i lidhur",
     "houseRole": "Shtëpi e dokumentuar",
     "yearLabel": "Viti",
-    "architectureLabel": "Arkitektura"
+    "architectureLabel": "Arkitektura",
+    "listen": "Dëgjo historinë",
+    "listenStop": "Ndalo historinë",
+    "listenStatus": "Historia po lexohet me zë.",
+    "listenMissing": "Ky shfletues nuk mund ta lexojë historinë me zë."
   }
 }

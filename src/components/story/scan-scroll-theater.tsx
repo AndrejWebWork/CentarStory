@@ -248,8 +248,33 @@ export function ScanScrollTheater({
       className="relative bg-ink text-foam"
       style={{ height: `${stretch}vh` }}
     >
+      <div className="sr-only">
+        <h2>{kicker}</h2>
+        {year ? (
+          <p>
+            {yearLabel}: {year}
+          </p>
+        ) : null}
+        {architecture ? (
+          <p>
+            {architectureLabel}: {architecture}
+          </p>
+        ) : null}
+        <p>{lead}</p>
+        <p>{second}</p>
+        <ul>
+          {figures.map((figure) => (
+            <li key={figure.slug}>
+              <p>{roleLabels[figure.role]}</p>
+              <p>{figure.name}</p>
+              <p>{figure.explanation}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div
         className="cs-chronicle sticky top-0 isolate h-dvh overflow-hidden"
+        aria-hidden="true"
         ref={(node) => {
           if (!node) return;
           node.style.setProperty("--cs-wash-a", washA);

@@ -231,6 +231,8 @@ export type EventRecord = {
   lastChecked: string;
   translationStatus: TranslationStatus;
   officialUrl: string;
+  /** Licensed photograph of the place named in the notice. Not a picture of the night itself. */
+  imageId?: string;
   calendar: EventCalendar;
 };
 

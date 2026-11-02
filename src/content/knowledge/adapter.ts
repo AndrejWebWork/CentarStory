@@ -117,6 +117,7 @@ export function listEvents(today: Date = new Date()): CulturalEvent[] {
       venues: event.venues,
       host: event.host,
       officialUrl: event.officialUrl,
+      imageId: event.imageId,
       status: resolved.status,
       startDate: resolved.startDate,
       endDate: resolved.endDate,

@@ -9,6 +9,7 @@ import {
   type ConnectedConnectionItem,
 } from "@/components/story/cinematic-scenes";
 import { StoryHero } from "@/components/story/story-hero";
+import { StoryListen } from "@/components/story/story-listen";
 import { StoryLook } from "@/components/story/story-look";
 import { StoryMap } from "@/components/story/story-map";
 import { pick } from "@/content/copy";
@@ -159,6 +160,64 @@ export async function CinematicMonumentStory({
     };
   });
 
+  const myths = site?.myths ?? [];
+  const roleLabels = {
+    rider: story("riderRole"),
+    warrior: story("warriorRole"),
+    place: story("companyRole"),
+    house: story("houseRole"),
+  } as const;
+  const seenSpoken = new Set<string>();
+  const spoken = [
+    ...(cinematic
+      ? [
+          filmKicker,
+          facts.year ? `${story("yearLabel")}. ${facts.year}` : "",
+          facts.architecture ? `${story("architectureLabel")}. ${facts.architecture}` : "",
+        ]
+      : []),
+    pick(place.story[0], locale),
+    pick(place.story[1], locale),
+    ...(cinematic
+      ? chronicle.flatMap((figure) => [roleLabels[figure.role], figure.name, figure.explanation])
+      : []),
+    pick(place.summary, locale),
+    pick(site?.historicalPeriod ?? place.era, locale),
+    pick(place.address, locale),
+    site?.commemorates ? pick(site.commemorates, locale) : "",
+    site?.materials ? pick(site.materials, locale) : "",
+    site?.missingOrDisputed ? pick(site.missingOrDisputed, locale) : "",
+    site?.significance ? pick(site.significance, locale) : "",
+    place.collection ? pick(place.collection, locale) : "",
+    ...(site?.claims ?? []).map((claim) => `${kindLabels[claim.kind]}. ${pick(claim.text, locale)}`),
+    ...timelineItems.map((item) => `${item.date}. ${item.labelText}`),
+    myths.length > 0 ? story("mythsLead") : "",
+    ...myths.map((claim) => `${kindLabels[claim.kind]}. ${pick(claim.text, locale)}`),
+    site?.architecturalStyle ? pick(site.architecturalStyle, locale) : "",
+    site?.creator ? pick(site.creator, locale) : "",
+    site?.architecturalFeatures ? pick(site.architecturalFeatures, locale) : "",
+    !site?.architecturalStyle && !site?.architecturalFeatures && !site?.creator ? story("architectureEmpty") : "",
+    ...connectionItems.map((item) => item.explanation),
+    pick(place.visit, locale),
+    ops && hoursNow.computed ? (hoursNow.open ? museums("openToday") : museums("closedToday")) : "",
+    ops && !hoursNow.computed ? museums("noOpenToday") : "",
+    ops ? pick(ops.timetable, locale) : "",
+    ops?.lastAdmission ? pick(ops.lastAdmission, locale) : "",
+    ops?.tickets ? pick(ops.tickets, locale) : "",
+    ops?.accessibility ? pick(ops.accessibility, locale) : "",
+    site?.visitor?.hours ? pick(site.visitor.hours, locale) : "",
+    site?.visitor?.tickets ? pick(site.visitor.tickets, locale) : "",
+    site?.visitor?.notes ? pick(site.visitor.notes, locale) : "",
+    place.walkMinutes === 0 ? t("atSquare") : t("walk", { minutes: place.walkMinutes }),
+    place.municipality === "nearby" && place.nearbyNote ? pick(place.nearbyNote, locale) : "",
+    place.boundaryNote ? pick(place.boundaryNote, locale) : "",
+  ].filter((line) => {
+    const text = line.trim();
+    if (!text || seenSpoken.has(text)) return false;
+    seenSpoken.add(text);
+    return true;
+  });
+
   const journeyStops = [place, ...related.slice(0, 3)].map((item) => ({
     slug: item.slug,
     name: pick(item.name, locale),
@@ -196,6 +255,30 @@ export async function CinematicMonumentStory({
         scrollLabel={cinematic ? story("scrollDown") : undefined}
       />
 
+      <nav
+        className="sticky top-14 z-30 border-b border-ink bg-paper/95 lg:top-[4.4rem]"
+        aria-label={story("chapters")}
+      >
+        <div className="mx-auto flex max-w-[96rem] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-[11px] tracking-[0.12em] uppercase sm:px-5 lg:px-8">
+          <StoryListen
+            title={pick(place.name, locale)}
+            paragraphs={spoken}
+            locale={locale}
+            listenLabel={story("listen")}
+            stopLabel={story("listenStop")}
+            statusLabel={story("listenStatus")}
+            missingLabel={story("listenMissing")}
+          />
+          <a href="#story" className="hover:text-cobalt">01 · {story("narrative")}</a>
+          <a href="#timeline" className="hover:text-cobalt">02 · {story("timeline")}</a>
+          {myths.length > 0 ? <a href="#legends" className="hover:text-cobalt">03 · {story("myths")}</a> : null}
+          <a href="#architecture" className="hover:text-cobalt">04 · {story("architecture")}</a>
+          <a href="#context" className="hover:text-cobalt">05 · {story("context")}</a>
+          <a href="#location" className="hover:text-cobalt">06 · {story("location")}</a>
+          <a href="#sources" className="hover:text-cobalt">07 · {story("sources")}</a>
+        </div>
+      </nav>
+
       {cinematic ? (
         <ScanScrollTheater
           figures={chronicle}
@@ -203,12 +286,7 @@ export async function CinematicMonumentStory({
           second={pick(place.story[1], locale)}
           scrollLabel={story("scrollDown")}
           kicker={filmKicker}
-          roleLabels={{
-            rider: story("riderRole"),
-            warrior: story("warriorRole"),
-            place: story("companyRole"),
-            house: story("houseRole"),
-          }}
+          roleLabels={roleLabels}
           filmKind={filmKind}
           year={facts.year}
           yearShort={facts.yearShort}
@@ -272,21 +350,6 @@ export async function CinematicMonumentStory({
           </dl>
         </div>
       </div>
-
-      <nav
-        className="sticky top-14 z-30 border-b border-ink bg-paper/95 lg:top-[4.4rem]"
-        aria-label={story("chapters")}
-      >
-        <div className="cs-no-scrollbar mx-auto flex max-w-[96rem] gap-5 overflow-x-auto px-4 py-3 text-[11px] tracking-[0.18em] whitespace-nowrap uppercase sm:px-5 lg:px-8">
-          <a href="#story" className="hover:text-cobalt">01 · {story("narrative")}</a>
-          <a href="#timeline" className="hover:text-cobalt">02 · {story("timeline")}</a>
-          <a href="#legends" className="hover:text-cobalt">03 · {story("myths")}</a>
-          <a href="#architecture" className="hover:text-cobalt">04 · {story("architecture")}</a>
-          <a href="#context" className="hover:text-cobalt">05 · {story("context")}</a>
-          <a href="#location" className="hover:text-cobalt">06 · {story("location")}</a>
-          <a href="#sources" className="hover:text-cobalt">07 · {story("sources")}</a>
-        </div>
-      </nav>
 
       {/* SCENE 2 — THE HISTORICAL NARRATIVE */}
       <section id="story" className="cs-story-section mx-auto max-w-[96rem] px-4 py-16 sm:px-5 sm:py-20 lg:px-8">
@@ -353,7 +416,7 @@ export async function CinematicMonumentStory({
       </section>
 
       {/* MYTHS & LEGENDS (SEPARATED FROM DOCUMENTED FACTS) */}
-      <section id="legends" className="cs-story-section mx-auto max-w-[96rem] px-4 py-16 sm:px-5 sm:py-20 lg:px-8">
+      {myths.length > 0 ? <section id="legends" className="cs-story-section mx-auto max-w-[96rem] px-4 py-16 sm:px-5 sm:py-20 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
             <p className="cs-kicker">03 — {story("myths")}</p>
@@ -361,7 +424,7 @@ export async function CinematicMonumentStory({
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">{story("mythsLead")}</p>
           </Reveal>
           <ul className="space-y-4 lg:col-span-8">
-            {(site?.myths ?? []).map((claim) => (
+            {myths.map((claim) => (
               <li key={claim.id} className={`border border-ink bg-foam p-5 sm:p-6 ${kindClass[claim.kind]}`}>
                 <p className="text-[10px] tracking-[0.22em] text-brass uppercase">{evidence(kindKey[claim.kind])}</p>
                 <p className="mt-3 text-base leading-relaxed">{pick(claim.text, locale)}</p>
@@ -369,7 +432,7 @@ export async function CinematicMonumentStory({
             ))}
           </ul>
         </div>
-      </section>
+      </section> : null}
 
       {/* ARCHITECTURE & SYMBOLISM */}
       <section id="architecture" className="cs-story-section border-y border-ink bg-ink py-16 text-foam sm:py-20">

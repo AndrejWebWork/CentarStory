@@ -1,10 +1,38 @@
 import { L } from "@/content/copy";
 import { sites } from "@/content/knowledge/catalog";
+import { programmes } from "@/content/knowledge/programmes";
 import type { Copy } from "@/content/types";
 import { ITINERARY_THEMES } from "@/lib/itinerary/types";
 
-export const AROUND_YEAR_MIN = 1910;
-export const AROUND_YEAR_MAX = 2026;
+const YEAR_IN_DATE = /(?:1[0-9]{3}|20[0-9]{2})/g;
+
+function yearsIn(value: string | undefined) {
+  if (!value) return [];
+  return [...value.matchAll(YEAR_IN_DATE)].map((match) => Number(match[0]));
+}
+
+/** Years that appear on a monument date or a dated event in the atlas. */
+export function documentedAtlasYears(): number[] {
+  const found = new Set<number>();
+  for (const site of sites) {
+    for (const year of yearsIn(site.installationDate)) found.add(year);
+    for (const milestone of site.milestones) {
+      if (milestone.precision === "century") continue;
+      for (const year of yearsIn(milestone.date)) found.add(year);
+    }
+  }
+  for (const event of programmes) {
+    for (const year of yearsIn(event.calendar.startDate)) found.add(year);
+    for (const year of yearsIn(event.calendar.endDate)) found.add(year);
+  }
+  return [...found].sort((a, b) => a - b);
+}
+
+const DOCUMENTED_YEARS = new Set(documentedAtlasYears());
+const YEAR_SPAN = documentedAtlasYears();
+
+export const AROUND_YEAR_MIN = YEAR_SPAN[0] ?? 1910;
+export const AROUND_YEAR_MAX = YEAR_SPAN[YEAR_SPAN.length - 1] ?? 2026;
 
 const RANDOM_THEMES = ITINERARY_THEMES.map((item) => item.id).filter(
   (id) => id !== "person:stevanovska" && id !== "quay-museums" && id !== "civic-institutions",
@@ -26,12 +54,12 @@ export function aroundThemeRandom(): AroundThemeChoice {
   return {
     themeId,
     note: L(
-      "A fresh walk through documented monuments. Each tap draws a different sequence. A birth year, if you enter one, is the only thing that locks the theme.",
-      "Нова прошетка низ документирани споменици. Секое допирање влече друга низа. Годината на раѓање, ако ја внесете, е единственото што ја заклучува темата.",
-      "Nova šetnja kroz dokumentovane spomenike. Svaki dodir vuče drugi niz. Godina rođenja, ako je unesete, jedino zaključava temu.",
-      "Belgelenmiş anıtlar arasında taze bir yürüyüş. Her dokunuş başka bir sıra çeker. Girdiğiniz doğum yılı temayı kilitleyen tek şeydir.",
-      "Свіжа прогулянка документованими пам'ятниками. Кожен дотик тягне іншу послідовність. Рік народження, якщо ввести, єдине, що фіксує тему.",
-     "Një shëtitje e re nëpër monumente të dokumentuara. Çdo prekje nxjerr një radhë tjetër. Një vit lindjeje, nëse futni një, është e vetmja gjë që e kyç temën."),
+      "A fresh walk through documented monuments. Each tap draws a different sequence. A year from the atlas, if you choose one, is the only thing that locks the theme.",
+      "Нова прошетка низ документирани споменици. Секое допирање влече друга низа. Година од атласот, ако изберете една, е единственото што ја заклучува темата.",
+      "Nova šetnja kroz dokumentovane spomenike. Svaki dodir vuče drugi niz. Godina iz atlasa, ako izaberete jednu, jedino zaključava temu.",
+      "Belgelenmiş anıtlar arasında taze bir yürüyüş. Her dokunuş başka bir sıra çeker. Atlastan seçtiğiniz bir yıl temayı kilitleyen tek şeydir.",
+      "Свіжа прогулянка документованими пам'ятниками. Кожен дотик тягне іншу послідовність. Рік з атласу, якщо обрати один, єдине, що фіксує тему.",
+     "Një shëtitje e re nëpër monumente të dokumentuara. Çdo prekje nxjerr një radhë tjetër. Një vit nga atlasi, nëse zgjidhni një, është e vetmja gjë që e kyç temën."),
   };
 }
 
@@ -42,7 +70,7 @@ export type AroundThemeChoice = {
 };
 
 export function isAroundBirthYear(year: number): boolean {
-  return Number.isInteger(year) && year >= AROUND_YEAR_MIN && year <= AROUND_YEAR_MAX;
+  return DOCUMENTED_YEARS.has(year);
 }
 
 export function aroundThemeDefault(): AroundThemeChoice {
@@ -65,12 +93,12 @@ export function aroundThemeForYear(year: number): AroundThemeChoice | null {
       themeId: "1963-memory",
       year,
       note: L(
-        "Your birth year is at or before 1963. The walk uses the documented earthquake-memory sequence in the atlas. It is not a biography of you.",
-        "Годината на раѓање е во или пред 1963. Прошетката ја користи документираната низа за сеќавање на земјотресот во атласот. Не е биографија за вас.",
-        "Godina rođenja je u ili pre 1963. Šetnja koristi dokumentovani niz sećanja na zemljotres u atlasu. To nije vaša biografija.",
-        "Doğum yılınız 1963 veya öncesi. Yürüyüş atlasın belgelenmiş deprem-belleği dizisini kullanır. Bu sizin biyografiniz değildir.",
-        "Рік народження — 1963 або раніше. Прогулянка бере документовану послідовність пам'яті землетрусу з атласу. Це не ваша біографія.",
-       "Viti juaj i lindjes është 1963 ose më parë. Shëtitja përdor radhën e dokumentuar të kujtesës së tërmetit në atlas. Ajo nuk është një biografi juaja."),
+        "This year is at or before 1963. The walk uses the documented earthquake-memory sequence in the atlas.",
+        "Годината е во или пред 1963. Прошетката ја користи документираната низа за сеќавање на земјотресот во атласот.",
+        "Godina je u ili pre 1963. Šetnja koristi dokumentovani niz sećanja na zemljotres u atlasu.",
+        "Bu yıl 1963 veya öncesi. Yürüyüş atlasın belgelenmiş deprem-belleği dizisini kullanır.",
+        "Цей рік — 1963 або раніше. Прогулянка бере документовану послідовність пам'яті землетрусу з атласу.",
+       "Ky vit është 1963 ose më parë. Shëtitja përdor radhën e dokumentuar të kujtesës së tërmetit në atlas."),
     };
   }
   if (year <= 1990) {
