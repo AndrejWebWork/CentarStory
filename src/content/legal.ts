@@ -1,7 +1,7 @@
 import { L } from "@/content/copy";
 import type { Copy } from "@/content/types";
 
-export const LEGAL_UPDATED = "2026-11-03";
+export const LEGAL_UPDATED = "2026-11-04";
 
 export type LegalSlug = "legal" | "privacy" | "terms" | "cookies" | "impressum";
 
@@ -109,12 +109,32 @@ export const legalDocuments: LegalDocument[] = [
         heading: L("Your choices", "Вашите избори", "Vaši izbori", "Seçimleriniz", "Ваші вибори", "Zgjedhjet tuaja"),
         body: [
           L(
-            "You can refuse the camera and use the catalog instead. You can clear site data in the browser to drop the locale cookie and any stored scan shot. Third-party sites you open from here (JSP, app stores, official event pages) have their own policies.",
-            "Камерата може да ја одбиете и да го користите каталогот. Податоците на страницата во прелистувачот ги бришете заедно со јазичното колаче и снимениот кадар. Надворешните страници што ги отворате оттука (ЈСП, продавници за апликации, службени настани) имаат свои правила.",
-            "Kameru možete odbiti i koristiti katalog. Podatke sajta u pregledaču brišete zajedno sa jezičkim kolačićem i snimljenim kadrom. Spoljne stranice koje otvorite odavde (JSP, prodavnice aplikacija, zvanični događaji) imaju svoja pravila.",
-            "Kamerayı reddedip kataloğu kullanabilirsiniz. Tarayıcıdaki site verisini silerek dil çerezini ve kayıtlı tarama karesini kaldırırsınız. Buradan açtığınız üçüncü taraf sitelerin (JSP, uygulama mağazaları, resmi etkinlik sayfaları) kendi politikaları vardır.",
-            "Камеру можна відхилити і користуватися каталогом. Дані сайту в браузері стираються разом із мовним cookie і збереженим кадром. Сторонні сайти, які ви відкриваєте звідси (JSP, крамниці додатків, офіційні події), мають власні політики.",
-           "Mund ta refuzoni kamerën dhe të përdorni katalogun. Mund t'i pastroni të dhënat e sajtit në shfletues për të hequr kukinë e lokalitetit dhe çdo shkrepje të ruajtur të skanimit. Sajtet e palëve të treta që hapni nga këtu (JSP, dyqanet e aplikacioneve, faqet zyrtare të ngjarjeve) kanë politikat e tyre."),
+            "You can refuse the camera and use the catalog instead. You can clear site data in the browser to drop the locale cookie and any stored scan shot. Third-party sites you open from here (JSP, app stores, official event pages, Wikimedia Commons) have their own policies.",
+            "Камерата може да ја одбиете и да го користите каталогот. Податоците на страницата во прелистувачот ги бришете заедно со јазичното колаче и снимениот кадар. Надворешните страници што ги отворате оттука (ЈСП, продавници за апликации, службени настани, Ризницата на Викимедија) имаат свои правила.",
+            "Kameru možete odbiti i koristiti katalog. Podatke sajta u pregledaču brišete zajedno sa jezičkim kolačićem i snimljenim kadrom. Spoljne stranice koje otvorite odavde (JSP, prodavnice aplikacija, zvanični događaji, Ostava Vikimedije) imaju svoja pravila.",
+            "Kamerayı reddedip kataloğu kullanabilirsiniz. Tarayıcıdaki site verisini silerek dil çerezini ve kayıtlı tarama karesini kaldırırsınız. Buradan açtığınız üçüncü taraf sitelerin (JSP, uygulama mağazaları, resmi etkinlik sayfaları, Wikimedia Commons) kendi politikaları vardır.",
+            "Камеру можна відхилити і користуватися каталогом. Дані сайту в браузері стираються разом із мовним cookie і збереженим кадром. Сторонні сайти, які ви відкриваєте звідси (JSP, крамниці додатків, офіційні події, Вікісховище), мають власні політики.",
+           "Mund ta refuzoni kamerën dhe të përdorni katalogun. Mund t'i pastroni të dhënat e sajtit në shfletues për të hequr kukinë e lokalitetit dhe çdo shkrepje të ruajtur të skanimit. Sajtet e palëve të treta që hapni nga këtu (JSP, dyqanet e aplikacioneve, faqet zyrtare të ngjarjeve, Wikimedia Commons) kanë politikat e tyre."),
+        ],
+      },
+      {
+        heading: L(
+          "Photograph sources",
+          "Извори на фотографиите",
+          "Izvori fotografija",
+          "Fotoğraf kaynakları",
+          "Джерела світлин",
+          "Burimet e fotografive",
+        ),
+        body: [
+          L(
+            "Place, monument, and dish photographs are requested by your browser from Wikimedia Commons at https://commons.wikimedia.org/ when a page shows them. Wikimedia can see that request. Each file below links to the page it was taken from, with the photographer and the licence. A few restaurant photographs are stored on this site; their source pages are the house’s own site. CentarStory does not keep a copy of your request to those hosts.",
+            "Фотографиите на места, споменици и јадења вашиот прелистувач ги бара од Ризницата на Викимедија на https://commons.wikimedia.org/ кога страницата ги покажува. Викимедија може да го види тоа барање. Секоја датотека подолу води до страницата од каде е преземена, со фотографот и лиценцата. Неколку фотографии од ресторани се чуваат на оваа страница; нивниот извор е страницата на самата куќа. CentarStory не чува копија од вашето барање кон тие домаќини.",
+            "Fotografije mesta, spomenika i jela vaš pregledač traži sa Ostave Vikimedije na https://commons.wikimedia.org/ kad ih stranica prikaže. Vikimedija može da vidi taj zahtev. Svaka datoteka ispod vodi na stranicu odakle je preuzeta, sa fotografom i licencom. Nekoliko fotografija restorana čuva se na ovom sajtu; njihov izvor je stranica same kuće. CentarStory ne čuva kopiju vašeg zahteva prema tim domaćinima.",
+            "Yer, anıt ve yemek fotoğraflarını tarayıcınız, sayfa onları gösterdiğinde https://commons.wikimedia.org/ adresindeki Wikimedia Commons’tan ister. Wikimedia bu isteği görebilir. Aşağıdaki her dosya, fotoğrafçı ve lisansla birlikte alındığı sayfaya gider. Birkaç restoran fotoğrafı bu sitede durur; kaynakları evin kendi sayfasıdır. CentarStory bu sunuculara giden isteğinizin kopyasını tutmaz.",
+            "Світлини місць, пам'яток і страв ваш браузер запитує з Вікісховища за адресою https://commons.wikimedia.org/, коли сторінка їх показує. Вікімедіа може бачити цей запит. Кожен файл нижче веде на сторінку, звідки його взято, з фотографом і ліцензією. Кілька світлин ресторанів зберігаються на цьому сайті; їхнє джерело — сторінка самого закладу. CentarStory не зберігає копію вашого запиту до цих хостів.",
+            "Fotografitë e vendeve, monumenteve dhe gatimeve i kërkon shfletuesi juaj nga Wikimedia Commons te https://commons.wikimedia.org/ kur një faqe i shfaq. Wikimedia mund ta shohë atë kërkesë. Çdo skedar më poshtë lidhet me faqen nga ku është marrë, me fotografin dhe licencën. Disa fotografi restorantesh ruhen në këtë sajt; burimi i tyre është faqja e vetë shtëpisë. CentarStory nuk mban një kopje të kërkesës suaj drejt atyre strehuesve.",
+          ),
         ],
       },
     ],

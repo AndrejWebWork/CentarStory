@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import type { Coordinates } from "@/content/types";
 import { loadWalkingPath, type WalkPath } from "@/lib/mapping/walk";
 
-export function useWalkingPath(points: Coordinates[] | null) {
-  const key =
-    points?.map((point) => `${point.lat.toFixed(5)},${point.lng.toFixed(5)}`).join(";") ?? "";
+export function useWalkingPath(points: Coordinates[] | null, withSteps = false) {
+  const key = `${
+    points?.map((point) => `${point.lat.toFixed(5)},${point.lng.toFixed(5)}`).join(";") ?? ""
+  }${withSteps ? "|steps" : ""}`;
   const [tracked, setTracked] = useState(key);
   const [status, setStatus] = useState<"idle" | "loading" | "ready">(key ? "loading" : "idle");
   const [path, setPath] = useState<WalkPath | null>(null);
@@ -19,7 +20,7 @@ export function useWalkingPath(points: Coordinates[] | null) {
 
   useEffect(() => {
     if (!key) return;
-    const current = key.split(";").map((pair) => {
+    const current = key.replace(/\|steps$/, "").split(";").filter(Boolean).map((pair) => {
       const [lat, lng] = pair.split(",");
       return { lat: Number(lat), lng: Number(lng) };
     });
@@ -27,7 +28,7 @@ export function useWalkingPath(points: Coordinates[] | null) {
       return;
     }
     let cancelled = false;
-    loadWalkingPath(current).then((next) => {
+    loadWalkingPath(current, key.endsWith("|steps")).then((next) => {
       if (cancelled) return;
       setPath(next);
       setStatus("ready");

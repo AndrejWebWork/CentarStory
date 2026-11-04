@@ -100,6 +100,7 @@ export default async function EventPage({
                 explore("eventsNote"),
               ]}
               locale={locale}
+              promptLabel={story("listenPrompt")}
               listenLabel={story("listen")}
               stopLabel={story("listenStop")}
               statusLabel={story("listenStatus")}

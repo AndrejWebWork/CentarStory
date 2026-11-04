@@ -35,7 +35,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(6rem + env(safe-area-inset-top));
+  scroll-padding-top: calc(5.25rem + env(safe-area-inset-top));
   scrollbar-width: none;
   -ms-overflow-style: none;
   overflow-x: clip;
@@ -96,18 +96,11 @@ figcaption {
 
 .cs-mast {
   box-sizing: border-box;
-  height: auto;
-  min-height: calc(4.75rem + env(safe-area-inset-top));
-  padding-top: env(safe-area-inset-top);
 }
 
 @media (min-width: 640px) {
   .cs-brand {
     font-size: 1.875rem;
-  }
-
-  .cs-mast {
-    min-height: calc(6rem + env(safe-area-inset-top));
   }
 }
 
@@ -146,10 +139,6 @@ figcaption {
 }
 
 @media (max-height: 480px) and (max-width: 1023px) {
-  .cs-mast {
-    min-height: calc(3.25rem + env(safe-area-inset-top));
-  }
-
   #content[class*="pb-36"] {
     padding-bottom: calc(6.25rem + env(safe-area-inset-bottom));
   }
@@ -310,8 +299,8 @@ figcaption {
   justify-content: center;
   padding: 0.85rem 1.35rem;
   overflow: hidden;
-  border-radius: 0.55rem;
-  background: linear-gradient(118deg, #2f5bff 0%, #6a5cff 52%, #ff6b4a 128%);
+  border-radius: 999px;
+  background: linear-gradient(128deg, #ffb08a 0%, #ff6b4a 48%, #e24b2d 100%);
   color: var(--foam);
   font-family: var(--font-unbounded), "Segoe UI", sans-serif;
   font-size: clamp(1rem, 2.6vw, 1.35rem);
@@ -320,16 +309,18 @@ figcaption {
   letter-spacing: -0.02em;
   text-align: center;
   text-wrap: balance;
-  box-shadow: 0 16px 34px rgba(59, 109, 255, 0.32);
+  box-shadow: 0 16px 34px rgba(226, 75, 45, 0.38);
   transition:
     transform 0.25s var(--ease-editorial),
-    box-shadow 0.25s var(--ease-editorial);
+    box-shadow 0.25s var(--ease-editorial),
+    background 0.25s var(--ease-editorial);
 }
 
 .cs-route-btn:hover,
 .cs-route-btn:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(59, 109, 255, 0.4);
+  background: linear-gradient(128deg, #ffc4a8 0%, #ff8164 48%, #ff6b4a 100%);
+  box-shadow: 0 20px 40px rgba(226, 75, 45, 0.46);
 }
 
 .cs-btn-patina {
@@ -341,6 +332,125 @@ figcaption {
   border: 1px solid var(--line);
   background: var(--foam);
   color: var(--ink);
+}
+
+.cs-listen {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.cs-listen-prompt {
+  font-family: var(--font-unbounded), "Segoe UI", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: inherit;
+}
+
+.cs-tape {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  height: 3.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.7rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 42%),
+    linear-gradient(180deg, #314056 0%, #171d29 100%);
+  color: var(--foam);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 10px 22px rgba(15, 23, 42, 0.2);
+}
+
+.cs-tape:hover,
+.cs-tape:focus-visible {
+  transform: translateY(-1px);
+}
+
+.cs-reel {
+  width: 1.85rem;
+  height: 1.85rem;
+  flex: none;
+  border: 2px solid #d5deec;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, #10151f 0 3px, transparent 3.5px),
+    repeating-conic-gradient(from 8deg, #e8eef7 0 14deg, #1a2230 14deg 28deg);
+  box-shadow: inset 0 0 0 5px #243044;
+}
+
+.cs-tape.is-playing .cs-reel {
+  animation: cs-reel-spin 1.15s linear infinite;
+}
+
+.cs-tape-window {
+  position: relative;
+  display: flex;
+  min-width: 9.5rem;
+  max-width: 16rem;
+  height: 1.85rem;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.28rem;
+  background: #0c111b;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cs-tape-film {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 220%;
+  background:
+    linear-gradient(180deg, transparent 0 3px, rgba(255, 255, 255, 0.28) 3px 5px, transparent 5px 1.35rem, rgba(255, 255, 255, 0.28) 1.35rem 1.48rem, transparent 1.48rem),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 14px, rgba(255, 255, 255, 0.16) 14px 16px);
+  opacity: 0.85;
+}
+
+.cs-tape.is-playing .cs-tape-film {
+  animation: cs-tape-run 1.6s linear infinite;
+}
+
+.cs-tape-word {
+  position: relative;
+  padding: 0 0.45rem;
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.cs-listen-missing {
+  font-size: 0.75rem;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--copper);
+}
+
+@keyframes cs-reel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cs-tape-run {
+  to {
+    transform: translateX(-42%);
+  }
 }
 
 .cs-back {
@@ -506,10 +616,23 @@ figcaption {
 .cs-mast {
   position: relative;
   width: 100%;
+  height: calc(4.75rem + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   background: var(--mast);
   color: var(--foam);
   border-radius: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  .cs-mast {
+    height: 4rem;
+    padding-top: 0;
+    border-radius: 999px;
+    border-bottom: 0;
+    box-shadow: 0 10px 32px rgba(15, 23, 42, 0.16);
+  }
 }
 
 .cs-nav-link {
@@ -761,8 +884,8 @@ figcaption {
 
 @media (min-width: 1024px) {
   .cs-nav-lens:not(.cs-nav-lens--raised) {
-    width: 3.75rem;
-    height: 3.75rem;
+    width: 2.85rem;
+    height: 2.85rem;
   }
 }
 

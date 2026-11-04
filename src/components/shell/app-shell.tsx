@@ -49,8 +49,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#content">
         {t("common.skip")}
       </a>
-      <header className="sticky top-0 z-50 isolate">
-        <div className="cs-mast flex items-center justify-between gap-2 px-3 sm:gap-3 sm:px-5 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-3 lg:px-8">
+      <header className="sticky top-0 z-50 isolate lg:px-4 lg:pt-3">
+        <div className="cs-mast mx-auto flex items-center justify-between gap-2 px-3 sm:gap-3 sm:px-5 lg:grid lg:h-16 lg:max-w-[96rem] lg:grid-cols-[1fr_auto_1fr] lg:gap-3 lg:px-5">
           <Link href="/" className="flex min-w-0 items-center justify-self-start">
             <span className="cs-brand font-display leading-none tracking-tight">CentarStory</span>
           </Link>

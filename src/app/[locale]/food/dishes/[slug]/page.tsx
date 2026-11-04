@@ -78,6 +78,7 @@ export default async function DishPage({
                 pick(dish.eat, locale),
               ]}
               locale={locale}
+              promptLabel={story("listenPrompt")}
               listenLabel={story("listen")}
               stopLabel={story("listenStop")}
               statusLabel={story("listenStatus")}

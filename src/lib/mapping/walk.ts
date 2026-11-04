@@ -1,11 +1,20 @@
 import type { Coordinates } from "@/content/types";
 import { haversineMeters } from "@/content/knowledge/boundary";
 
+export type WalkStep = {
+  kind: string;
+  street: string;
+  meters: number;
+  lat: number;
+  lng: number;
+};
+
 export type WalkPath = {
   positions: [number, number][];
   minutes: number | null;
   meters: number | null;
   source: "street" | "direct";
+  steps: WalkStep[];
 };
 
 /** Straight-line length with a footpath factor. Never present as street walking distance. */
@@ -24,19 +33,21 @@ export function approximateWalkMinutes(meters: number): number {
 
 const OSRM_FOOT = "https://router.project-osrm.org/route/v1/foot";
 
-export async function loadWalkingPath(points: Coordinates[]): Promise<WalkPath> {
+export async function loadWalkingPath(points: Coordinates[], withSteps = false): Promise<WalkPath> {
   const approx = approximateWalkMeters(points);
   const direct: WalkPath = {
     positions: points.map((point) => [point.lat, point.lng]),
     minutes: null,
     meters: null,
     source: "direct",
+    steps: [],
   };
 
   if (points.length < 2) return direct;
 
   const coord = points.map((point) => `${point.lng},${point.lat}`).join(";");
-  const url = `${OSRM_FOOT}/${coord}?overview=full&geometries=geojson`;
+  const stepsQuery = withSteps ? "&steps=true" : "";
+  const url = `${OSRM_FOOT}/${coord}?overview=full&geometries=geojson${stepsQuery}`;
 
   try {
     const response = await fetch(url);
@@ -46,21 +57,80 @@ export async function loadWalkingPath(points: Coordinates[]): Promise<WalkPath> 
         duration?: number;
         distance?: number;
         geometry?: { coordinates?: [number, number][] };
+        legs?: {
+          steps?: {
+            name?: string;
+            distance?: number;
+            maneuver?: { type?: string; modifier?: string; location?: [number, number] };
+          }[];
+        }[];
       }[];
     };
     const route = data.routes?.[0];
     const line = route?.geometry?.coordinates;
     if (!route || !line?.length) return { ...direct, meters: approx };
+    const rawSteps = route.legs?.[0]?.steps ?? [];
     return {
       positions: line.map(([lng, lat]) => [lat, lng]),
       minutes:
         typeof route.duration === "number" ? Math.max(1, Math.round(route.duration / 60)) : null,
       meters: typeof route.distance === "number" ? Math.round(route.distance) : null,
       source: "street",
+      steps: rawSteps.flatMap((step) => {
+        const location = step.maneuver?.location;
+        if (!location) return [];
+        const [lng, lat] = location;
+        return [
+          {
+            kind: maneuverKind(step.maneuver?.type, step.maneuver?.modifier),
+            street: (step.name ?? "").trim(),
+            meters: typeof step.distance === "number" ? Math.round(step.distance) : 0,
+            lat,
+            lng,
+          },
+        ];
+      }),
     };
   } catch {
     return { ...direct, meters: approx };
   }
+}
+
+function maneuverKind(type?: string, modifier?: string) {
+  if (type === "arrive") return "arrive";
+  if (type === "roundabout" || type === "rotary" || type === "exit roundabout") return "roundabout";
+  if (type === "depart") return "depart";
+  if (modifier === "uturn") return "uturn";
+  if (modifier === "sharp left") return "sharp-left";
+  if (modifier === "left") return "left";
+  if (modifier === "slight left") return "slight-left";
+  if (modifier === "sharp right") return "sharp-right";
+  if (modifier === "right") return "right";
+  if (modifier === "slight right") return "slight-right";
+  return "straight";
+}
+
+/** The next maneuver the walker has not yet passed. */
+export function upcomingStep(user: Coordinates, steps: WalkStep[]): WalkStep | null {
+  if (steps.length === 0) return null;
+  let index = 0;
+  for (let i = 0; i < steps.length - 1; i += 1) {
+    const here = haversineMeters(user, steps[i]);
+    const next = haversineMeters(user, steps[i + 1]);
+    if (next + 12 < here) index = i + 1;
+    else break;
+  }
+  const step = steps[index];
+  return step.kind === "arrive" ? null : step;
+}
+
+/** Coarse distance so the spoken line does not change on every GPS tick. */
+export function distanceBand(meters: number) {
+  const marks = [800, 500, 300, 200, 100, 50, 25];
+  for (const mark of marks) {
+    if (meters >= mark) return mark;
+  }
+  return 25;
 }
 
 export function walkingDirections(lat: number, lng: number) {

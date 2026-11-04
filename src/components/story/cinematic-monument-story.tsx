@@ -256,7 +256,7 @@ export async function CinematicMonumentStory({
       />
 
       <nav
-        className="sticky top-14 z-30 border-b border-ink bg-paper/95 lg:top-[4.4rem]"
+        className="sticky top-[calc(4.75rem+env(safe-area-inset-top))] z-30 border-b border-ink bg-paper/95 lg:top-[5.25rem]"
         aria-label={story("chapters")}
       >
         <div className="mx-auto flex max-w-[96rem] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-[11px] tracking-[0.12em] uppercase sm:px-5 lg:px-8">
@@ -264,6 +264,7 @@ export async function CinematicMonumentStory({
             title={pick(place.name, locale)}
             paragraphs={spoken}
             locale={locale}
+            promptLabel={story("listenPrompt")}
             listenLabel={story("listen")}
             stopLabel={story("listenStop")}
             statusLabel={story("listenStatus")}

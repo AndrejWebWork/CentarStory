@@ -22,6 +22,8 @@ import {
 } from "@/lib/itinerary/around-theme";
 import { planItinerary, type ItineraryPlan } from "@/lib/itinerary";
 import { useWalkingPath } from "@/lib/mapping/use-walking-path";
+import { distanceBand, upcomingStep } from "@/lib/mapping/walk";
+import { speak, stopSpeaking } from "@/lib/speech/speak";
 
 const Atlas = dynamic(
   () => import("@/components/map/explore-map").then((mod) => mod.ExploreMap),
@@ -60,6 +62,10 @@ export function AroundGuide() {
   const [geoError, setGeoError] = useState(false);
   const [nextIndex, setNextIndex] = useState(0);
   const mapRef = useRef<HTMLDivElement>(null);
+  const announced = useRef(new Set<string>());
+  const spoken = useRef({ slug: "", kind: "", street: "", band: Infinity });
+  const advanceTimer = useRef<number | null>(null);
+  const [voiceLine, setVoiceLine] = useState("");
 
   const points = useMemo(() => {
     if (!plan) return null;
@@ -78,7 +84,7 @@ export function AroundGuide() {
     if (rest.length === 0) return null;
     return [snapOrigin(user.lat, user.lng), ...rest];
   }, [guiding, nextIndex, plan, user]);
-  const { path: guidePath } = useWalkingPath(guidePoints);
+  const { path: guidePath } = useWalkingPath(guidePoints, true);
   const nextStop = guiding ? plan?.stops[nextIndex] : undefined;
   const nextSite = nextStop ? getSite(nextStop.slug) : undefined;
   const nextPoint = nextStop ? coordinatesOf(nextStop.slug) : null;
@@ -136,9 +142,69 @@ export function AroundGuide() {
   }, [guiding]);
 
   useEffect(() => {
-    if (!guiding || !atStop || lastStop) return;
-    setNextIndex((index) => index + 1);
-  }, [atStop, guiding, lastStop]);
+    if (guiding) return;
+    announced.current.clear();
+    spoken.current = { slug: "", kind: "", street: "", band: Infinity };
+    if (advanceTimer.current) {
+      window.clearTimeout(advanceTimer.current);
+      advanceTimer.current = null;
+    }
+    setVoiceLine("");
+    stopSpeaking();
+  }, [guiding]);
+
+  useEffect(() => {
+    if (!guiding || !atStop || !nextSite) return;
+    if (announced.current.has(nextSite.slug)) return;
+    announced.current.add(nextSite.slug);
+    const name = pick(nextSite.officialName, locale);
+    const explain = pick(nextSite.summary, locale);
+    const line = lastStop
+      ? t("guideSpeakDone", { name, explain })
+      : t("guideSpeakArrive", { name, explain });
+    setVoiceLine(line);
+    speak(line, locale);
+    if (lastStop) return;
+    if (advanceTimer.current) window.clearTimeout(advanceTimer.current);
+    advanceTimer.current = window.setTimeout(() => {
+      advanceTimer.current = null;
+      setNextIndex((index) => index + 1);
+    }, 9000);
+  }, [atStop, guiding, lastStop, locale, nextSite, t]);
+
+  useEffect(() => {
+    if (!guiding || atStop) return;
+    if (geoError) {
+      if (spoken.current.slug === "denied") return;
+      spoken.current = { slug: "denied", kind: "", street: "", band: Infinity };
+      const line = t("guideDenied");
+      setVoiceLine(line);
+      speak(line, locale);
+      return;
+    }
+    if (!user || !nextSite) {
+      if (spoken.current.slug === "waiting") return;
+      spoken.current = { slug: "waiting", kind: "", street: "", band: Infinity };
+      const line = t("guideWaiting");
+      setVoiceLine(line);
+      speak(line, locale);
+      return;
+    }
+    const step = guidePath?.steps.length ? upcomingStep(user, guidePath.steps) : null;
+    const kind = step?.kind ?? "straight";
+    const street = step?.street ?? "";
+    const band = distanceBand(metersToNext ?? 0);
+    const prev = spoken.current;
+    if (prev.slug === nextSite.slug && prev.kind === kind && prev.street === street && band >= prev.band) return;
+    spoken.current = { slug: nextSite.slug, kind, street, band };
+    const name = pick(nextSite.officialName, locale);
+    const maneuver = t(`guideMan_${kind}`);
+    const line = street
+      ? t("guideSpeakStep", { maneuver, street, meters: band, name })
+      : t("guideSpeakStepPlain", { maneuver, meters: band, name });
+    setVoiceLine(line);
+    speak(line, locale);
+  }, [atStop, geoError, guidePath, guiding, locale, metersToNext, nextSite, t, user]);
 
   function build(next: AroundThemeChoice, options?: { shuffle?: boolean; startSlug?: string }) {
     const starts = aroundMonumentStarts();
@@ -321,20 +387,8 @@ export function AroundGuide() {
                 />
               </div>
               {guiding ? (
-                <p className="border border-line bg-foam px-4 py-3 text-sm" aria-live="polite">
-                  {geoError
-                    ? t("guideDenied")
-                    : !user
-                      ? t("guideWaiting")
-                      : atStop && lastStop
-                        ? t("guideDone")
-                        : atStop && nextSite
-                          ? t("guideHere", { name: pick(nextSite.officialName, locale) })
-                          : nextSite
-                            ? `${t("guideStop", { name: pick(nextSite.officialName, locale) })}${
-                                metersToNext !== null ? ` · ${t("guideMeters", { meters: metersToNext })}` : ""
-                              }`
-                            : t("guideWaiting")}
+                <p className="border border-line bg-foam px-4 py-3 text-sm leading-relaxed" aria-live="assertive">
+                  {voiceLine || t("guideWaiting")}
                 </p>
               ) : null}
 
@@ -382,6 +436,7 @@ export function AroundGuide() {
                 <button
                   type="button"
                   className="cs-btn cs-btn-cobalt flex-1 sm:flex-none"
+                  aria-pressed={guiding}
                   onClick={() => {
                     setGuiding((on) => !on);
                     setGeoError(false);

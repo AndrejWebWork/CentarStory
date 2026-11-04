@@ -1,4 +1,5 @@
 import { L } from "@/content/copy";
+import { monumentMedia } from "@/content/knowledge/media-monuments";
 import type { MediaAsset } from "@/content/knowledge/schema";
 
 export const media: MediaAsset[] = [
@@ -702,6 +703,7 @@ export const media: MediaAsset[] = [
     verified: true,
     captured: "2023-11-23",
   },
+  ...monumentMedia,
 ];
 
 const byId = new Map(media.map((item) => [item.id, item]));

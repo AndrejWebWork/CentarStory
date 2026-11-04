@@ -87,15 +87,20 @@ export function MovementMasthead() {
             <p data-mast-fade className="text-[10px] tracking-[0.26em] text-brass uppercase sm:text-[11px]">
               41.9957°N · 21.4312°E · Vardar Axis
             </p>
-            <h1 className="mt-3 font-display text-[clamp(3.1rem,10.5vw,8.6rem)] leading-[0.84] tracking-tight sm:mt-4">
+            <h1 className="mt-3 font-display text-[clamp(1.75rem,3.35vw,4.25rem)] leading-[0.92] tracking-[-0.03em] break-normal sm:mt-4">
               <span className="block overflow-hidden">
-                <span data-mast-title className="block">
+                <span data-mast-title className="block whitespace-nowrap break-normal">
                   Centar
                 </span>
               </span>
-              <span className="block overflow-hidden pl-[8%] text-brass italic">
-                <span data-mast-title className="block">
-                  {t("title")}.
+              <span className="block overflow-hidden text-brass italic">
+                <span data-mast-title className="block whitespace-nowrap break-normal">
+                  {t("lineA")}
+                </span>
+              </span>
+              <span className="block overflow-hidden text-brass italic">
+                <span data-mast-title className="block whitespace-nowrap break-normal">
+                  {t("lineB")}.
                 </span>
               </span>
             </h1>
@@ -107,7 +112,7 @@ export function MovementMasthead() {
           <div data-mast-fade className="grid grid-cols-2 gap-px bg-foam/15">
             <a
               href="#move"
-              className="flex items-center justify-between bg-foam px-4 py-4 text-[11px] tracking-[0.16em] text-ink uppercase hover:bg-paper-2 sm:px-5 sm:text-xs"
+              className="flex items-center justify-between bg-[linear-gradient(128deg,#ffb08a_0%,#ff6b4a_48%,#e24b2d_100%)] px-4 py-4 text-[11px] tracking-[0.16em] text-foam uppercase hover:bg-[linear-gradient(128deg,#ffc4a8_0%,#ff8164_48%,#ff6b4a_100%)] sm:px-5 sm:text-xs"
             >
               <span>{t("makeRoute")}</span>
               <ArrowDownRight className="size-4" aria-hidden="true" />

@@ -6,6 +6,7 @@ import {
   ExternalLink,
   Footprints,
   Phone,
+  Signpost,
   Smartphone,
   Ticket,
 } from "lucide-react";
@@ -20,7 +21,7 @@ import { jspFares, transportLinks } from "@/content/transport";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
 import type { MediaAsset } from "@/content/knowledge/schema";
 
-type ModeId = "walk" | "bus" | "enjoy" | "binbin" | "taxi";
+type ModeId = "walk" | "bus" | "enjoy" | "binbin" | "taxi" | "route";
 
 function AppLinks({
   play,
@@ -161,6 +162,13 @@ export function TransportGuide() {
       image: taxiImage,
       wash: "from-brass/20 via-ink/50 to-ink",
     },
+    {
+      id: "route",
+      title: around("makeRoute"),
+      icon: Signpost,
+      wash: "from-[#ffb08a] via-[#ff6b4a] to-[#e24b2d]",
+      href: "/around",
+    },
   ];
 
   const active = modes.find((mode) => mode.id === open);
@@ -217,7 +225,7 @@ export function TransportGuide() {
         </section>
       ) : (
         <section className="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8">
-          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
             {modes.map((mode) => {
               const className = "group relative block aspect-[4/5] w-full overflow-hidden bg-ink text-left text-foam";
               const tile = (
