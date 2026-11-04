@@ -269,8 +269,7 @@ export function AroundGuide() {
               className="grid overflow-hidden border border-line bg-foam lg:grid-cols-12"
             >
               <div className="flex flex-col justify-between border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
-                <p className="cs-kicker">01 — 41.9957°N · 21.4312°E</p>
-                <button type="button" className="cs-route-btn mt-6 sm:mt-10" onClick={makeDefault}>
+                <button type="button" className="cs-route-btn" onClick={makeDefault}>
                   {t("makeRoute")}
                 </button>
               </div>
@@ -306,7 +305,10 @@ export function AroundGuide() {
                     {t("yearInvalid")}
                   </p>
                 ) : null}
-                <button type="submit" className="cs-btn cs-btn-cobalt mt-5 h-12 w-full">
+                <button
+                  type="submit"
+                  className="mt-5 flex min-h-14 w-full items-center justify-center rounded-full bg-ink px-5 text-[0.95rem] font-semibold tracking-wide text-foam shadow-[0_12px_28px_rgba(15,23,42,0.22)] transition hover:-translate-y-0.5 hover:bg-[#1e293b]"
+                >
                   {t("yearSubmit")}
                 </button>
               </form>

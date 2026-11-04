@@ -84,10 +84,7 @@ export function MovementMasthead() {
               />
               <circle cx="176" cy="112" r="3.5" className="fill-cobalt" />
             </svg>
-            <p data-mast-fade className="text-[10px] tracking-[0.26em] text-brass uppercase sm:text-[11px]">
-              41.9957°N · 21.4312°E · Vardar Axis
-            </p>
-            <h1 className="mt-3 font-display text-[clamp(1.75rem,3.35vw,4.25rem)] leading-[0.92] tracking-[-0.03em] break-normal sm:mt-4">
+            <h1 className="font-display text-[clamp(1.75rem,3.35vw,4.25rem)] leading-[0.92] tracking-[-0.03em] break-normal">
               <span className="block overflow-hidden">
                 <span data-mast-title className="block whitespace-nowrap break-normal">
                   Centar

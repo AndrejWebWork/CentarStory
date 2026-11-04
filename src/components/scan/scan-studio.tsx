@@ -301,9 +301,6 @@ function stopCamera() {
             <span className="absolute top-1/2 left-1/2 h-px w-6 -translate-x-1/2 -translate-y-1/2 bg-cobalt" />
           </>
         )}
-        <span className="absolute top-2 left-3 text-[10px] tracking-[0.24em] text-foam/75 uppercase">
-          41.9957°N · 21.4312°E
-        </span>
       </div>
       {phase === "reading" ? (
         <p
