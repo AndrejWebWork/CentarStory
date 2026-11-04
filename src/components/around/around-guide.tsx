@@ -268,8 +268,9 @@ export function AroundGuide() {
               exit={reduce ? undefined : { opacity: 0, y: -8 }}
               className="grid overflow-hidden border border-line bg-foam lg:grid-cols-12"
             >
-              <div className="flex flex-col justify-between border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
-                <button type="button" className="cs-route-btn" onClick={makeDefault}>
+              <div className="flex flex-col border-b border-line p-5 sm:p-10 lg:col-span-6 lg:border-r lg:border-b-0">
+                <p className="max-w-md text-sm leading-relaxed text-ink-soft">{t("makeRouteHint")}</p>
+                <button type="button" className="cs-route-btn mt-5" onClick={makeDefault}>
                   {t("makeRoute")}
                 </button>
               </div>

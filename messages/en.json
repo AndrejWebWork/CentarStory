@@ -451,6 +451,7 @@
     "guideMan_arrive": "You are arriving",
     "museumsOnFoot": "{count} verified institutions are in the museum atlas.",
     "makeRoute": "Make me a route",
+    "makeRouteHint": "Builds a short walk through the monuments in Centar.",
     "orYear": "or write your year",
     "yearLabel": "Year",
     "yearPlaceholder": "Choose",

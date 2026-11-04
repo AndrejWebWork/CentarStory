@@ -451,6 +451,7 @@
     "guideMan_arrive": "Po arrin",
     "museumsOnFoot": "{count} institucione të verifikuara janë në atlasin e muzeve.",
     "makeRoute": "Më bëj një rrugë",
+    "makeRouteHint": "Ndërton një ecje të shkurtër ndër monumentet e Qendrës.",
     "orYear": "ose shkruaj vitin tënd",
     "yearLabel": "Viti",
     "yearPlaceholder": "Zgjidh",

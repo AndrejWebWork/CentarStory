@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { intlTag } from "@/lib/format";
+import { bestVoice, loadVoices, tune } from "@/lib/speech/speak";
 
 function piecesOf(script: string) {
   const text = script.replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
@@ -19,46 +20,6 @@ function piecesOf(script: string) {
     pieces.push(part);
   }
   return pieces;
-}
-
-function voiceScore(voice: SpeechSynthesisVoice, lang: string) {
-  const voiceLang = voice.lang.toLowerCase().replaceAll("_", "-");
-  const want = lang.toLowerCase();
-  const base = want.slice(0, 2);
-  if (!voiceLang.startsWith(base)) return -1;
-  let score = voiceLang === want ? 140 : 80;
-  const name = `${voice.name} ${voice.voiceURI}`.toLowerCase();
-  if (/natural|neural|premium|enhanced|wavenet|online/.test(name)) score += 90;
-  if (name.includes("google")) score += 50;
-  if (/espeak|compact|festival|android/.test(name)) score -= 70;
-  if (/(^| )(david|zira|mark|hazel)( |$)/.test(name) && !/natural|online|neural/.test(name)) score -= 25;
-  return score;
-}
-
-function bestVoice(voices: SpeechSynthesisVoice[], lang: string) {
-  return voices
-    .map((voice) => ({ voice, score: voiceScore(voice, lang) }))
-    .filter((entry) => entry.score >= 0)
-    .sort((a, b) => b.score - a.score)[0]?.voice;
-}
-
-function loadVoices(synth: SpeechSynthesis) {
-  return new Promise<SpeechSynthesisVoice[]>((resolve) => {
-    const current = synth.getVoices();
-    if (current.length > 0) {
-      resolve(current);
-      return;
-    }
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      synth.removeEventListener("voiceschanged", finish);
-      resolve(synth.getVoices());
-    };
-    synth.addEventListener("voiceschanged", finish);
-    window.setTimeout(finish, 900);
-  });
 }
 
 export function StoryListen({
@@ -133,11 +94,7 @@ export function StoryListen({
         return;
       }
       const utterance = new SpeechSynthesisUtterance(pieces[index] ?? "");
-      utterance.lang = voice?.lang || lang;
-      utterance.rate = 0.94;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      if (voice) utterance.voice = voice;
+      tune(utterance, voice, lang);
       utterance.onend = () => {
         index += 1;
         speakNext();
@@ -168,10 +125,9 @@ export function StoryListen({
         aria-pressed={speaking}
         aria-label={speaking ? stopLabel : listenLabel}
       >
-        <span className="cs-reel" aria-hidden="true" />
-        <span className="cs-tape-window">
-          <span className="cs-tape-film" aria-hidden="true" />
-          <span className="cs-tape-word">{speaking ? stopLabel : listenLabel}</span>
+        <span className="cs-tape-word">{speaking ? stopLabel : listenLabel}</span>
+        <span className="cs-tape-window" aria-hidden="true">
+          <span className="cs-tape-film" />
         </span>
         <span className="cs-reel" aria-hidden="true" />
       </button>

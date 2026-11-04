@@ -142,6 +142,7 @@ const seedsI: MonumentSeed[] = [
     claimText: L("OSM node 9200216072 verifies the location inside Centar; kept as `candidate` until primary procurement/sculptor records are attached.", "OSM јазолот 9200216072 ја потврдува положбата во Центар; се води како `candidate` додека не се прикачи примарен документ за авторот.", "OSM čvor 9200216072 potvrđuje položaj u Centru; vodi se kao `candidate`.", "OSM düğümü 9200216072 konumu Centar içinde doğrular; birincil sanatçı kaydı eklenene dek `candidate` olarak tutulur.", "Вузол OSM 9200216072 підтверджує розташування в Центрі; утримується як `candidate`.", "Nyja OSM 9200216072 verifikon vendndodhjen brenda Qendrës; mbajtur si `candidate` derisa të bashkëngjiten regjistrimet parësore të prokurimit/skulptorit."),
     sourceIds: ["osm-overpass-centar"],
     related: ["nikola-petrov-rusinski-monument", "pere-tosev-monument", "opera-ballet"],
+    images: ["img-caulev"],
     motif: "memorial",
     palette: ["#6c5947", "#211b15"],
   },

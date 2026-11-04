@@ -259,7 +259,7 @@ export async function CinematicMonumentStory({
         className="sticky top-[calc(4.75rem+env(safe-area-inset-top))] z-30 border-b border-ink bg-paper/95 lg:top-[5.25rem]"
         aria-label={story("chapters")}
       >
-        <div className="mx-auto flex max-w-[96rem] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-[11px] tracking-[0.12em] uppercase sm:px-5 lg:px-8">
+        <div className="mx-auto max-w-[96rem] lg:flex lg:flex-wrap lg:items-center lg:gap-x-4 lg:px-8 lg:py-3">
           <StoryListen
             title={pick(place.name, locale)}
             paragraphs={spoken}
@@ -270,6 +270,7 @@ export async function CinematicMonumentStory({
             statusLabel={story("listenStatus")}
             missingLabel={story("listenMissing")}
           />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-[11px] tracking-[0.12em] uppercase sm:px-5 lg:contents lg:px-0 lg:py-0">
           <a href="#story" className="hover:text-cobalt">01 · {story("narrative")}</a>
           <a href="#timeline" className="hover:text-cobalt">02 · {story("timeline")}</a>
           {myths.length > 0 ? <a href="#legends" className="hover:text-cobalt">03 · {story("myths")}</a> : null}
@@ -277,6 +278,7 @@ export async function CinematicMonumentStory({
           <a href="#context" className="hover:text-cobalt">05 · {story("context")}</a>
           <a href="#location" className="hover:text-cobalt">06 · {story("location")}</a>
           <a href="#sources" className="hover:text-cobalt">07 · {story("sources")}</a>
+          </div>
         </div>
       </nav>
 

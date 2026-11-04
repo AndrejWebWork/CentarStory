@@ -174,6 +174,7 @@ const seedsB: MonumentSeed[] = [
     claimText: L("Mapped at OSM node 5901740885 (`historic=memorial`, `memorial=plaque`) as 'Спомен плоча на Мајка Тереза / Mother Teresa Old House Place'.", "Мапирана на OSM јазолот 5901740885 (`historic=memorial`, `memorial=plaque`) како „Спомен плоча на Мајка Тереза“.", "Mapirana na OSM čvoru 5901740885 (`historic=memorial`, `memorial=plaque`) kao „Spomen ploča na Majka Tereza“.", "OSM düğümü 5901740885 üzerinde anı levhası olarak haritalanmıştır.", "Картографована на вузлі OSM 5901740885 як «Спомен плоча на Мајка Тереза».", "Hartuar te nyja OSM 5901740885 (`historic=memorial`, `memorial=plaque`) si 'Спомен плоча на Мајка Тереза / Mother Teresa Old House Place'."),
     sourceIds: ["osm-overpass-centar", "mother-teresa-official"],
     related: ["mother-teresa-house", "mother-teresa-statue", "macedonia-square"],
+    images: ["img-teresa-plaque"],
     motif: "memorial",
     palette: ["#8a7968", "#2d261f"],
   },

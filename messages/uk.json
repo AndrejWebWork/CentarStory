@@ -451,6 +451,7 @@
     "guideMan_arrive": "Прибуваєш",
     "museumsOnFoot": "У музейному атласі {count} підтверджених установ.",
     "makeRoute": "Зроби мені маршрут",
+    "makeRouteHint": "Складає коротку прогулянку пам'ятками Центру.",
     "orYear": "або введи рік",
     "yearLabel": "Рік",
     "yearPlaceholder": "Обери",

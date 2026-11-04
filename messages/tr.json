@@ -451,6 +451,7 @@
     "guideMan_arrive": "Varıyorsun",
     "museumsOnFoot": "Müze atlasında {count} doğrulanmış kurum var.",
     "makeRoute": "Bana bir rota yap",
+    "makeRouteHint": "Centar'daki anıtlar boyunca kısa bir yürüyüş kurar.",
     "orYear": "veya yılınızı yazın",
     "yearLabel": "Yıl",
     "yearPlaceholder": "Seç",

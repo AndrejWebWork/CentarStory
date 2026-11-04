@@ -451,6 +451,7 @@
     "guideMan_arrive": "Stižeš",
     "museumsOnFoot": "{count} potvrđenih institucija je u muzejskom atlasu.",
     "makeRoute": "Napravi mi rutu",
+    "makeRouteHint": "Sastavlja kratku šetnju kroz spomenike u Centru.",
     "orYear": "ili unesi godinu",
     "yearLabel": "Godina",
     "yearPlaceholder": "Izaberi",
