@@ -84,6 +84,21 @@ figcaption {
   font-size: clamp(1.02rem, 5.1vw, 1.45rem);
 }
 
+.cs-brand-mark {
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: none;
+  border-radius: 0.55rem;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .cs-brand-mark {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
 @media (max-width: 430px) {
   .cs-lang {
     max-width: 4.75rem;
