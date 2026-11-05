@@ -35,7 +35,11 @@
     "catalog": "Katalogu",
     "story": "Historia",
     "nearby": "Afër, jashtë Qendrës",
-    "scriptStrategy": "Shqipja në këtë atlas përdor alfabetin latin. Serbishtja përdor latinicën (gajicën) me qëllim. Maqedonishtja dhe ukrainishtja përdorin cirilicën. Emrat e përveçëm ruajnë format e tyre vendore."
+    "scriptStrategy": "Shqipja në këtë atlas përdor alfabetin latin. Serbishtja përdor latinicën (gajicën) me qëllim. Maqedonishtja dhe ukrainishtja përdorin cirilicën. Emrat e përveçëm ruajnë format e tyre vendore.",
+    "locationTitle": "Ndiz vendndodhjen",
+    "locationBody": "Rruga mund të thotë “vazhdo 50 metra drejt” vetëm kur telefoni e di ku je.",
+    "locationAllow": "Lejo vendndodhjen",
+    "locationLater": "Jo tani"
   },
   "legal": {
     "kicker": "Ligjore",
@@ -435,8 +439,10 @@
     "guideDone": "Kjo është ndalesa e fundit",
     "guideDenied": "Vendndodhja është e fikur. Lejoje që rruga të të udhëheqë.",
     "guideWaiting": "Po kërkohet vendndodhja jote",
-    "guideSpeakStep": "{maneuver} në {street}. Rreth {meters} metra deri te {name}.",
-    "guideSpeakStepPlain": "{maneuver}. Rreth {meters} metra deri te {name}.",
+    "guideSpeakStep": "{maneuver} për {meters} metra, përgjatë {street}.",
+    "guideSpeakStepPlain": "{maneuver} për {meters} metra.",
+    "guideSpeakTurn": "Pas {meters} metrave, {maneuver} në {street}.",
+    "guideSpeakTurnPlain": "Pas {meters} metrave, {maneuver}.",
     "guideSpeakArrive": "Je te {name}. {explain}",
     "guideSpeakDone": "Kjo është ndalesa e fundit, {name}. {explain}",
     "guideMan_depart": "Nisu",

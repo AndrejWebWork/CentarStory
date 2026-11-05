@@ -152,7 +152,7 @@ export const stageSites: SiteRecord[] = [
     ],
     myths: none("mnt", L("the National Theatre", "Народниот театар", "Narodnog teatra", "Ulusal Tiyatro", "Народного театру", "Teatri Kombëtar")),
     related: ["opera-ballet", "archaeological-museum", "holocaust-memorial", "macedonia-square"],
-    images: [],
+    images: ["img-theatre"],
     visitor: {
       notes: L("A working theatre. The poster is the programme. Not a daytime museum.", "Работен театар. Плакатот е програмата. Не е дневен музеј.", "Radno pozorište. Plakat je program. Nije dnevni muzej.", "İşleyen bir tiyatro. Afiş programdır. Gündüz müzesi değildir.", "Чинний театр. Афіша — програма. Це не денний музей.", "Një teatër në funksion. Afishja është programi. Jo një muze ditor."),
     },
@@ -337,7 +337,7 @@ export const stageSites: SiteRecord[] = [
     ],
     myths: none("ss", L("Sveti Spas", "Свети Спас", "Svetog Spasa", "Sveti Spas", "Святого Спаса", "Sveti Spas")),
     related: ["skopje-fortress", "daut-pasha-hammam", "stone-bridge"],
-    images: [],
+    images: ["img-spas"],
     visitor: {
       notes: L("A working church in a tight bazaar street. Enter only if visiting hours allow.", "Работна црква во тесна чаршиска улица. Влезете само ако часовите за посета дозволуваат.", "Radna crkva u tesnoj čaršijskoj ulici. Uđite samo ako sati posete dozvoljavaju.", "Dar bir çarşı sokağında işleyen kilise. Yalnızca ziyaret saatleri izin veriyorsa girin.", "Чинна церква на тісній базарній вулиці. Заходьте лише якщо години відвідин дозволяють.", "Një kishë në funksion në një rrugë të ngushtë çarshie. Hyni vetëm nëse orari i vizitës e lejon."),
     },
@@ -412,7 +412,7 @@ export const stageSites: SiteRecord[] = [
     ],
     myths: none("nl", L("the national library", "националната библиотека", "nacionalne biblioteke", "ulusal kütüphane", "національної бібліотеки", "biblioteka kombëtare")),
     related: ["opera-ballet", "cathedral-clement"],
-    images: [],
+    images: ["img-library"],
     visitor: {
       notes: L("A working research library. Entry rules belong to the library.", "Работна истражувачка библиотека. Правилата за влез се на библиотеката.", "Radna istraživačka biblioteka. Pravila ulaska pripadaju biblioteci.", "İşleyen bir araştırma kütüphanesi. Giriş kuralları kütüphaneye aittir.", "Чинна дослідницька бібліотека. Правила входу належать бібліотеці.", "Një bibliotekë kërkimore në funksion. Rregullat e hyrjes i takojnë bibliotekës."),
     },

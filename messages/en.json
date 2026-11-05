@@ -35,7 +35,11 @@
     "catalog": "Catalog",
     "story": "The story",
     "nearby": "Nearby, outside Centar",
-    "scriptStrategy": "Serbian in this atlas uses Latin script (Gajica) by design. Macedonian and Ukrainian use Cyrillic. Proper names keep their local forms."
+    "scriptStrategy": "Serbian in this atlas uses Latin script (Gajica) by design. Macedonian and Ukrainian use Cyrillic. Proper names keep their local forms.",
+    "locationTitle": "Turn on location",
+    "locationBody": "The route can say “continue 50 metres straight” only when the phone knows where you are.",
+    "locationAllow": "Enable location",
+    "locationLater": "Not now"
   },
   "legal": {
     "kicker": "Legal",
@@ -435,8 +439,10 @@
     "guideDone": "This was the last stop",
     "guideDenied": "Location is off. Allow it so the route can lead you.",
     "guideWaiting": "Looking for your location",
-    "guideSpeakStep": "{maneuver} onto {street}. About {meters} meters to {name}.",
-    "guideSpeakStepPlain": "{maneuver}. About {meters} meters to {name}.",
+    "guideSpeakStep": "{maneuver} for {meters} meters, along {street}.",
+    "guideSpeakStepPlain": "{maneuver} for {meters} meters.",
+    "guideSpeakTurn": "In {meters} meters, {maneuver} onto {street}.",
+    "guideSpeakTurnPlain": "In {meters} meters, {maneuver}.",
     "guideSpeakArrive": "You are at {name}. {explain}",
     "guideSpeakDone": "This was the last stop, {name}. {explain}",
     "guideMan_depart": "Head out",

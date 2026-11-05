@@ -35,7 +35,11 @@
     "catalog": "Katalog",
     "story": "Hikâye",
     "nearby": "Yakında, Centar dışında",
-    "scriptStrategy": "Bu atlasda Sırpça, tasarım gereği Latin alfabesiyledir (Gajica). Makedonca ve Ukraynaca Kiril kullanır. Özel adlar yerel biçimlerini korur."
+    "scriptStrategy": "Bu atlasda Sırpça, tasarım gereği Latin alfabesiyledir (Gajica). Makedonca ve Ukraynaca Kiril kullanır. Özel adlar yerel biçimlerini korur.",
+    "locationTitle": "Konumu aç",
+    "locationBody": "Rota ancak telefon nerede olduğunu bilirse “50 metre düz devam et” diyebilir.",
+    "locationAllow": "Konuma izin ver",
+    "locationLater": "Şimdi değil"
   },
   "legal": {
     "kicker": "Yasal",
@@ -435,8 +439,10 @@
     "guideDone": "Bu son durak",
     "guideDenied": "Konum kapalı. Rotanın seni götürmesi için izin ver.",
     "guideWaiting": "Konumun aranıyor",
-    "guideSpeakStep": "{maneuver}, {street}. {name} noktasına yaklaşık {meters} metre.",
-    "guideSpeakStepPlain": "{maneuver}. {name} noktasına yaklaşık {meters} metre.",
+    "guideSpeakStep": "{maneuver}, {meters} metre, {street} boyunca.",
+    "guideSpeakStepPlain": "{maneuver}, {meters} metre.",
+    "guideSpeakTurn": "{meters} metre sonra {maneuver}, {street}.",
+    "guideSpeakTurnPlain": "{meters} metre sonra {maneuver}.",
     "guideSpeakArrive": "{name} noktasındasın. {explain}",
     "guideSpeakDone": "Son durak bu, {name}. {explain}",
     "guideMan_depart": "Yola çık",

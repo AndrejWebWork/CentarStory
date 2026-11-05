@@ -22,7 +22,7 @@ import {
 } from "@/lib/itinerary/around-theme";
 import { planItinerary, type ItineraryPlan } from "@/lib/itinerary";
 import { useWalkingPath } from "@/lib/mapping/use-walking-path";
-import { distanceBand, upcomingStep } from "@/lib/mapping/walk";
+import { spokenMeters, upcomingStep } from "@/lib/mapping/walk";
 import { speak, stopSpeaking } from "@/lib/speech/speak";
 
 const Atlas = dynamic(
@@ -113,13 +113,17 @@ export function AroundGuide() {
     if (phase !== "building") return;
     if (reduce) {
       setPhase("ready");
+      setGuiding(true);
       return;
     }
     const started = Date.now();
     const tick = window.setInterval(() => {
       const elapsed = Date.now() - started;
       setStep(Math.min(BUILD_STEPS.length - 1, Math.floor(elapsed / 780)));
-      if (elapsed >= BUILD_STEPS.length * 780) setPhase("ready");
+      if (elapsed >= BUILD_STEPS.length * 780) {
+        setPhase("ready");
+        setGuiding(true);
+      }
     }, 80);
     return () => window.clearInterval(tick);
   }, [phase, reduce]);
@@ -193,15 +197,21 @@ export function AroundGuide() {
     const step = guidePath?.steps.length ? upcomingStep(user, guidePath.steps) : null;
     const kind = step?.kind ?? "straight";
     const street = step?.street ?? "";
-    const band = distanceBand(metersToNext ?? 0);
+    const remaining = step ? haversineMeters(user, step) : (metersToNext ?? 0);
+    const meters = spokenMeters(remaining);
     const prev = spoken.current;
-    if (prev.slug === nextSite.slug && prev.kind === kind && prev.street === street && band >= prev.band) return;
-    spoken.current = { slug: nextSite.slug, kind, street, band };
-    const name = pick(nextSite.officialName, locale);
+    if (prev.slug === nextSite.slug && prev.kind === kind && prev.street === street && meters === prev.band) return;
+    spoken.current = { slug: nextSite.slug, kind, street, band: meters };
     const maneuver = t(`guideMan_${kind}`);
-    const line = street
-      ? t("guideSpeakStep", { maneuver, street, meters: band, name })
-      : t("guideSpeakStepPlain", { maneuver, meters: band, name });
+    const along = kind === "straight" || kind === "depart";
+    const line =
+      along && street
+        ? t("guideSpeakStep", { maneuver, street, meters })
+        : along
+          ? t("guideSpeakStepPlain", { maneuver, meters })
+          : street
+            ? t("guideSpeakTurn", { maneuver, street, meters })
+            : t("guideSpeakTurnPlain", { maneuver, meters });
     setVoiceLine(line);
     speak(line, locale);
   }, [atStop, geoError, guidePath, guiding, locale, metersToNext, nextSite, t, user]);
@@ -227,7 +237,23 @@ export function AroundGuide() {
     setPhase(reduce ? "ready" : "building");
   }
 
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      setGeoError(true);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUser({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setGeoError(false);
+      },
+      () => setGeoError(true),
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 12000 },
+    );
+  }
+
   function makeDefault() {
+    requestLocation();
     build(aroundThemeRandom(), { shuffle: true });
   }
 
@@ -238,6 +264,7 @@ export function AroundGuide() {
       setYearError(true);
       return;
     }
+    requestLocation();
     build(next, { startSlug: "macedonia-square" });
   }
 

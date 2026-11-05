@@ -1286,6 +1286,70 @@ figcaption {
   animation: cs-lens 2.4s var(--ease-editorial) infinite;
 }
 
+.cs-cookie {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  align-items: end;
+  gap: 0.35rem;
+}
+
+.cs-biscuit {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+  margin-bottom: 0.35rem;
+  border-radius: 46% 54% 50% 48%;
+  background:
+    radial-gradient(circle at 72% 58%, #4a2918 0 8%, transparent 9%),
+    radial-gradient(circle at 34% 70%, #5c321c 0 7%, transparent 8%),
+    radial-gradient(circle at 64% 28%, #3d2214 0 6%, transparent 7%),
+    radial-gradient(circle at 24% 40%, #6b3a22 0 5%, transparent 6%),
+    radial-gradient(circle at 46% 46%, #f0d09a 0%, #e0a85a 28%, #c4843a 58%, #8d5520 100%);
+  box-shadow:
+    inset -8px -10px 14px rgba(90, 42, 10, 0.38),
+    0 10px 18px rgba(60, 30, 8, 0.22);
+}
+
+.cs-biscuit__bite {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.2rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 4px 5px 0 rgba(196, 132, 58, 0.18);
+}
+
+.cs-biscuit__crumb {
+  position: absolute;
+  border-radius: 50%;
+  background: #c4843a;
+}
+
+.cs-biscuit__crumb--a {
+  right: -0.15rem;
+  bottom: 0.85rem;
+  width: 0.45rem;
+  height: 0.45rem;
+}
+
+.cs-biscuit__crumb--b {
+  right: 0.35rem;
+  bottom: 0.15rem;
+  width: 0.28rem;
+  height: 0.28rem;
+  background: #8d5520;
+}
+
+.cs-cookie__card {
+  border: 1px solid var(--ink);
+  border-radius: 1.35rem 1.6rem 1.15rem 1.7rem;
+  background: var(--foam);
+  padding: 1rem 1rem 1rem 1.05rem;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+}
+
 @keyframes cs-lens {
   0%,
   100% {

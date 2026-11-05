@@ -92,7 +92,7 @@ export const civicSites: SiteRecord[] = [
     ],
     myths: none("as", L("the Assembly building", "зградата на Собранието", "zgrade Skupštine", "Meclis binası", "будівлі Зборів", "ndërtesa e Kuvendit")),
     related: ["porta-macedonia", "officers-hall", "macedonia-square"],
-    images: [],
+    images: ["img-assembly"],
     visitor: {
       website: "https://www.sobranie.mk/",
       notes: L(
@@ -198,7 +198,7 @@ export const civicSites: SiteRecord[] = [
     ],
     myths: none("gv", L("the Government building", "зградата на Владата", "zgrade Vlade", "Hükümet binası", "будівлі Уряду", "ndërtesa e Qeverisë")),
     related: ["cathedral-clement", "skopje-fortress", "national-library"],
-    images: [],
+    images: ["img-government"],
     visitor: {
       website: "https://vlada.mk/",
       notes: L(
@@ -305,7 +305,7 @@ export const civicSites: SiteRecord[] = [
     ],
     myths: none("cp", L("City Park", "Градскиот парк", "Gradskog parka", "Kent Parkı", "Міського парку", "Parku i Qytetit")),
     related: ["government", "skopje-fortress", "vardar-quay"],
-    images: [],
+    images: ["img-park"],
     visitor: {
       notes: L(
         "Open public ground. The planted area continues west into Karpoš; this atlas pin marks the Centar OSM way.",

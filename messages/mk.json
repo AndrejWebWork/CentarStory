@@ -35,7 +35,11 @@
     "catalog": "Каталог",
     "story": "Приказната",
     "nearby": "Блиску, надвор од Центар",
-    "scriptStrategy": "Српскиот во овој атлас намерно користи латиница (гајица). Македонскиот и украинскиот користат кирилица. Сопствените имиња го задржуваат месниот облик."
+    "scriptStrategy": "Српскиот во овој атлас намерно користи латиница (гајица). Македонскиот и украинскиот користат кирилица. Сопствените имиња го задржуваат месниот облик.",
+    "locationTitle": "Вклучи локација",
+    "locationBody": "Рутата може да каже „продолжи 50 метри право“ само кога телефонот знае каде си.",
+    "locationAllow": "Дозволи локација",
+    "locationLater": "Не сега"
   },
   "legal": {
     "kicker": "Правно",
@@ -435,8 +439,10 @@
     "guideDone": "Ова е последната постојка",
     "guideDenied": "Локацијата е исклучена. Дозволи ја за да те води рутата.",
     "guideWaiting": "Се бара твојата локација",
-    "guideSpeakStep": "{maneuver} на {street}. Околу {meters} метри до {name}.",
-    "guideSpeakStepPlain": "{maneuver}. Околу {meters} метри до {name}.",
+    "guideSpeakStep": "{maneuver} {meters} метри, по {street}.",
+    "guideSpeakStepPlain": "{maneuver} {meters} метри.",
+    "guideSpeakTurn": "За {meters} метри, {maneuver} на {street}.",
+    "guideSpeakTurnPlain": "За {meters} метри, {maneuver}.",
     "guideSpeakArrive": "Стигна до {name}. {explain}",
     "guideSpeakDone": "Ова е последната постојка, {name}. {explain}",
     "guideMan_depart": "Тргни",

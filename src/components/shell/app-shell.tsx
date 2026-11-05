@@ -6,6 +6,7 @@ import { Suspense, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { CookieNotice } from "@/components/shell/cookie-notice";
+import { LocationPrompt } from "@/components/shell/location-prompt";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { NavLens } from "@/components/shell/nav-lens";
 import {
@@ -256,6 +257,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </ul>
           </div>
         </nav>
+      <LocationPrompt />
       <CookieNotice />
     </div>
   );

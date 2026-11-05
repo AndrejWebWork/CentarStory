@@ -124,13 +124,16 @@ export function upcomingStep(user: Coordinates, steps: WalkStep[]): WalkStep | n
   return step.kind === "arrive" ? null : step;
 }
 
-/** Coarse distance so the spoken line does not change on every GPS tick. */
-export function distanceBand(meters: number) {
-  const marks = [800, 500, 300, 200, 100, 50, 25];
-  for (const mark of marks) {
-    if (meters >= mark) return mark;
-  }
-  return 25;
+/** Distances a walking voice would actually say, so it does not chatter on every GPS tick. */
+export function spokenMeters(meters: number) {
+  if (!Number.isFinite(meters) || meters < 15) return 10;
+  if (meters < 35) return 20;
+  if (meters < 75) return 50;
+  if (meters < 150) return 100;
+  if (meters < 250) return 200;
+  if (meters < 400) return 300;
+  if (meters < 650) return 500;
+  return Math.min(2000, Math.round(meters / 100) * 100);
 }
 
 export function walkingDirections(lat: number, lng: number) {

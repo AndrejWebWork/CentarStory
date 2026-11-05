@@ -35,7 +35,11 @@
     "catalog": "Katalog",
     "story": "Priča",
     "nearby": "Blizu, van Centra",
-    "scriptStrategy": "Srpski u ovom atlasu koristi latinicu (Gajicu) namerno. Makedonski i ukrajinski koriste ćirilicu. Vlastita imena zadržavaju lokalni oblik."
+    "scriptStrategy": "Srpski u ovom atlasu koristi latinicu (Gajicu) namerno. Makedonski i ukrajinski koriste ćirilicu. Vlastita imena zadržavaju lokalni oblik.",
+    "locationTitle": "Uključi lokaciju",
+    "locationBody": "Ruta može da kaže „nastavi 50 metara pravo“ samo kad telefon zna gde si.",
+    "locationAllow": "Dozvoli lokaciju",
+    "locationLater": "Ne sada"
   },
   "legal": {
     "kicker": "Pravno",
@@ -435,8 +439,10 @@
     "guideDone": "Ovo je poslednja stanica",
     "guideDenied": "Lokacija je isključena. Dozvoli je da te ruta vodi.",
     "guideWaiting": "Traži se tvoja lokacija",
-    "guideSpeakStep": "{maneuver} na {street}. Oko {meters} metara do {name}.",
-    "guideSpeakStepPlain": "{maneuver}. Oko {meters} metara do {name}.",
+    "guideSpeakStep": "{maneuver} {meters} metara, ulicom {street}.",
+    "guideSpeakStepPlain": "{maneuver} {meters} metara.",
+    "guideSpeakTurn": "Za {meters} metara, {maneuver} na {street}.",
+    "guideSpeakTurnPlain": "Za {meters} metara, {maneuver}.",
     "guideSpeakArrive": "Stigao si do {name}. {explain}",
     "guideSpeakDone": "Ovo je poslednja stanica, {name}. {explain}",
     "guideMan_depart": "Kreni",

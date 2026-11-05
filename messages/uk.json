@@ -35,7 +35,11 @@
     "catalog": "Каталог",
     "story": "Історія",
     "nearby": "Поруч, поза Центром",
-    "scriptStrategy": "Сербська в цьому атласі навмисно латиницею (гаєвиця). Македонська й українська — кирилицею. Власні назви зберігають місцеву форму."
+    "scriptStrategy": "Сербська в цьому атласі навмисно латиницею (гаєвиця). Македонська й українська — кирилицею. Власні назви зберігають місцеву форму.",
+    "locationTitle": "Увімкни локацію",
+    "locationBody": "Маршрут може сказати «йди 50 метрів прямо» лише коли телефон знає, де ти.",
+    "locationAllow": "Дозволити локацію",
+    "locationLater": "Не зараз"
   },
   "legal": {
     "kicker": "Правове",
@@ -435,8 +439,10 @@
     "guideDone": "Це остання зупинка",
     "guideDenied": "Локацію вимкнено. Дозволь її, щоб маршрут тебе вів.",
     "guideWaiting": "Шукаємо твоє місце",
-    "guideSpeakStep": "{maneuver} на {street}. Близько {meters} метрів до {name}.",
-    "guideSpeakStepPlain": "{maneuver}. Близько {meters} метрів до {name}.",
+    "guideSpeakStep": "{maneuver} {meters} метрів, вулицею {street}.",
+    "guideSpeakStepPlain": "{maneuver} {meters} метрів.",
+    "guideSpeakTurn": "За {meters} метрів {maneuver} на {street}.",
+    "guideSpeakTurnPlain": "За {meters} метрів {maneuver}.",
     "guideSpeakArrive": "Ти біля {name}. {explain}",
     "guideSpeakDone": "Це остання зупинка, {name}. {explain}",
     "guideMan_depart": "Рушай",

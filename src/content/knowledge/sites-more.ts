@@ -289,7 +289,7 @@ export const moreSites: SiteRecord[] = [
     ],
     myths: none("vq", L("the quay", "кејот", "keja", "rıhtım", "набережної", "keji")),
     related: ["stone-bridge", "macedonia-square", "archaeological-museum", "opera-ballet"],
-    images: [],
+    images: ["img-quay"],
     translationStatus: "complete",
     verificationStatus: "confirmed",
     lastChecked: checked,
