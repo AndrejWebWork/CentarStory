@@ -150,19 +150,21 @@ export function EventBoard({ posted = [] }: { posted?: CulturalEvent[] }) {
 function EventsPoster() {
   return (
     <svg className="cs-events-hero__poster" viewBox="0 0 760 320" aria-hidden="true">
-      <path d="M86 292V78c0-36 30-58 68-58h210c38 0 68 22 68 58v214" />
+      <path className="is-fill" d="M86 292V78c0-36 30-58 68-58h210c38 0 68 22 68 58v214" />
       <path d="M104 292V96c18-28 52-44 100-44s82 16 100 44v196" />
       <path d="M118 292c8-34 28-52 52-52s44 18 52 52" />
       <path d="M168 292c6-22 16-34 28-34s22 12 28 34" />
       <path d="M470 78h196M470 108h196M470 138h196M470 168h196M470 198h196" />
-      <circle className="is-note" cx="512" cy="123" r="5" />
-      <circle className="is-note" cx="548" cy="153" r="5" />
-      <circle className="is-note" cx="602" cy="93" r="5" />
+      <circle className="is-note" cx="512" cy="123" r="6" />
+      <circle className="is-note" cx="548" cy="153" r="6" />
+      <circle className="is-note" cx="602" cy="93" r="6" />
       <path d="M512 123v-28M548 153v-22M602 93v-26" />
+      <rect className="is-ticket" x="448" y="214" width="92" height="52" rx="6" />
+      <path className="is-ticket" d="M470 214v52M448 232h18M448 248h18" />
       <path d="M668 36h46v248h-46" />
       <path d="M676 52h8M690 52h8M704 52h8M676 72h8M690 72h8M704 72h8M676 252h8M690 252h8M704 252h8M676 272h8M690 272h8M704 272h8" />
-      <circle cx="628" cy="248" r="22" />
-      <path d="M628 214v-12M628 294v12M594 248h-12M674 248h12M604 224l-8-8M652 272l8 8M652 224l8-8M604 272l-8 8" />
+      <circle className="is-fill" cx="628" cy="168" r="28" />
+      <path d="M628 124v-14M628 226v14M584 168h-14M686 168h14M596 136l-10-10M660 200l10 10M660 136l10-10M596 200l-10 10" />
     </svg>
   );
 }

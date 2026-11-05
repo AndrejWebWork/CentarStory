@@ -116,7 +116,17 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <p className="mt-4 max-w-xl text-sm leading-relaxed text-foam/78">{t("common.disclaimer")}</p>
                 </div>
                 <address className="text-sm leading-relaxed text-foam/80 not-italic">
-                  <p className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t("common.contactTitle")}</p>
+                  <a
+                    href="https://www.centar.gov.mk/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-3"
+                  >
+                    <img src="/brand/opstina-centar.png" alt="" className="h-14 w-auto" />
+                    <span className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">
+                      {t("common.contactTitle")}
+                    </span>
+                  </a>
                   <p className="mt-3">{t("common.contactAddress")}</p>
                   <p className="mt-2">
                     <a className="cs-foot-link" href="tel:+38923203693">
