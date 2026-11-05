@@ -1,0 +1,24 @@
+# CentarStory
+
+CentarStory is a cultural guide to the Municipality of Centar in Skopje. It covers monuments, memorials, museums, walks, food, and how to move through the city centre.
+
+The atlas is written in English, Macedonian, Serbian, Turkish, Ukrainian, and Albanian. English lives at the root. The other languages use a prefix: /mk, /sr, /tr, /uk, /sq.
+
+## What a page is
+
+- /around — the atlas and a walk built from a year
+- /places/{slug} — one monument or place, with the story and the map pin
+- /museums/{slug} — one museum
+- /routes/{slug} — a themed walk
+- /scan — photograph a monument or museum and open its story when the picture matches
+- /food, /food/places/{slug}, /food/dishes/{slug} — kitchens and dishes
+- /events — municipal cultural dates
+- /transport — how to arrive and move
+- /legal, /privacy, /terms, /cookies, /impressum — the legal pages
+
+Photographs are credited and licensed. A page without a photograph says so. Do not treat a portrait or a news picture as the monument.
+
+## Machine-readable
+
+- /sitemap.xml lists every public page in all six languages
+- Place and museum pages include schema.org TouristAttraction or Museum markup

@@ -10,8 +10,12 @@ const nextConfig: NextConfig = {
       { source: "/:locale/explore", destination: "/:locale/around", permanent: true },
     ];
   },
-  transpilePackages: ["maplibre-gl", "react-map-gl"],
+  transpilePackages: ["maplibre-gl", "react-map-gl", "@mintplex-labs/piper-tts-web", "onnxruntime-web"],
   turbopack: {
+    resolveAlias: {
+      fs: { browser: "./src/lib/speech/node-stub.ts" },
+      path: { browser: "./src/lib/speech/node-stub.ts" },
+    },
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],

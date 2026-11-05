@@ -1,18 +1,14 @@
 "use client";
 
-import { ArrowDownRight, ImageUp, ListFilter, RotateCcw, Search, X } from "lucide-react";
+import { ImageUp, ListFilter, RotateCcw, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plate } from "@/components/atlas/plate";
-import { SkeletonOverlay } from "@/components/scan/skeleton-overlay";
-import { SCAN_CAPTURE_STORAGE_KEY } from "@/components/story/cinematic-scenes";
 import { pick } from "@/content/copy";
 import { getSite } from "@/content/knowledge/catalog";
-import { getMedia } from "@/content/knowledge/media";
 import { getPlace, places, sitePath } from "@/content/places";
-import { walksThrough } from "@/content/journeys";
-import { Link } from "@/i18n/navigation";
-import { mediaSrc } from "@/lib/media/src";
+import { Link, useRouter } from "@/i18n/navigation";
+import { SkeletonOverlay } from "@/components/scan/skeleton-overlay";
+import { SCAN_CAPTURE_STORAGE_KEY } from "@/components/story/cinematic-scenes";
 import type { ImageQualityIssue } from "@/lib/recognition/analyze";
 import { requestRemoteRecognition } from "@/lib/recognition/client";
 import { recognizeOnDevice } from "@/lib/recognition/on-device";
@@ -21,13 +17,22 @@ import { subscribeArmedCamera, takeArmedCamera } from "@/lib/scan/arm-camera";
 import { skeletonFromCanvas, type SkeletonMesh } from "@/lib/recognition/skeleton";
 import type { LocationHint, RecognitionResult } from "@/lib/recognition/types";
 
-type Phase = "live" | "reading" | "result";
+type Phase = "live" | "reading" | "opening" | "result";
 type ScanError = "camera" | "permission" | "unsupported" | PrepareError | "network" | "timeout";
 type Mode = "unknown" | "demo" | "remote";
+
+function rememberCapture(slug: string, dataUrl: string) {
+  try {
+    window.sessionStorage.setItem(SCAN_CAPTURE_STORAGE_KEY, JSON.stringify({ slug, dataUrl }));
+  } catch {
+    /* Session storage is optional. */
+  }
+}
 
 export function ScanStudio() {
   const t = useTranslations("scan");
   const locale = useLocale();
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -37,7 +42,6 @@ export function ScanStudio() {
   const [error, setError] = useState<ScanError | null>(null);
   const [qualityIssue, setQualityIssue] = useState<ImageQualityIssue>(null);
   const [result, setResult] = useState<RecognitionResult | null>(null);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("unknown");
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -141,7 +145,6 @@ function stopCamera() {
     setError(null);
     setQualityIssue(null);
     setResult(null);
-    setSelectedSlug(null);
     setPreview(null);
     setSkeleton(null);
     setRevealResult(false);
@@ -210,37 +213,53 @@ function stopCamera() {
       return;
     }
     setSkeleton(skeletonFromCanvas(jpeg.canvas));
-    const location = await readLocation();
-    const local = await recognizeOnDevice(jpeg.canvas, location);
+    const local = await recognizeOnDevice(jpeg.canvas, null);
     setQualityIssue(local.qualityIssue);
+
+    const finish = (next: RecognitionResult) => {
+      const slug = local.result.outcome === "identified" ? local.result.candidates[0]?.slug : undefined;
+      const place = slug ? getPlace(slug) : undefined;
+      if (place && slug) {
+        rememberCapture(slug, jpeg.dataUrl);
+        setResult(local.result);
+        setPhase("opening");
+        router.push(`${sitePath(place)}?from=scan`);
+        return;
+      }
+      setResult({
+        ...next,
+        outcome: next.outcome === "out-of-catalogue" ? "out-of-catalogue" : "unknown",
+        candidates: [],
+      });
+      setPhase("result");
+    };
+
+    if (local.result.outcome === "identified") {
+      finish(local.result);
+      return;
+    }
 
     if (mode === "remote") {
       try {
+        const location = await readLocation();
         const remote = await requestRemoteRecognition({
           dataUrl: jpeg.dataUrl,
           location,
           structure: local.structure,
         });
-        setResult(remote);
-        setSelectedSlug(remote.candidates[0]?.slug ?? null);
-        setPhase("result");
+        finish(remote);
         return;
       } catch (caught) {
         const message = caught instanceof Error ? caught.message : "network";
         if (message !== "unconfigured") {
           setError(message === "timeout" ? "timeout" : "network");
         }
-        const fallback = { ...local.result, note: "fallback-local" };
-        setResult(fallback);
-        setSelectedSlug(fallback.candidates[0]?.slug ?? null);
-        setPhase("result");
+        finish({ ...local.result, note: "fallback-local" });
         return;
       }
     }
 
-    setResult(local.result);
-    setSelectedSlug(local.result.candidates[0]?.slug ?? null);
-    setPhase("result");
+    finish(local.result);
   }
 
   const filteredCatalog = useMemo(() => {
@@ -287,8 +306,8 @@ function stopCamera() {
       <SkeletonOverlay
         mesh={skeleton}
         active={Boolean(skeleton) && (phase === "reading" || phase === "result")}
-        locked={result?.outcome === "identified" || result?.outcome === "candidates"}
-        failed={result?.outcome === "unknown" || result?.outcome === "out-of-catalogue"}
+        locked={phase === "opening" || result?.outcome === "identified"}
+        failed={phase === "result" && (result?.outcome === "unknown" || result?.outcome === "out-of-catalogue")}
       />
       <div className="pointer-events-none absolute inset-x-5 top-5 bottom-36 sm:inset-x-10 sm:top-10 lg:bottom-10" aria-hidden="true">
         <span className="absolute top-0 left-0 h-10 w-10 border-t-2 border-l-2 border-foam" />
@@ -302,12 +321,12 @@ function stopCamera() {
           </>
         )}
       </div>
-      {phase === "reading" ? (
+      {phase === "reading" || phase === "opening" ? (
         <p
           className="absolute inset-x-0 top-[18%] z-10 text-center text-[10px] tracking-[0.28em] text-foam/80 uppercase"
           role="status"
         >
-          {t("stageSample")}
+          {phase === "opening" ? t("identified") : t("stageSample")}
         </p>
       ) : null}
       <div className="absolute inset-x-0 bottom-36 z-10 mx-auto flex w-full max-w-xl flex-col items-center gap-3 px-4 pb-[env(safe-area-inset-bottom)] lg:bottom-8">
@@ -315,9 +334,6 @@ function stopCamera() {
           <Results
             result={result}
             qualityIssue={qualityIssue}
-            locale={locale}
-            selectedSlug={selectedSlug}
-            onSelect={setSelectedSlug}
             onOpenCatalog={() => setCatalogOpen(true)}
           />
         ) : null}
@@ -361,7 +377,7 @@ function stopCamera() {
               {mode === "remote" ? t("privacyRemote") : t("privacy")}
             </p>
           </div>
-        ) : phase !== "reading" && (phase !== "result" || revealResult) ? (
+        ) : phase === "result" && revealResult ? (
           <div className="flex flex-wrap justify-center gap-2">
             <button
               type="button"
@@ -456,168 +472,29 @@ function stopCamera() {
 function Results({
   result,
   qualityIssue,
-  locale,
-  selectedSlug,
-  onSelect,
   onOpenCatalog,
 }: {
   result: RecognitionResult;
   qualityIssue: ImageQualityIssue;
-  locale: string;
-  selectedSlug: string | null;
-  onSelect: (slug: string) => void;
   onOpenCatalog: () => void;
 }) {
   const t = useTranslations("scan");
-  const story = useTranslations("story");
-  const candidates = result.candidates
-    .map((candidate) => ({ candidate, place: getPlace(candidate.slug) }))
-    .filter(
-      (
-        entry,
-      ): entry is {
-        candidate: (typeof result.candidates)[number];
-        place: NonNullable<ReturnType<typeof getPlace>>;
-      } => Boolean(entry.place),
-    );
-  const active = candidates.find((entry) => entry.place.slug === selectedSlug) ?? candidates[0];
-
-  if (result.outcome === "unknown" || result.outcome === "out-of-catalogue" || !active) {
-    return (
-      <section className="w-full border border-line bg-paper p-5">
-        <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
-          {result.outcome === "out-of-catalogue" ? t("outOfCatalogue") : t("resultKicker")}
-        </p>
-        <p className="mt-2 font-display text-3xl leading-none">{t("unknown")}</p>
-        <p className="mt-2 text-xs leading-relaxed text-ink-soft">{t("unknownBody")}</p>
-        {qualityIssue ? (
-          <p className="mt-2 border-l-2 border-copper pl-3 text-xs text-copper">
-            {qualityIssue === "low-light" ? t("reasons.cool") : t("uncertain")}
-          </p>
-        ) : null}
-        <button type="button" onClick={onOpenCatalog} className="cs-btn cs-btn-cobalt mt-4 w-full">
-          {t("catalog")}
-        </button>
-      </section>
-    );
-  }
-
-  const { place } = active;
-  const site = getSite(place.slug);
-  const image = site?.images[0] ? getMedia(site.images[0]) : undefined;
-  const folio = String(places.findIndex((item) => item.slug === place.slug) + 1).padStart(2, "0");
-  const path = `${sitePath(place)}?from=scan`;
-  const walk = walksThrough(place.slug)[0];
-  const isSingleMatch = result.outcome === "identified";
-
-  function rememberCaptureForStory(slug: string) {
-    try {
-      const imgEl = document.querySelector<HTMLImageElement>("img[src^='data:image/']");
-      if (imgEl?.src) {
-        window.sessionStorage.setItem(
-          SCAN_CAPTURE_STORAGE_KEY,
-          JSON.stringify({ slug, dataUrl: imgEl.src }),
-        );
-      }
-    } catch {
-      /* Session storage optional. */
-    }
-  }
-
-  if (isSingleMatch) {
-    return (
-      <section className="w-full overflow-hidden border border-line bg-paper" style={{ borderLeft: `6px solid ${place.palette[0]}` }}>
-        <div className="grid sm:grid-cols-[8.5rem_1fr]">
-          <div className="relative h-36 overflow-hidden bg-ink sm:h-auto">
-            {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={mediaSrc(image, 640)}
-                alt={pick(image.caption, locale)}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <Plate
-                motif={place.motif}
-                palette={place.palette}
-                index={folio}
-                title={pick(place.name, locale)}
-                eyebrow={story("noPhotograph")}
-              />
-            )}
-          </div>
-          <div className="p-4 sm:p-5">
-            <p className="text-[10px] tracking-[0.22em] text-cobalt uppercase">{t("identified")}</p>
-            <h2 className="mt-1 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
-            <p className="mt-1 text-[11px] tracking-[0.14em] text-brass uppercase">{pick(place.eyebrow, locale)}</p>
-            <p className="mt-2.5 line-clamp-3 text-xs leading-relaxed text-ink-soft">
-              {pick(place.summary, locale)}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link
-                href={path}
-                onClick={() => rememberCaptureForStory(place.slug)}
-                className="cs-btn cs-btn-cobalt flex-1"
-              >
-                <span>{t("open")}</span>
-                <ArrowDownRight className="size-4" aria-hidden="true" />
-              </Link>
-              <Link href={sitePath(place)} className="cs-btn cs-btn-ghost">
-                {t("onMap")}
-              </Link>
-            </div>
-            <button
-              type="button"
-              onClick={onOpenCatalog}
-              className="mt-3 block text-[11px] tracking-[0.14em] text-ink-soft uppercase underline"
-            >
-              {t("catalog")}
-            </button>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="w-full border border-line bg-paper p-5">
-      <p className="text-[10px] tracking-[0.22em] text-copper uppercase">{t("choose")}</p>
-      <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">{pick(place.name, locale)}</h2>
-      <p className="mt-2 text-xs leading-relaxed text-ink-soft">{pick(place.summary, locale)}</p>
-
-      {candidates.length > 1 ? (
-        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-line pt-3">
-          {candidates.map((item) => (
-            <button
-              key={item.place.slug}
-              type="button"
-              onClick={() => onSelect(item.place.slug)}
-              className={`cs-chip h-9 px-3 text-[11px] ${item.place.slug === place.slug ? "is-on" : ""}`}
-            >
-              {pick(item.place.name, locale)}
-            </button>
-          ))}
-        </div>
+      <p className="text-[10px] tracking-[0.22em] text-copper uppercase">
+        {result.outcome === "out-of-catalogue" ? t("outOfCatalogue") : t("resultKicker")}
+      </p>
+      <p className="mt-2 font-display text-3xl leading-none">{t("unknown")}</p>
+      <p className="mt-2 text-xs leading-relaxed text-ink-soft">{t("unknownBody")}</p>
+      {qualityIssue ? (
+        <p className="mt-2 border-l-2 border-copper pl-3 text-xs text-copper">
+          {qualityIssue === "low-light" ? t("reasons.cool") : t("uncertain")}
+        </p>
       ) : null}
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Link
-          href={path}
-          onClick={() => rememberCaptureForStory(place.slug)}
-          className="cs-btn cs-btn-cobalt flex-1"
-        >
-          <span>{t("open")}</span>
-          <ArrowDownRight className="size-4" aria-hidden="true" />
-        </Link>
-        <Link href={sitePath(place)} className="cs-btn cs-btn-ghost">
-          {t("onMap")}
-        </Link>
-        {walk ? (
-          <Link href={`/routes/${walk.slug}`} className="cs-btn cs-btn-ghost">
-            {t("makeRoute")}
-          </Link>
-        ) : null}
-      </div>
+      <button type="button" onClick={onOpenCatalog} className="cs-btn cs-btn-cobalt mt-4 w-full">
+        {t("catalog")}
+      </button>
     </section>
   );
 }

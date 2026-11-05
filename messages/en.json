@@ -2,7 +2,8 @@
   "meta": {
     "title": "CentarStory",
     "template": "%s · CentarStory",
-    "description": "CentarStory is a cultural guide to monuments, museums, food, and movement in the Municipality of Centar, Skopje."
+    "description": "CentarStory is a cultural guide to monuments, museums, food, and movement in the Municipality of Centar, Skopje.",
+    "keywords": "Skopje, Centar, monuments, museums, cultural guide, Macedonia Square, Stone Bridge"
   },
   "common": {
     "language": "Language",
@@ -539,6 +540,7 @@
     "architectureLabel": "Architecture",
     "listenPrompt": "Tell the story",
     "listen": "Play",
+    "listenWarm": "Preparing the voice",
     "listenStop": "Stop",
     "listenStatus": "The story is being read aloud.",
     "listenMissing": "This browser cannot read the story aloud."

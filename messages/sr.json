@@ -2,7 +2,8 @@
   "meta": {
     "title": "CentarStory",
     "template": "%s · CentarStory",
-    "description": "CentarStory je kulturni vodič kroz spomenike, muzeje, hranu i kretanje u opštini Centar, Skoplje."
+    "description": "CentarStory je kulturni vodič kroz spomenike, muzeje, hranu i kretanje u opštini Centar, Skoplje.",
+    "keywords": "Skoplje, Centar, spomenici, muzeji, kulturni vodič, Trg Makedonija, Kameni most"
   },
   "common": {
     "language": "Jezik",
@@ -539,6 +540,7 @@
     "architectureLabel": "Arhitektura",
     "listenPrompt": "Ispričaj priču",
     "listen": "Pusti",
+    "listenWarm": "Glas se priprema",
     "listenStop": "Zaustavi",
     "listenStatus": "Priča se čita naglas.",
     "listenMissing": "Ovaj pregledač ne može da pročita priču naglas."

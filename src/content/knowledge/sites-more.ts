@@ -151,7 +151,7 @@ export const moreSites: SiteRecord[] = [
     ],
     myths: none("cc", L("the cathedral", "соборот", "sabora", "katedral", "собору", "katedralja")),
     related: ["opera-ballet", "vardar-quay", "old-railway-station"],
-    images: [],
+    images: ["img-clement"],
     visitor: {
       notes: L("A working cathedral. Enter only if a service or visiting hour allows it.", "Работен собор. Влезете само ако службата или часот за посета дозволува.", "Radni sabor. Uđite samo ako služba ili sat posete dozvoljava.", "İşleyen bir katedral. Yalnızca ayin veya ziyaret saati izin veriyorsa girin.", "Чинний собор. Заходьте лише якщо служба чи година відвідин дозволяє.", "Një katedrale në funksion. Hyni vetëm nëse një shërbesë ose ora e vizitës e lejon."),
     },

@@ -69,7 +69,7 @@ async function run() {
 
   const proximityBoosts = fuseCandidates({
     mode: "remote",
-    vision: [{ slug: "stone-bridge", score: 0.5 }],
+    vision: [{ slug: "stone-bridge", score: 0.82 }],
     structure: [],
     references: [],
     location: coordinates["stone-bridge"],
@@ -77,7 +77,7 @@ async function run() {
   });
   const withoutGps = fuseCandidates({
     mode: "remote",
-    vision: [{ slug: "stone-bridge", score: 0.5 }],
+    vision: [{ slug: "stone-bridge", score: 0.82 }],
     structure: [],
     references: [],
     coordinates,
@@ -85,6 +85,18 @@ async function run() {
   assert.ok((proximityBoosts[0]?.score ?? 0) > (withoutGps[0]?.score ?? 0));
   assert.ok(proximityBoosts[0]?.sources.includes("proximity"));
   assert.ok((proximityBoosts[0]?.score ?? 1) <= 0.97);
+
+  const weakNearGps = fuseCandidates({
+    mode: "remote",
+    vision: [{ slug: "stone-bridge", score: 0.5 }],
+    structure: [{ slug: "stone-bridge", score: 90 }],
+    references: [],
+    location: coordinates["stone-bridge"],
+    coordinates,
+  });
+  assert.equal(weakNearGps[0]?.score, 0.5);
+  assert.equal(weakNearGps[0]?.sources.includes("proximity"), false);
+  assert.notEqual(decideOutcome("remote", weakNearGps).outcome, "identified");
 
   const bestReferenceKept = fuseCandidates({
     mode: "demo",
@@ -97,7 +109,7 @@ async function run() {
     ],
     coordinates,
   });
-  assert.ok((bestReferenceKept[0]?.score ?? 0) >= 0.85);
+  assert.ok((bestReferenceKept[0]?.score ?? 0) >= 0.93);
   assert.equal(bestReferenceKept[0]?.slug, "stone-bridge");
 
   const demoRefs = fuseCandidates({

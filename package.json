@@ -14,12 +14,14 @@
     "test:quality": "npx tsx --tsconfig tsconfig.json src/lib/content/quality.test.ts && npx tsx --tsconfig tsconfig.json src/lib/e2e/routes.test.ts"
   },
   "dependencies": {
+    "@mintplex-labs/piper-tts-web": "^1.0.5",
     "gsap": "^3.15.0",
     "lucide-react": "^1.64.0",
     "maplibre-gl": "^5.6.2",
     "motion": "^14.7.1",
     "next": "16.4.3",
     "next-intl": "^4.14.9",
+    "onnxruntime-web": "^1.21.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-map-gl": "^8.1.3"

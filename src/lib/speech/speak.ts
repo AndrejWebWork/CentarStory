@@ -1,4 +1,5 @@
 import { intlTag } from "@/lib/format";
+import { playNeural, primeAudio, stopNeural } from "@/lib/speech/neural";
 
 const NEURAL = /natural|neural|premium|enhanced|wavenet|online|google/;
 const HARSH = /espeak|compact|festival/;
@@ -64,34 +65,93 @@ export function tune(utterance: SpeechSynthesisUtterance, voice: SpeechSynthesis
   const name = `${voice?.name ?? ""} ${voice?.voiceURI ?? ""}`.toLowerCase();
   const neural = NEURAL.test(name);
   utterance.lang = voice?.lang || lang;
-  utterance.rate = neural ? 0.92 : 0.86;
-  utterance.pitch = neural ? 1 : 1.02;
+  utterance.rate = neural ? 0.95 : 0.92;
+  utterance.pitch = 1;
   utterance.volume = 1;
   if (voice) utterance.voice = voice;
 }
 
 let token = 0;
 
+function phrases(text: string) {
+  const parts = text
+    .split(/(?<=[.!?…])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return parts.length > 0 ? parts : [text];
+}
+
+function speakWithSystem(
+  parts: string[],
+  locale: string,
+  id: number,
+  hooks?: { onReady?: () => void; onEnd?: () => void },
+) {
+  const synth = window.speechSynthesis;
+  if (!synth) {
+    hooks?.onReady?.();
+    hooks?.onEnd?.();
+    return;
+  }
+  const lang = intlTag(locale);
+  void loadVoices(synth).then((voices) => {
+    if (id !== token) return;
+    const voice = bestVoice(voices, lang);
+    hooks?.onReady?.();
+    const say = (index: number) => {
+      if (id !== token) return;
+      const part = parts[index];
+      if (!part) {
+        hooks?.onEnd?.();
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(part);
+      tune(utterance, voice, lang);
+      utterance.onend = () => {
+        if (id !== token) return;
+        window.setTimeout(() => say(index + 1), 160);
+      };
+      utterance.onerror = () => {
+        if (id !== token) return;
+        say(index + 1);
+      };
+      synth.speak(utterance);
+    };
+    say(0);
+  });
+}
+
+export function speakParts(
+  parts: string[],
+  locale: string,
+  hooks?: { onReady?: () => void; onEnd?: () => void },
+) {
+  if (typeof window === "undefined") return;
+  const lines = parts.map((part) => part.trim()).filter(Boolean);
+  if (lines.length === 0) return;
+  const id = ++token;
+  primeAudio();
+  stopNeural();
+  window.speechSynthesis?.cancel();
+  void playNeural(lines, locale, () => id === token, hooks?.onReady).then((result) => {
+    if (id !== token) return;
+    if (result === "failed") {
+      speakWithSystem(lines, locale, id, hooks);
+      return;
+    }
+    if (result === "done") hooks?.onEnd?.();
+  });
+}
+
 export function speak(text: string, locale: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
   const line = text.replace(/\s+/g, " ").trim();
   if (!line) return;
-  const id = ++token;
-  const synth = window.speechSynthesis;
-  const lang = intlTag(locale);
-  synth.cancel();
-  window.setTimeout(() => {
-    void loadVoices(synth).then((voices) => {
-      if (id !== token) return;
-      const utterance = new SpeechSynthesisUtterance(line);
-      tune(utterance, bestVoice(voices, lang), lang);
-      synth.speak(utterance);
-    });
-  }, 70);
+  speakParts(phrases(line), locale);
 }
 
 export function stopSpeaking() {
   token += 1;
+  stopNeural();
   if (typeof window === "undefined") return;
   window.speechSynthesis?.cancel();
 }

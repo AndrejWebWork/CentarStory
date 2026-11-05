@@ -10,7 +10,7 @@ import {
   PRECOMPUTED_REFERENCE_EMBEDDINGS,
   type PrecomputedReferenceEmbedding,
 } from "@/lib/recognition/embeddings";
-import { decideOutcome, fuseCandidates } from "@/lib/recognition/fuse";
+import { fuseCandidates } from "@/lib/recognition/fuse";
 import { profiles } from "@/lib/recognition/profiles";
 import type { LocationHint, RecognitionResult, StructureMatch } from "@/lib/recognition/types";
 
@@ -68,9 +68,12 @@ export function embeddingSimilarity(
 ): number {
   const cos = cosineSimilarity(shot.embedding, ref.embedding);
   const hashSim = dhashSimilarity(shot.dhash, ref.dhash);
-  // Rescale high-baseline positive-octant cosine into discriminative [0..1] range
-  const scaledCos = Math.max(0, Math.min(1, (cos - 0.8) / 0.2));
-  return scaledCos * 0.45 + hashSim * 0.55;
+  // Colour blocks sit in a high cosine band; stretch the top of that band.
+  const scaledCos = Math.max(0, Math.min(1, (cos - 0.84) / 0.16));
+  // A few shared edges are not a monument. The colour layout and the
+  // edge pattern both have to agree before the score can rise.
+  if (hashSim < 0.72 || scaledCos < 0.42) return Math.min(hashSim, scaledCos) * 0.42;
+  return Math.min(1, hashSim * 0.64 + scaledCos * 0.36);
 }
 
 function cropCanvas(source: HTMLCanvasElement, xRatio: number, yRatio: number, wRatio: number, hRatio: number) {
@@ -201,17 +204,22 @@ export function evaluateLocalSamples(input: {
     location: input.location,
     coordinates,
   });
-  const referenced = candidates.filter((item) => item.sources.includes("reference") && item.score >= 0.6);
-  const pool = referenced.length > 0 ? referenced : candidates.filter((item) => item.score >= 0.64);
-  const decided = decideOutcome("demo", pool);
-  const top = pool[0];
-  const strongReference = Boolean(top && top.sources.includes("reference") && top.score >= 0.72);
-  const outcome =
-    decided.outcome === "identified" && strongReference
-      ? "identified"
-      : decided.outcome === "unknown" || !top
-        ? "unknown"
-        : "candidates";
+  const bestReference = new Map<string, number>();
+  for (const item of references) {
+    bestReference.set(item.slug, Math.max(bestReference.get(item.slug) ?? 0, item.score));
+  }
+  const ranked = [...bestReference.entries()].sort((a, b) => b[1] - a[1]);
+  const topRef = ranked[0];
+  const secondRef = ranked[1]?.[1] ?? 0;
+  const clearMatch = Boolean(topRef && topRef[1] >= 0.76 && topRef[1] - secondRef >= 0.1);
+  const outcome = clearMatch ? "identified" : "unknown";
+  const winner = clearMatch
+    ? candidates.find((item) => item.slug === topRef?.[0]) ?? {
+        slug: topRef?.[0] ?? "",
+        score: topRef?.[1] ?? 0,
+        sources: ["reference" as const],
+      }
+    : undefined;
 
   return {
     structure,
@@ -219,9 +227,9 @@ export function evaluateLocalSamples(input: {
     result: {
       mode: "demo",
       outcome,
-      candidates: outcome === "unknown" ? [] : pool.slice(0, 4),
-      leadingScore: top?.score ?? 0,
-      threshold: decided.threshold,
+      candidates: winner ? [winner] : [],
+      leadingScore: winner?.score ?? 0,
+      threshold: 0.76,
       usedLocation: Boolean(input.location),
       retainedImage: false,
       note:
@@ -243,10 +251,15 @@ export async function recognizeOnDevice(
   const evidence = analyzeSource(canvas, canvas.width, canvas.height);
   const views = [canvas, centerCrop(canvas), upperCrop(canvas)];
   const descriptors = views.map((view) => extractDescriptorFromCanvas(view, view.width, view.height));
-  const precomputedScores: StructureMatch[] = PRECOMPUTED_REFERENCE_EMBEDDINGS.map((ref) => ({
-    slug: ref.slug,
-    score: Math.max(...descriptors.map((descriptor) => embeddingSimilarity(descriptor, ref))),
-  }));
+  const precomputedScores: StructureMatch[] = PRECOMPUTED_REFERENCE_EMBEDDINGS.map((ref) => {
+    const scores = descriptors
+      .map((descriptor) => embeddingSimilarity(descriptor, ref))
+      .sort((a, b) => b - a);
+    const best = scores[0] ?? 0;
+    const next = scores[1] ?? 0;
+    // One lucky crop is not enough. Two views of the same object have to agree.
+    return { slug: ref.slug, score: best * 0.58 + next * 0.42 };
+  });
   const evaluated = evaluateLocalSamples({
     evidence,
     precomputedScores,

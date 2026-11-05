@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Onest, Unbounded } from "next/font/google";
 import { getLocale, getTranslations } from "next-intl/server";
+import { languageAlternates, siteOrigin } from "@/lib/seo/site";
 import "./globals.css";
 
 const display = Unbounded({
@@ -25,13 +26,40 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("meta");
+  const description = t("description");
   return {
+    metadataBase: new URL(siteOrigin()),
     applicationName: "CentarStory",
     title: {
       default: t("title"),
       template: t("template"),
     },
-    description: t("description"),
+    description,
+    keywords: t("keywords").split(", "),
+    authors: [{ name: "CentarStory" }],
+    creator: "CentarStory",
+    category: "travel",
+    alternates: {
+      languages: languageAlternates("/"),
+    },
+    openGraph: {
+      type: "website",
+      siteName: "CentarStory",
+      title: t("title"),
+      description,
+      images: [{ url: "/brand/logo.jpg", alt: "CentarStory" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description,
+      images: ["/brand/logo.jpg"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    },
     manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,

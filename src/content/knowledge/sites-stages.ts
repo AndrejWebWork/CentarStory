@@ -80,7 +80,7 @@ export const stageSites: SiteRecord[] = [
     ],
     myths: none("mob", L("the opera house", "операта", "opere", "opera evi", "опери", "shtëpia e operës")),
     related: ["macedonian-national-theatre", "vardar-quay", "archaeological-museum"],
-    images: [],
+    images: ["img-opera"],
     visitor: {
       website: "https://operabalet.mk/",
       notes: L("Buy tickets from the house. A performance night is not a walk-in museum hour.", "Билети земете од куќата. Ноќ на претстава не е музејски час за влез од улица.", "Karte uzmite u kući. Noć predstave nije muzejski sat za ulazak s ulice.", "Biletleri evden alın. Gösteri gecesi sokaktan girilen bir müze saati değildir.", "Квитки беріть у театрі. Вечір вистави — не музейна година для входу з вулиці.", "Blijeni biletat nga shtëpia. Një mbrëmje shfaqjeje nuk është orë muzeu pa njoftim."),

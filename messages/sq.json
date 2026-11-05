@@ -2,7 +2,8 @@
   "meta": {
     "title": "CentarStory",
     "template": "%s · CentarStory",
-    "description": "CentarStory është një udhërrëfyes kulturor për monumentet, muzetë, ushqimin dhe lëvizjen në Komunën e Qendrës, Shkup."
+    "description": "CentarStory është një udhërrëfyes kulturor për monumentet, muzetë, ushqimin dhe lëvizjen në Komunën e Qendrës, Shkup.",
+    "keywords": "Shkup, Qendra, monumente, muze, udhërrëfyes kulturor, Sheshi i Maqedonisë, Ura e Gurit"
   },
   "common": {
     "language": "Gjuha",
@@ -539,6 +540,7 @@
     "architectureLabel": "Arkitektura",
     "listenPrompt": "Tregoje historinë",
     "listen": "Luaj",
+    "listenWarm": "Zëri po përgatitet",
     "listenStop": "Ndalo",
     "listenStatus": "Historia po lexohet me zë.",
     "listenMissing": "Ky shfletues nuk mund ta lexojë historinë me zë."

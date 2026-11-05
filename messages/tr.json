@@ -2,7 +2,8 @@
   "meta": {
     "title": "CentarStory",
     "template": "%s · CentarStory",
-    "description": "CentarStory, Üsküp’ün Centar Belediyesi’nde anıtlar, müzeler, yemek ve dolaşım için bir kültür rehberidir."
+    "description": "CentarStory, Üsküp’ün Centar Belediyesi’nde anıtlar, müzeler, yemek ve dolaşım için bir kültür rehberidir.",
+    "keywords": "Üsküp, Centar, anıtlar, müzeler, kültür rehberi, Makedonya Meydanı, Taş Köprü"
   },
   "common": {
     "language": "Dil",
@@ -539,6 +540,7 @@
     "architectureLabel": "Mimari",
     "listenPrompt": "Hikâyeyi anlat",
     "listen": "Oynat",
+    "listenWarm": "Ses hazırlanıyor",
     "listenStop": "Durdur",
     "listenStatus": "Hikâye sesli okunuyor.",
     "listenMissing": "Bu tarayıcı hikâyeyi sesli okuyamıyor."

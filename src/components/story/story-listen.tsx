@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { intlTag } from "@/lib/format";
-import { bestVoice, loadVoices, tune } from "@/lib/speech/speak";
+import { useTranslations } from "next-intl";
+import { speakParts, stopSpeaking } from "@/lib/speech/speak";
 
 function piecesOf(script: string) {
   const text = script.replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
@@ -41,78 +41,48 @@ export function StoryListen({
   statusLabel: string;
   missingLabel: string;
 }) {
+  const story = useTranslations("story");
   const [speaking, setSpeaking] = useState(false);
+  const [warming, setWarming] = useState(false);
   const [missing, setMissing] = useState(false);
   const stopRef = useRef(false);
-  const keepAlive = useRef<number | null>(null);
   const script = [title, ...paragraphs].filter(Boolean).join(". ");
-
-  function clearKeepAlive() {
-    if (keepAlive.current !== null) {
-      window.clearInterval(keepAlive.current);
-      keepAlive.current = null;
-    }
-  }
 
   function stop() {
     stopRef.current = true;
-    clearKeepAlive();
-    window.speechSynthesis?.cancel();
+    stopSpeaking();
     setSpeaking(false);
+    setWarming(false);
   }
 
   useEffect(() => {
     return () => {
       stopRef.current = true;
-      clearKeepAlive();
-      window.speechSynthesis?.cancel();
+      stopSpeaking();
     };
   }, [script]);
 
-  async function start() {
-    const synth = window.speechSynthesis;
-    if (!synth) {
+  function start() {
+    const pieces = piecesOf(script);
+    if (pieces.length === 0) return;
+    if (typeof window === "undefined") {
       setMissing(true);
       return;
     }
     stopRef.current = false;
     setMissing(false);
-    const pieces = piecesOf(script);
-    if (pieces.length === 0) return;
+    setWarming(true);
     setSpeaking(true);
-    const lang = intlTag(locale);
-    const voices = await loadVoices(synth);
-    if (stopRef.current) return;
-    const voice = bestVoice(voices, lang);
-    let index = 0;
-
-    const speakNext = () => {
-      if (stopRef.current) return;
-      if (index >= pieces.length) {
-        clearKeepAlive();
+    speakParts(pieces, locale, {
+      onReady: () => {
+        if (!stopRef.current) setWarming(false);
+      },
+      onEnd: () => {
+        if (stopRef.current) return;
         setSpeaking(false);
-        return;
-      }
-      const utterance = new SpeechSynthesisUtterance(pieces[index] ?? "");
-      tune(utterance, voice, lang);
-      utterance.onend = () => {
-        index += 1;
-        speakNext();
-      };
-      utterance.onerror = (event) => {
-        if (stopRef.current || event.error === "interrupted" || event.error === "canceled") return;
-        index += 1;
-        speakNext();
-      };
-      synth.speak(utterance);
-    };
-
-    if (synth.speaking || synth.pending) synth.cancel();
-    window.setTimeout(speakNext, synth.speaking || synth.pending ? 60 : 0);
-    clearKeepAlive();
-    keepAlive.current = window.setInterval(() => {
-      if (!stopRef.current && synth.paused) synth.resume();
-    }, 10000);
+        setWarming(false);
+      },
+    });
   }
 
   return (
@@ -123,16 +93,16 @@ export function StoryListen({
         onClick={() => (speaking ? stop() : void start())}
         className={speaking ? "cs-tape is-playing" : "cs-tape"}
         aria-pressed={speaking}
-        aria-label={speaking ? stopLabel : listenLabel}
+        aria-label={warming ? story("listenWarm") : speaking ? stopLabel : listenLabel}
       >
-        <span className="cs-tape-word">{speaking ? stopLabel : listenLabel}</span>
+        <span className="cs-tape-word">{warming ? story("listenWarm") : speaking ? stopLabel : listenLabel}</span>
         <span className="cs-tape-window" aria-hidden="true">
           <span className="cs-tape-film" />
         </span>
         <span className="cs-reel" aria-hidden="true" />
       </button>
       <p className="sr-only" aria-live="polite">
-        {missing ? missingLabel : speaking ? statusLabel : ""}
+        {missing ? missingLabel : warming ? story("listenWarm") : speaking ? statusLabel : ""}
       </p>
       {missing ? <p className="cs-listen-missing">{missingLabel}</p> : null}
     </div>

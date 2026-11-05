@@ -65,24 +65,24 @@ export function fuseCandidates(input: {
       sources.push("vision");
     }
     if (reference > 0) {
-      imageScore = Math.max(imageScore, reference * 0.92 + structure * 0.08);
+      imageScore = Math.max(imageScore, reference);
       sources.push("reference");
     }
     if (structure > 0) {
-      if (!vision && reference === 0) imageScore = Math.max(imageScore, structure * 0.86);
-      else imageScore = Math.max(imageScore, imageScore * 0.88 + structure * 0.12);
-      sources.push("structure");
+      // Edges and brightness describe a silhouette, not the monument.
+      // They may not carry a match on their own or lift a weak photograph.
+      if (vision || reference > 0) sources.push("structure");
     }
 
     if (imageScore < 0.22) continue;
 
     let score = imageScore;
     const point = input.coordinates[slug];
-    if (input.location && point) {
+    if (input.location && point && imageScore >= 0.78) {
       const meters = haversineMeters(input.location, point);
       const boost = proximityBoost(meters);
       if (boost > 0) {
-        score = imageScore + boost * Math.min(1, imageScore / 0.35);
+        score = Math.min(MAX_CONFIDENCE, imageScore + boost * 0.15);
         sources.push("proximity");
       }
     }
@@ -108,8 +108,8 @@ export function decideOutcome(
   if (!top || top.score < rules.consider) {
     return { outcome: "unknown", threshold: rules.identify };
   }
-  const visionOrReference = top.sources.some((source) => source === "vision" || source === "reference" || source === "structure");
-  if (!visionOrReference) {
+  const imageBacked = top.sources.some((source) => source === "vision" || source === "reference");
+  if (!imageBacked) {
     return { outcome: "unknown", threshold: rules.identify };
   }
   if (top.score >= rules.identify && top.score - (second?.score ?? 0) >= rules.gap) {
