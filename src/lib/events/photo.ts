@@ -11,7 +11,29 @@ const focus: Record<string, string> = {
   "nesto-sto-ke-ostane-2026": "50% 82%",
 };
 
-export function eventImage(event: { slug: string; imageId?: string; venues: string[] }) {
+export function eventImage(event: {
+  slug: string;
+  imageId?: string;
+  imageUrl?: string;
+  venues: string[];
+  name?: { en: string };
+}) {
+  if (event.imageUrl) {
+    const caption = event.name?.en || "Event";
+    return {
+      id: `posted-${event.slug}`,
+      fileTitle: caption,
+      url: event.imageUrl,
+      pageUrl: event.imageUrl,
+      credit: "CentarStory",
+      license: "Operator upload",
+      licenseUrl: event.imageUrl,
+      attributionRequired: false,
+      caption: { en: caption, mk: caption, sr: caption, tr: caption, uk: caption, sq: caption },
+      authenticPhotograph: true as const,
+      verified: false,
+    };
+  }
   if (event.imageId) {
     const direct = getMedia(event.imageId);
     if (direct) return direct;

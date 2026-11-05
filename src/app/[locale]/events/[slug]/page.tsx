@@ -9,12 +9,14 @@ import { getEvent, listEvents } from "@/content/journeys";
 import { getPlace, sitePath } from "@/content/places";
 import { Link } from "@/i18n/navigation";
 import { locales } from "@/i18n/locales";
+import { postedAsCultural } from "@/lib/events/managed";
 import { noticeLabelKey } from "@/lib/events/notice";
 import { eventImage, eventImageFocus } from "@/lib/events/photo";
 import { formatIsoDay } from "@/lib/format";
 import { mediaSrc, mediaSrcSet } from "@/lib/media/src";
 import { resolveLocale } from "@/lib/resolve-locale";
 
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export function generateStaticParams() {
@@ -28,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const locale = await resolveLocale(params);
-  const event = getEvent(slug);
+  const event = postedAsCultural(slug) ?? getEvent(slug);
   if (!event) return { title: "CentarStory" };
   return { title: pick(event.name, locale), description: pick(event.summary, locale) };
 }
@@ -40,7 +42,7 @@ export default async function EventPage({
 }) {
   const { slug } = await params;
   const locale = await resolveLocale(params);
-  const event = getEvent(slug);
+  const event = postedAsCultural(slug) ?? getEvent(slug);
   if (!event) notFound();
   const detail = await getTranslations("detail");
   const explore = await getTranslations("explore");
@@ -138,6 +140,25 @@ export default async function EventPage({
               {explore(noticeLabelKey(event.officialUrl))}
             </a>
           </p>
+          {event.links && event.links.length > 0 ? (
+            <ul className="mt-3 space-y-2">
+              {event.links.map((link) => (
+                <li key={link.url}>
+                  <a
+                    href={link.url}
+                    className="inline-flex min-h-11 items-center text-sm font-semibold text-cobalt underline underline-offset-4"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {event.placeLabel && venues.length === 0 ? (
+            <p className="mt-4 text-sm">{event.placeLabel}</p>
+          ) : null}
           <p className="mt-4 text-xs tracking-[0.16em] text-brass uppercase">
             {explore("lastVerified", { date: event.lastChecked })}
           </p>

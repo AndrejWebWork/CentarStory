@@ -123,6 +123,9 @@ export type CulturalEvent = {
   host: EventHost;
   officialUrl: string;
   imageId?: string;
+  imageUrl?: string;
+  links?: { label: string; url: string }[];
+  placeLabel?: string;
   status: EventStatus;
   startDate?: string;
   endDate?: string;

@@ -43,11 +43,15 @@ function covers(event: CulturalEvent, iso: string) {
   return iso >= start && iso <= end;
 }
 
-export function EventBoard() {
+export function EventBoard({ posted = [] }: { posted?: CulturalEvent[] }) {
   const t = useTranslations("events");
   const explore = useTranslations("explore");
   const locale = useLocale();
-  const events = listEvents().filter((event) => event.host === "municipality");
+  const seen = new Set(posted.map((event) => event.slug));
+  const events = [
+    ...posted,
+    ...listEvents().filter((event) => event.host === "municipality" && !seen.has(event.slug)),
+  ];
   const live = liveEvents(events);
   const confirm = confirmDateEvents(events);
   const closed = closedEvents(events);
@@ -190,7 +194,7 @@ function Featured({ event }: { event: CulturalEvent }) {
           </h2>
           <p className="mt-3 flex min-w-0 items-center gap-1.5 text-sm text-foam/80">
             <MapPinned className="size-3.5 shrink-0" aria-hidden="true" />
-            <span className="min-w-0">{venue ? pick(venue.name, locale) : explore("unmappedVenue")}</span>
+            <span className="min-w-0">{venue ? pick(venue.name, locale) : event.placeLabel || explore("unmappedVenue")}</span>
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <Link href={`/events/${event.slug}`} className="cs-btn h-auto min-h-11 bg-foam py-2 text-ink">
@@ -250,7 +254,7 @@ function EventCard({ event }: { event: CulturalEvent }) {
                 {pick(venue.name, locale)}
               </Link>
             ) : (
-              explore("unmappedVenue")
+              event.placeLabel || explore("unmappedVenue")
             )}
           </span>
         </p>

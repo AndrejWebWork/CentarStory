@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { EventsIndex } from "@/components/events/events-index";
+import { postedEvents } from "@/lib/events/managed";
 import { resolveLocale } from "@/lib/resolve-locale";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -19,5 +22,5 @@ export default async function EventsPage({
   params: Promise<{ locale: string }>;
 }) {
   await resolveLocale(params);
-  return <EventsIndex />;
+  return <EventsIndex posted={postedEvents()} />;
 }

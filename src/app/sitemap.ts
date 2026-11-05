@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { dishes, restaurants } from "@/content/food";
 import { events, walks } from "@/content/journeys";
+import { postedEvents } from "@/lib/events/managed";
 import { places, sitePath } from "@/content/places";
 import { locales } from "@/i18n/locales";
 import { localeHref } from "@/lib/seo/site";
@@ -26,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...places.map((place) => sitePath(place)),
     ...walks.map((walk) => `/routes/${walk.slug}`),
     ...events.map((event) => `/events/${event.slug}`),
+    ...postedEvents().map((event) => `/events/${event.slug}`),
     ...restaurants.map((restaurant) => `/food/places/${restaurant.slug}`),
     ...dishes.map((dish) => `/food/dishes/${dish.slug}`),
   ];
